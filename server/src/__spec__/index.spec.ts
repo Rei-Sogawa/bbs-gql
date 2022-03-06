@@ -37,6 +37,38 @@ describe("datasource", () => {
     await Promise.all([clearFirestore()]);
   });
 
+  it("findMany from firestore", async () => {
+    const createdAt = new Date("2000-01-01");
+
+    const newDocs = Array.from({ length: 25 }).map((_, idx) =>
+      User.of({
+        id: idx.toString(),
+        createdAt: admin.firestore.Timestamp.fromDate(createdAt),
+        updatedAt: admin.firestore.Timestamp.fromDate(createdAt),
+      })
+    );
+
+    await Promise.all(newDocs.map((user) => users.collection.doc(user.id).set(user)));
+
+    // NOTE: read 25 docs from firestore
+    const readDocs = await users.findMany(newDocs.map((user) => user.id));
+
+    const updatedAt = new Date("2020-01-01");
+
+    const editedDocs = newDocs.map((user) =>
+      User.of({ ...user, updatedAt: admin.firestore.Timestamp.fromDate(updatedAt) })
+    );
+
+    await Promise.all(editedDocs.map((user) => users.collection.doc(user.id).set(user)));
+
+    // NOTE: read 25 docs from firestore
+    const readDocsAgain = await users.findMany(newDocs.map((user) => user.id));
+
+    expect(newDocs).toStrictEqual(readDocs);
+    expect(editedDocs).toStrictEqual(readDocsAgain);
+    expect(usersReadCounter.count).toBe(50);
+  });
+
   it("findMany from cache within ttl", async () => {
     const createdAt = new Date("2000-01-01");
 
