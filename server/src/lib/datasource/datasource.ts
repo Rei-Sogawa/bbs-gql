@@ -4,10 +4,10 @@ import * as admin from "firebase-admin";
 
 import { CachedMethods, DocField, ICachedMethods } from "./cache";
 
-export class FirestoreDataSource<
-  TDoc extends DocField,
-  TContext = any
-> extends DataSource<TContext> {
+export class FirestoreDataSource<TDoc extends DocField, TContext = any>
+  extends DataSource<TContext>
+  implements ICachedMethods<TDoc>
+{
   context?: TContext;
   cache!: ICachedMethods<TDoc>["cache"];
   collection: admin.firestore.CollectionReference<TDoc>;
