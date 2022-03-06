@@ -3,8 +3,21 @@ import { FirestoreDataSource } from "../lib/datasource/index";
 import { IUser, User } from "../lib/entity/user";
 import { Converter, replacer, reviver } from "./../lib/datasource/helper";
 import { clearAuth, clearFirestore } from "./test-util/clear";
+import { ReadCounter, WriteCounter } from "./test-util/counter";
 
 const db = getDb();
+
+const usersReadCounter = new ReadCounter("users");
+const usersWriteCounter = new WriteCounter("users");
+
+const usersRef = db.collection("users").withConverter(
+  Converter<IUser>({
+    logger: {
+      onRead: () => usersReadCounter.log(),
+      onWrite: () => usersWriteCounter.log(),
+    },
+  })
+);
 
 describe("datasource", () => {
   beforeAll(async () => {
@@ -14,23 +27,22 @@ describe("datasource", () => {
     await Promise.all([clearAuth(), clearFirestore()]);
   });
 
-  it.skip("can add user doc", async () => {
+  it("can add user doc", async () => {
     const user = User.of({ id: "1" });
-    await db.collection("users").doc(user.id).set(user);
-    const dSnap = await db.collection("users").doc(user.id).get();
+    await usersRef.doc(user.id).set(user);
+    const dSnap = await usersRef.doc(user.id).get();
     expect(dSnap.data()).toStrictEqual(user);
   });
 
   it("check cache", async () => {
-    const users = new FirestoreDataSource<IUser>(
-      db.collection("users").withConverter(Converter<IUser>())
-    );
+    const users = new FirestoreDataSource<IUser>(usersRef);
     users.initialize();
-    users.cache.set("1", JSON.stringify({ id: "1" }, replacer));
-    const cached = await users.cache.get("1");
+    const user = User.of({ id: "1" });
+    users.cache.set(user.id, JSON.stringify(user, replacer));
+    const cached = await users.cache.get(user.id);
     expect(cached).toBeTruthy();
     if (cached) {
-      expect(JSON.parse(cached, reviver)).toStrictEqual({ id: "1" });
+      expect(JSON.parse(cached, reviver)).toStrictEqual(user);
     }
   });
 });
