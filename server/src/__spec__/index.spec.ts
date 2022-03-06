@@ -50,6 +50,7 @@ describe("datasource", () => {
 
     await Promise.all(newDocs.map((user) => users.collection.doc(user.id).set(user)));
 
+    // NOTE: read 25 docs from firestore
     const readDocs = await users.findMany(
       newDocs.map((user) => user.id),
       { ttl: 60 }
@@ -63,6 +64,7 @@ describe("datasource", () => {
 
     await Promise.all(editedDocs.map((user) => users.collection.doc(user.id).set(user)));
 
+    // NOTE: read 25 docs from cache because within ttl
     const readDocsAgain = await users.findMany(
       newDocs.map((user) => user.id),
       { ttl: 60 }
@@ -86,6 +88,7 @@ describe("datasource", () => {
 
     await Promise.all(newDocs.map((user) => users.collection.doc(user.id).set(user)));
 
+    // NOTE: read 25 docs from firestore
     const readDocs = await users.findMany(
       newDocs.map((user) => user.id),
       { ttl: 1 }
@@ -101,6 +104,7 @@ describe("datasource", () => {
 
     await Promise.all(editedDocs.map((user) => users.collection.doc(user.id).set(user)));
 
+    // NOTE: read 25 docs from firestore because after ttl
     const readDocsAgain = await users.findMany(
       newDocs.map((user) => user.id),
       { ttl: 1 }
