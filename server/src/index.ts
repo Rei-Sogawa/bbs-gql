@@ -2,6 +2,7 @@ import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import { readFileSync } from "fs";
 import expressPlayground from "graphql-playground-middleware-express";
+import { resolvers } from "./resolvers";
 
 const typeDefs = readFileSync("./typeDefs.graphql", "utf-8");
 
@@ -10,11 +11,7 @@ async function start() {
 
   const server = new ApolloServer({
     typeDefs,
-    resolvers: {
-      Query: {
-        totalPhotos: () => 42,
-      },
-    },
+    resolvers,
   });
 
   server.start().then(() => {
@@ -23,10 +20,8 @@ async function start() {
 
   app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 
-  app.listen({ port: 4000 }, () =>
-    console.log(
-      `GraphQL Server running at http://localhost:4000${server.graphqlPath}`
-    )
+  app.listen({ port: process.env.PORT || 8080 }, () =>
+    console.log(`GraphQL Server started!}`)
   );
 }
 
