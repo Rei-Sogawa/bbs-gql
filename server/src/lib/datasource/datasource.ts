@@ -7,7 +7,10 @@ type DocField = {
   id: string;
 };
 
-export class FirestoreDataSource<TDoc extends DocField, TContext> extends DataSource<TContext> {
+export class FirestoreDataSource<
+  TDoc extends DocField,
+  TContext = any
+> extends DataSource<TContext> {
   context?: TContext;
   cache!: KeyValueCache;
   collection: CollectionReference<TDoc>;

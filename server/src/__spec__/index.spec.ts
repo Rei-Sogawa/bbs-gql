@@ -22,7 +22,7 @@ describe("datasource", () => {
   });
 
   it("check cache", async () => {
-    const users = new FirestoreDataSource<IUser, any>(
+    const users = new FirestoreDataSource<IUser>(
       db.collection("users").withConverter(Converter<IUser>())
     );
     users.initialize();
