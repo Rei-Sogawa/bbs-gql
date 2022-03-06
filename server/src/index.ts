@@ -2,6 +2,7 @@ import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import { readFileSync } from "fs";
 import expressPlayground from "graphql-playground-middleware-express";
+
 import { resolvers } from "./resolvers";
 
 const typeDefs = readFileSync("./typeDefs.graphql", "utf-8");

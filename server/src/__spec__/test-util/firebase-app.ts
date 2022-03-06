@@ -4,7 +4,7 @@ import {
   FIREBASE_AUTH_EMULATOR_HOST,
   FIRESTORE_EMULATOR_HOST,
   PROJECT_ID,
-} from "./__spec__/test-util/env-constants";
+} from "./env-constants";
 
 process.env.GCLOUD_PROJECT = PROJECT_ID;
 process.env.FIREBASE_AUTH_EMULATOR_HOST = FIREBASE_AUTH_EMULATOR_HOST;
