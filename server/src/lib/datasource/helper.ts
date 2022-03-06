@@ -8,13 +8,13 @@ type Logger = {
 export const Converter = <TDoc>(options?: {
   logger?: Logger;
 }): admin.firestore.FirestoreDataConverter<TDoc> => ({
-  toFirestore: (data) => {
-    options?.logger?.onRead();
-    return data;
-  },
   fromFirestore: (snap) => {
-    options?.logger?.onWrite();
+    options?.logger?.onRead();
     return snap.data() as TDoc;
+  },
+  toFirestore: (data) => {
+    options?.logger?.onWrite();
+    return data;
   },
 });
 

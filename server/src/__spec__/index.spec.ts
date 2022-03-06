@@ -28,23 +28,39 @@ describe("datasource", () => {
   beforeAll(async () => {
     await Promise.all([clearAuth(), clearFirestore()]);
   });
-  afterAll(async () => {
-    await Promise.all([clearAuth(), clearFirestore()]);
-  });
 
-  it("findOne", async () => {
-    const user = User.of({ id: "1", updatedAt: admin.firestore.Timestamp.now() });
+  it("findMany", async () => {
+    const createdAt = new Date("2000-01-01");
 
-    await users.collection.doc("1").set(user);
+    const newDocs = Array.from({ length: 25 }).map((_, idx) =>
+      User.of({
+        id: idx.toString(),
+        createdAt: admin.firestore.Timestamp.fromDate(createdAt),
+        updatedAt: admin.firestore.Timestamp.fromDate(createdAt),
+      })
+    );
 
-    const readFromCacheFirst = await users.findOne("1", { ttl: 60 });
+    await Promise.all(newDocs.map((user) => users.collection.doc(user.id).set(user)));
 
-    const updatedUser = User.of({ ...user, updatedAt: admin.firestore.Timestamp.now() });
+    const readDocs = await users.findMany(
+      newDocs.map((user) => user.id),
+      { ttl: 60 }
+    );
 
-    await users.collection.doc("1").set(updatedUser, { merge: true });
+    const updatedAt = new Date("2020-01-01");
 
-    const readFromCacheSecond = await users.findOne("1", { ttl: 60 });
+    const editedDocs = newDocs.map((user) =>
+      User.of({ ...user, updatedAt: admin.firestore.Timestamp.fromDate(updatedAt) })
+    );
 
-    expect(readFromCacheSecond).toStrictEqual(readFromCacheFirst);
+    await Promise.all(editedDocs.map((user) => users.collection.doc(user.id).set(user)));
+
+    const readDocsAgain = await users.findMany(
+      newDocs.map((user) => user.id),
+      { ttl: 60 }
+    );
+
+    expect(newDocs).toStrictEqual(readDocs);
+    expect(readDocs).toStrictEqual(readDocsAgain);
   });
 });

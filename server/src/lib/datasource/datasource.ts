@@ -12,6 +12,7 @@ export class FirestoreDataSource<
   cache!: ICachedMethods<TDoc>["cache"];
   collection: admin.firestore.CollectionReference<TDoc>;
   findOne!: ICachedMethods<TDoc>["findOne"];
+  findMany!: ICachedMethods<TDoc>["findMany"];
 
   constructor(collection: admin.firestore.CollectionReference<TDoc>) {
     super();

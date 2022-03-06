@@ -14,7 +14,8 @@ export type DocField = {
 
 export type ICachedMethods<TDoc> = {
   cache: KeyValueCache;
-  findOne: (id: string, args: FindArgs) => Promise<TDoc>;
+  findOne: (id: string, args?: FindArgs) => Promise<TDoc>;
+  findMany: (ids: string[], args?: FindArgs) => Promise<TDoc[]>;
 };
 
 export const CachedMethods = <TDoc extends DocField>(
@@ -36,14 +37,19 @@ export const CachedMethods = <TDoc extends DocField>(
     )
   );
 
-  const findOne = async (id: string, { ttl }: FindArgs): Promise<TDoc> => {
+  const findOne = async (id: string, args?: FindArgs): Promise<TDoc> => {
     const cacheDoc = await cache.get(id);
-    if (cacheDoc && ttl) return JSON.parse(cacheDoc, reviver) as TDoc;
+    if (cacheDoc && args?.ttl) return JSON.parse(cacheDoc, reviver) as TDoc;
 
     const doc = await loader.load(id);
-    if (Number.isInteger(ttl)) await cache.set(id, JSON.stringify(doc, replacer), { ttl });
+    if (Number.isInteger(args?.ttl))
+      await cache.set(id, JSON.stringify(doc, replacer), { ttl: args?.ttl });
     return doc;
   };
 
-  return { cache, findOne };
+  const findMany = async (ids: string[], args?: FindArgs): Promise<TDoc[]> => {
+    return Promise.all(ids.map((id) => findOne(id, args)));
+  };
+
+  return { cache, findOne, findMany };
 };
