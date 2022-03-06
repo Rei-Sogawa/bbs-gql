@@ -6,9 +6,12 @@
   "scripts": {
     "dev:server": "ts-node-dev --respawn src/index",
     "dev:emulators": "firebase emulators:start --only auth,firestore",
-    "gql:generate": "graphql-codegen --config codegen.yml"
+    "gql:generate": "graphql-codegen --config codegen.yml",
+    "test": "jest --detectOpenHandles"
   },
   "dependencies": {
+    "apollo-datasource": "^3.3.1",
+    "apollo-server-caching": "^3.3.0",
     "apollo-server-express": "^3.6.3",
     "express": "^4.17.3",
     "firebase-admin": "^10.0.2",
