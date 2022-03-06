@@ -1,7 +1,9 @@
+import * as admin from "firebase-admin";
+
 import { getDb } from "../firebase-app";
 import { FirestoreDataSource } from "../lib/datasource/index";
 import { IUser, User } from "../lib/entity/user";
-import { Converter, replacer, reviver } from "./../lib/datasource/helper";
+import { Converter } from "./../lib/datasource/helper";
 import { clearAuth, clearFirestore } from "./test-util/clear";
 import { ReadCounter, WriteCounter } from "./test-util/counter";
 
@@ -19,6 +21,9 @@ const usersRef = db.collection("users").withConverter(
   })
 );
 
+const users = new FirestoreDataSource<IUser>(usersRef);
+users.initialize();
+
 describe("datasource", () => {
   beforeAll(async () => {
     await Promise.all([clearAuth(), clearFirestore()]);
@@ -27,22 +32,19 @@ describe("datasource", () => {
     await Promise.all([clearAuth(), clearFirestore()]);
   });
 
-  it("can add user doc", async () => {
-    const user = User.of({ id: "1" });
-    await usersRef.doc(user.id).set(user);
-    const dSnap = await usersRef.doc(user.id).get();
-    expect(dSnap.data()).toStrictEqual(user);
-  });
+  it("findOne", async () => {
+    const user = User.of({ id: "1", updatedAt: admin.firestore.Timestamp.now() });
 
-  it("check cache", async () => {
-    const users = new FirestoreDataSource<IUser>(usersRef);
-    users.initialize();
-    const user = User.of({ id: "1" });
-    users.cache.set(user.id, JSON.stringify(user, replacer));
-    const cached = await users.cache.get(user.id);
-    expect(cached).toBeTruthy();
-    if (cached) {
-      expect(JSON.parse(cached, reviver)).toStrictEqual(user);
-    }
+    await users.collection.doc("1").set(user);
+
+    const readFromCacheFirst = await users.findOne("1", { ttl: 60 });
+
+    const updatedUser = User.of({ ...user, updatedAt: admin.firestore.Timestamp.now() });
+
+    await users.collection.doc("1").set(updatedUser, { merge: true });
+
+    const readFromCacheSecond = await users.findOne("1", { ttl: 60 });
+
+    expect(readFromCacheSecond).toStrictEqual(readFromCacheFirst);
   });
 });

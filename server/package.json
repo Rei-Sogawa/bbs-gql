@@ -13,6 +13,7 @@
     "apollo-datasource": "^3.3.1",
     "apollo-server-caching": "^3.3.0",
     "apollo-server-express": "^3.6.3",
+    "dataloader": "^2.0.0",
     "express": "^4.17.3",
     "firebase-admin": "^10.0.2",
     "graphql": "^16.3.0",
