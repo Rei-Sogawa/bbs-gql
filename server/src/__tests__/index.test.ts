@@ -1,6 +1,14 @@
-import * as admin from "firebase-admin";
+import { getDb } from "../firebase-app";
+
+const db = getDb();
 
 it("trivial", () => {
-  const a = admin.firestore.Timestamp.now();
-  expect(a).toStrictEqual(a);
+  expect(1).toBe(1);
+});
+
+it("add doc", async () => {
+  const data = { name: "Alice" };
+  await db.collection("users").doc("1").set(data);
+  const dSnap = await db.collection("users").doc("1").get();
+  expect(dSnap.data()).toStrictEqual(data);
 });

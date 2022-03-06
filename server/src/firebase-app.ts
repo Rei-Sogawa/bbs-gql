@@ -1,5 +1,9 @@
 import * as admin from "firebase-admin";
 
+process.env.GCLOUD_PROJECT = "playground-67a20";
+process.env.FIREBASE_AUTH_EMULATOR_HOST = "localhost:9099";
+process.env.FIRESTORE_EMULATOR_HOST = "localhost:8080";
+
 const config = {};
 
 export function getAdmin() {
