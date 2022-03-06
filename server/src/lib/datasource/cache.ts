@@ -5,7 +5,7 @@ import * as admin from "firebase-admin";
 import { replacer, reviver } from "./helper";
 
 type FindArgs = {
-  ttl?: number;
+  ttl?: number; // NOTE: second
 };
 
 export type DocField = {
@@ -30,7 +30,7 @@ export const CachedMethods = <TDoc extends DocField>(
           .get()
           .then((doc) => {
             const data = doc.data();
-            if (!data) throw new Error("could not find doc");
+            if (!data) throw new Error(`could not find doc (id: ${doc.id})`);
             return data;
           })
       )
@@ -41,7 +41,7 @@ export const CachedMethods = <TDoc extends DocField>(
     const cacheDoc = await cache.get(id);
     if (cacheDoc && args?.ttl) return JSON.parse(cacheDoc, reviver) as TDoc;
 
-    const doc = await loader.load(id);
+    const doc = await loader.clear(id).load(id);
     if (Number.isInteger(args?.ttl))
       await cache.set(id, JSON.stringify(doc, replacer), { ttl: args?.ttl });
     return doc;
