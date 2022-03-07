@@ -8,12 +8,13 @@ export class FirestoreDataSource<TDoc extends DocField, TContext = any>
   extends DataSource<TContext>
   implements ICachedMethods<TDoc>
 {
+  collection: admin.firestore.CollectionReference<TDoc>;
   context?: TContext;
   cache!: ICachedMethods<TDoc>["cache"];
-  collection: admin.firestore.CollectionReference<TDoc>;
   findOne!: ICachedMethods<TDoc>["findOne"];
   findMany!: ICachedMethods<TDoc>["findMany"];
   deleteFromCacheById!: ICachedMethods<TDoc>["deleteFromCacheById"];
+  primeLoader!: ICachedMethods<TDoc>["primeLoader"];
 
   constructor(collection: admin.firestore.CollectionReference<TDoc>) {
     super();

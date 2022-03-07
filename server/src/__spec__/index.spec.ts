@@ -148,3 +148,13 @@ describe.skip("datasource", () => {
     expect(usersReadCounter.count).toBe(50);
   });
 });
+
+it("trivial", () => {
+  const q = db
+    .collection("users")
+    .where("updatedAt", ">=", admin.firestore.Timestamp.now())
+    .orderBy("createdAt", "desc");
+  console.log();
+
+  expect(1).toBe(1);
+});
