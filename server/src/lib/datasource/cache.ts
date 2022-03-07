@@ -41,9 +41,7 @@ export const CachedMethods = <TDoc extends DocField>(
     const cacheDoc = await cache.get(id);
     if (cacheDoc && args?.ttl) return JSON.parse(cacheDoc, reviver) as TDoc;
 
-    // NOTE: change from original code ( const doc = await loader.load(id) )
-    //       because cache management is "cache" responsibility not "loader"
-    const doc = await loader.clear(id).load(id);
+    const doc = await loader.load(id);
     if (Number.isInteger(args?.ttl))
       await cache.set(id, JSON.stringify(doc, replacer), { ttl: args?.ttl });
     return doc;
