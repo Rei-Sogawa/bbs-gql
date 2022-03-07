@@ -4,7 +4,7 @@ import * as admin from "firebase-admin";
 
 import { replacer, reviver } from "./helper";
 
-type FindArgs = {
+type Args = {
   ttl?: number; // NOTE: second
 };
 
@@ -14,9 +14,10 @@ export type DocField = {
 
 export type ICachedMethods<TDoc> = {
   cache: KeyValueCache;
-  findOne: (id: string, args?: FindArgs) => Promise<TDoc>;
-  findMany: (ids: string[], args?: FindArgs) => Promise<TDoc[]>;
+  findOne: (id: string, args?: Args) => Promise<TDoc>;
+  findMany: (ids: string[], args?: Args) => Promise<TDoc[]>;
   deleteFromCacheById: (id: string) => Promise<void>;
+  primeLoader: (docs: TDoc[], args?: Args) => Promise<void>;
 };
 
 export const CachedMethods = <TDoc extends DocField>(
@@ -40,19 +41,17 @@ export const CachedMethods = <TDoc extends DocField>(
     )
   );
 
-  const findOne = async (id: string, args?: FindArgs): Promise<TDoc> => {
+  const findOne = async (id: string, args?: Args): Promise<TDoc> => {
     const key = cacheKeyPrefix + id;
-
     const cacheDoc = await cache.get(key);
     if (cacheDoc && args?.ttl) return JSON.parse(cacheDoc, reviver) as TDoc;
 
     const doc = await loader.load(id);
-    if (Number.isInteger(args?.ttl))
-      await cache.set(key, JSON.stringify(doc, replacer), { ttl: args?.ttl });
+    if (args?.ttl) await cache.set(key, JSON.stringify(doc, replacer), { ttl: args.ttl });
     return doc;
   };
 
-  const findMany = async (ids: string[], args?: FindArgs): Promise<TDoc[]> => {
+  const findMany = async (ids: string[], args?: Args): Promise<TDoc[]> => {
     return Promise.all(ids.map((id) => findOne(id, args)));
   };
 
@@ -62,5 +61,16 @@ export const CachedMethods = <TDoc extends DocField>(
     await cache.delete(key);
   };
 
-  return { cache, findOne, findMany, deleteFromCacheById };
+  const primeLoader = async (docs: TDoc[], args?: Args) => {
+    for (const doc of docs) {
+      loader.prime(doc.id, doc);
+
+      const key = cacheKeyPrefix + doc.id;
+      const cacheDoc = await cache.get(key);
+      if (cacheDoc && args?.ttl)
+        await cache.set(key, JSON.stringify(doc, replacer), { ttl: args.ttl });
+    }
+  };
+
+  return { cache, findOne, findMany, deleteFromCacheById, primeLoader };
 };
