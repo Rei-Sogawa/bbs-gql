@@ -40,6 +40,7 @@ type QueryOptions = Partial<{
 type FindOneById<T> = (id: string, args: FindArgs) => Promise<T>;
 type FindManyByIds<T> = (ids: string[], args: FindArgs) => Promise<T[]>;
 type Query<T> = (options: QueryOptions, args: FindArgs) => Promise<T[]>;
+type DeleteFromCacheById = (id: string) => Promise<void>;
 
 const defaultOptions: QueryOptions = {
   startAt: undefined,
@@ -48,4 +49,11 @@ const defaultOptions: QueryOptions = {
   endBefore: undefined,
   limit: undefined,
   where: undefined,
+};
+
+type CachedMethods<T> = {
+  findOneById: FindOneById<T>;
+  findManyByIds: FindManyByIds<T>;
+  query: Query<T>;
+  deleteFromCacheById: DeleteFromCacheById;
 };
