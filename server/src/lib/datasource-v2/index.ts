@@ -54,6 +54,6 @@ const defaultOptions: QueryOptions = {
 type CachedMethods<T> = {
   findOneById: FindOneById<T>;
   findManyByIds: FindManyByIds<T>;
-  query: Query<T>;
+  query: Query<T>; // TODO: 取得結果の id にもとづきキャッシュする？
   deleteFromCacheById: DeleteFromCacheById;
 };
