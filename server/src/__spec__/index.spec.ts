@@ -1,9 +1,9 @@
 import * as admin from "firebase-admin";
 
 import { getDb } from "../firebase-app";
-import { FirestoreDataSource } from "../lib/datasource/index";
+import { FirestoreDataSource } from "../lib/datasource/firestore-datasource";
 import { IUser, User } from "../lib/entity/user";
-import { Converter } from "./../lib/datasource/helper";
+import { Converter } from "./../lib/datasource/converter";
 import { clearFirestore } from "./test-util/clear";
 import { ReadCounter, WriteCounter } from "./test-util/counter";
 import { wait } from "./test-util/wait";
