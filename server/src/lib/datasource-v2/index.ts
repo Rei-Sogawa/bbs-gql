@@ -28,15 +28,24 @@ type FieldValue = admin.firestore.FieldValue;
 type FieldPath = admin.firestore.FieldPath;
 type WhereFilterOp = admin.firestore.WhereFilterOp;
 
-type QueryOptions = {
+type QueryOptions = Partial<{
   startAt: FieldValue[];
   startAfter: FieldValue[];
   endAt: FieldValue[];
   endBefore: FieldValue[];
   limit: number;
   where: [string | FieldPath, WhereFilterOp, any][];
-};
+}>;
 
 type FindOneById<T> = (id: string, args: FindArgs) => Promise<T>;
 type FindManyByIds<T> = (ids: string[], args: FindArgs) => Promise<T[]>;
-type Query<T> = (options: Partial<QueryOptions>, args: FindArgs) => Promise<T[]>;
+type Query<T> = (options: QueryOptions, args: FindArgs) => Promise<T[]>;
+
+const defaultOptions: QueryOptions = {
+  startAt: undefined,
+  startAfter: undefined,
+  endAt: undefined,
+  endBefore: undefined,
+  limit: undefined,
+  where: undefined,
+};
