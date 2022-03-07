@@ -13,6 +13,7 @@ export class FirestoreDataSource<TDoc extends DocField, TContext = any>
   collection: admin.firestore.CollectionReference<TDoc>;
   findOne!: ICachedMethods<TDoc>["findOne"];
   findMany!: ICachedMethods<TDoc>["findMany"];
+  deleteFromCacheById!: ICachedMethods<TDoc>["deleteFromCacheById"];
 
   constructor(collection: admin.firestore.CollectionReference<TDoc>) {
     super();

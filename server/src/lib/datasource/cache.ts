@@ -16,12 +16,15 @@ export type ICachedMethods<TDoc> = {
   cache: KeyValueCache;
   findOne: (id: string, args?: FindArgs) => Promise<TDoc>;
   findMany: (ids: string[], args?: FindArgs) => Promise<TDoc[]>;
+  deleteFromCacheById: (id: string) => Promise<void>;
 };
 
 export const CachedMethods = <TDoc extends DocField>(
   collection: admin.firestore.CollectionReference<TDoc>,
   cache: KeyValueCache
 ): ICachedMethods<TDoc> => {
+  const cacheKeyPrefix = `firestore-${collection.path}-`;
+
   const loader = new DataLoader<string, TDoc>((ids) =>
     Promise.all(
       ids.map((id) =>
@@ -38,12 +41,14 @@ export const CachedMethods = <TDoc extends DocField>(
   );
 
   const findOne = async (id: string, args?: FindArgs): Promise<TDoc> => {
-    const cacheDoc = await cache.get(id);
+    const key = cacheKeyPrefix + id;
+
+    const cacheDoc = await cache.get(key);
     if (cacheDoc && args?.ttl) return JSON.parse(cacheDoc, reviver) as TDoc;
 
     const doc = await loader.load(id);
     if (Number.isInteger(args?.ttl))
-      await cache.set(id, JSON.stringify(doc, replacer), { ttl: args?.ttl });
+      await cache.set(key, JSON.stringify(doc, replacer), { ttl: args?.ttl });
     return doc;
   };
 
@@ -51,5 +56,11 @@ export const CachedMethods = <TDoc extends DocField>(
     return Promise.all(ids.map((id) => findOne(id, args)));
   };
 
-  return { cache, findOne, findMany };
+  const deleteFromCacheById = async (id: string) => {
+    const key = cacheKeyPrefix + id;
+    loader.clear(id);
+    await cache.delete(key);
+  };
+
+  return { cache, findOne, findMany, deleteFromCacheById };
 };
