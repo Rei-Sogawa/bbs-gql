@@ -1518,6 +1518,11 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
+"@rei-sogawa/path-builder@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@rei-sogawa/path-builder/-/path-builder-1.0.3.tgz#6cbab5218fad473c51c170c0e64d286d32775074"
+  integrity sha512-0Q3Dkp2OV6v12oH5S6n0bPvrrI6qJrLwcdmkH7GQppCDzJJpCDX61Ew7jdVNz4/1dIlbxWO2nsylSKv+RPk4SA==
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.1.tgz#a21117b19ee9be70c379ec1877537ef2e1c63301"

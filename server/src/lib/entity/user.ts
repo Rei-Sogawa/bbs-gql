@@ -29,5 +29,3 @@ export class User {
     });
   }
 }
-
-User.of();

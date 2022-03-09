@@ -10,6 +10,7 @@
     "test": "jest --detectOpenHandles"
   },
   "dependencies": {
+    "@rei-sogawa/path-builder": "^1.0.3",
     "apollo-datasource": "^3.3.1",
     "apollo-server-caching": "^3.3.0",
     "apollo-server-express": "^3.6.3",
