@@ -150,11 +150,11 @@ describe.skip("datasource", () => {
 });
 
 it("trivial", () => {
-  const q = db
-    .collection("users")
-    .where("updatedAt", ">=", admin.firestore.Timestamp.now())
-    .orderBy("createdAt", "desc");
-  console.log();
-
+  // const q = db
+  //   .collection("users")
+  //   .where("updatedAt", ">=", admin.firestore.Timestamp.now())
+  //   .orderBy("createdAt", "desc");
+  // console.log();
+  User.of({});
   expect(1).toBe(1);
 });
