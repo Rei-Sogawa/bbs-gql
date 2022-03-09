@@ -18,7 +18,7 @@ export const createCacheMethods = <TDoc>({
     const dSnaps = await Promise.all(docPaths.map((docPath) => db.doc(docPath).get()));
     return dSnaps.map((dSnap) => {
       const data = dSnap.data();
-      if (!data) throw new Error(`could not find dSnap.data() by ${dSnap.ref.path}`);
+      if (!data) throw new Error(`could not find dSnap.data() at ${dSnap.ref.path}`);
       return data as TDoc;
     });
   });
@@ -31,7 +31,6 @@ export const createCacheMethods = <TDoc>({
     if (cacheDoc && args?.ttlInSeconds) return JSON.parse(cacheDoc, reviver) as TDoc;
 
     const doc = await loader.load(docRef.path);
-    if (!doc) throw new Error(`could not find doc by ${docRef.path}`);
     if (args?.ttlInSeconds)
       await cache.set(docRef.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
     return doc;
