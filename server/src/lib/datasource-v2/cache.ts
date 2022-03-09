@@ -1,4 +1,5 @@
 import { KeyValueCache } from "apollo-server-caching";
+import DataLoader from "dataloader";
 import * as admin from "firebase-admin";
 
 import { replacer } from "./../datasource/firestore-datasource/helper";
@@ -6,20 +7,33 @@ import { reviver } from "./helper";
 
 type FindArgs = { ttlInSeconds: number };
 
-export const createCacheMethods = <TDoc>({ cache }: { cache: KeyValueCache }) => {
+export const createCacheMethods = <TDoc>({
+  db,
+  cache,
+}: {
+  db: admin.firestore.Firestore;
+  cache: KeyValueCache;
+}) => {
+  const loader = new DataLoader<string, TDoc>(async (docPaths) => {
+    const dSnaps = await Promise.all(docPaths.map((docPath) => db.doc(docPath).get()));
+    return dSnaps.map((dSnap) => {
+      const data = dSnap.data();
+      if (!data) throw new Error(`could not find dSnap.data() by ${dSnap.ref.path}`);
+      return data as TDoc;
+    });
+  });
+
   const findOne = async (
     docRef: admin.firestore.DocumentReference<TDoc>,
     args?: FindArgs
   ): Promise<TDoc> => {
-    const key = docRef.path;
-    const cacheDoc = await cache.get(key);
+    const cacheDoc = await cache.get(docRef.path);
     if (cacheDoc && args?.ttlInSeconds) return JSON.parse(cacheDoc, reviver) as TDoc;
 
-    const dSnap = await docRef.get();
-    const doc = dSnap.data();
-    if (!doc) throw new Error(`could not find doc by ${key}`);
+    const doc = await loader.load(docRef.path);
+    if (!doc) throw new Error(`could not find doc by ${docRef.path}`);
     if (args?.ttlInSeconds)
-      await cache.set(key, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
+      await cache.set(docRef.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
     return doc;
   };
 
@@ -28,21 +42,22 @@ export const createCacheMethods = <TDoc>({ cache }: { cache: KeyValueCache }) =>
     args?: FindArgs
   ): Promise<TDoc[]> => {
     const qSnap = await query.get();
-    const dSnaps = qSnap.docs;
-    for (const dSnap of dSnaps) {
-      const key = dSnap.ref.path;
-      const doc = dSnap.data();
-      if (args?.ttlInSeconds)
-        await cache.set(key, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
+    const qdSnaps = qSnap.docs;
+
+    for (const qdSnap of qdSnaps) {
+      const doc = qdSnap.data();
+      if (!args?.ttlInSeconds) continue;
+      await cache.set(qdSnap.ref.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
     }
-    return dSnaps.map((dSnap) => dSnap.data());
+
+    return qdSnaps.map((qdSnap) => qdSnap.data());
   };
 
   const deleteFromCache = async (
     docRef: admin.firestore.DocumentReference<TDoc>
   ): Promise<void> => {
-    const key = docRef.path;
-    await cache.delete(key);
+    loader.clear(docRef.path);
+    await cache.delete(docRef.path);
   };
 
   return {
