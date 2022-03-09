@@ -38,8 +38,16 @@ export const createCacheMethods = <TDoc>({ cache }: { cache: KeyValueCache }) =>
     return dSnaps.map((dSnap) => dSnap.data());
   };
 
+  const deleteFromCache = async (
+    docRef: admin.firestore.DocumentReference<TDoc>
+  ): Promise<void> => {
+    const key = docRef.path;
+    await cache.delete(key);
+  };
+
   return {
     findOne,
     findManyByQuery,
+    deleteFromCache,
   };
 };
