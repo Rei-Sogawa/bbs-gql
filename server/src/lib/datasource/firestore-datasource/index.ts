@@ -14,9 +14,9 @@ export class FirestoreDataSource<
   context?: TContext;
   cache!: KeyValueCache;
   ref: Ref<TDoc, TParams>;
-  findOne!: FindOne<TDoc>;
-  findManyByQuery!: FindManyByQuery<TDoc>;
-  deleteFromCache!: DeleteFromCache<TDoc>;
+  findOne!: FindOne<TDoc, TParams>;
+  findManyByQuery!: FindManyByQuery<TDoc, TParams>;
+  deleteFromCache!: DeleteFromCache<TDoc, TParams>;
 
   constructor(ref: Ref<TDoc, TParams>) {
     super();

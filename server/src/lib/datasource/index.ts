@@ -13,5 +13,3 @@ export const dataSources = () => {
     users: new FirestoreDataSource(usersRef),
   };
 };
-
-// dataSources().users.findOne(ref => ref().doc("id"));

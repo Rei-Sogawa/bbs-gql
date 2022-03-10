@@ -7,18 +7,18 @@ import { replacer, reviver } from "./helper";
 
 type FindArgs = { ttlInSeconds: number };
 
-export type FindOne<TDoc> = (
-  docRef: admin.firestore.DocumentReference<TDoc>,
+export type FindOne<TDoc, TParams> = (
+  docRefFn: (ref: Ref<TDoc, TParams>) => admin.firestore.DocumentReference<TDoc>,
   args?: FindArgs
 ) => Promise<TDoc>;
 
-export type FindManyByQuery<TDoc> = (
-  query: admin.firestore.Query<TDoc>,
+export type FindManyByQuery<TDoc, TParams> = (
+  queryFn: (ref: Ref<TDoc, TParams>) => admin.firestore.Query<TDoc>,
   args?: FindArgs
 ) => Promise<TDoc[]>;
 
-export type DeleteFromCache<TDoc> = (
-  docRef: admin.firestore.DocumentReference<TDoc>
+export type DeleteFromCache<TDoc, TParams> = (
+  docRefFn: (ref: Ref<TDoc, TParams>) => admin.firestore.DocumentReference<TDoc>
 ) => Promise<void>;
 
 export const createCacheMethods = <TDoc, TParams>({
@@ -40,10 +40,7 @@ export const createCacheMethods = <TDoc, TParams>({
     { cacheKeyFn: (docRef) => docRef.path }
   );
 
-  const findOne = async (
-    docRefFn: (ref: Ref<TDoc, TParams>) => admin.firestore.DocumentReference<TDoc>,
-    args?: FindArgs
-  ): Promise<TDoc> => {
+  const findOne: FindOne<TDoc, TParams> = async (docRefFn, args?) => {
     const docRef = docRefFn(ref);
     const cacheDoc = await cache.get(docRef.path);
     if (cacheDoc && args?.ttlInSeconds) return JSON.parse(cacheDoc, reviver) as TDoc;
@@ -54,10 +51,7 @@ export const createCacheMethods = <TDoc, TParams>({
     return doc;
   };
 
-  const findManyByQuery = async (
-    queryFn: (ref: Ref<TDoc, TParams>) => admin.firestore.Query<TDoc>,
-    args?: FindArgs
-  ): Promise<TDoc[]> => {
+  const findManyByQuery: FindManyByQuery<TDoc, TParams> = async (queryFn, args?) => {
     const qSnap = await queryFn(ref).get();
     const qdSnaps = qSnap.docs;
 
@@ -72,9 +66,8 @@ export const createCacheMethods = <TDoc, TParams>({
     return qdSnaps.map((qdSnap) => qdSnap.data());
   };
 
-  const deleteFromCache = async (
-    docRef: admin.firestore.DocumentReference<TDoc>
-  ): Promise<void> => {
+  const deleteFromCache: DeleteFromCache<TDoc, TParams> = async (docRefFn) => {
+    const docRef = docRefFn(ref);
     loader.clear(docRef);
     await cache.delete(docRef.path);
   };
