@@ -54,16 +54,18 @@ export const createCacheMethods = <TDoc, TParams>({
   const findMany: FindMany<TDoc, TParams> = async (queryFn, args?) => {
     const qSnap = await queryFn(ref).get();
     const qdSnaps = qSnap.docs;
+    const res: TDoc[] = [];
 
     for (const qdSnap of qdSnaps) {
       const doc = qdSnap.data();
+      res.push(doc);
 
       loader.prime(qdSnap.ref, doc);
       if (args?.ttlInSeconds)
         await cache.set(qdSnap.ref.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
     }
 
-    return qdSnaps.map((qdSnap) => qdSnap.data());
+    return res;
   };
 
   const deleteFromCache: DeleteFromCache<TDoc, TParams> = async (docRefFn) => {
