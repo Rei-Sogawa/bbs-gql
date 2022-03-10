@@ -4,73 +4,76 @@ import * as admin from "firebase-admin";
 
 import { replacer, reviver } from "./helper";
 
-type Args = {
-  ttl?: number; // NOTE: second
-};
+type FindArgs = { ttlInSeconds: number };
 
-export type DocField = {
-  id: string;
-};
+export type FindOne<TDoc> = (
+  docRef: admin.firestore.DocumentReference<TDoc>,
+  args?: FindArgs
+) => Promise<TDoc>;
 
-export type ICachedMethods<TDoc> = {
-  cache: KeyValueCache;
-  findOne: (id: string, args?: Args) => Promise<TDoc>;
-  findMany: (ids: string[], args?: Args) => Promise<TDoc[]>;
-  deleteFromCacheById: (id: string) => Promise<void>;
-  primeLoader: (docs: TDoc[], args?: Args) => Promise<void>;
-};
+export type FindManyByQuery<TDoc> = (
+  query: admin.firestore.Query<TDoc>,
+  args?: FindArgs
+) => Promise<TDoc[]>;
 
-export const CachedMethods = <TDoc extends DocField>(
-  collection: admin.firestore.CollectionReference<TDoc>,
-  cache: KeyValueCache
-): ICachedMethods<TDoc> => {
-  const cacheKeyPrefix = `firestore-${collection.path}-`;
+export type DeleteFromCache<TDoc> = (
+  docRef: admin.firestore.DocumentReference<TDoc>
+) => Promise<void>;
 
-  const loader = new DataLoader<string, TDoc>((ids) =>
-    Promise.all(
-      ids.map((id) =>
-        collection
-          .doc(id)
-          .get()
-          .then((doc) => {
-            const data = doc.data();
-            if (!data) throw new Error(`could not find doc (id: ${doc.id})`);
-            return data;
-          })
-      )
-    )
+export const createCacheMethods = <TDoc>({ cache }: { cache: KeyValueCache }) => {
+  const loader = new DataLoader<admin.firestore.DocumentReference<TDoc>, TDoc, string>(
+    async (docRefs) => {
+      const dSnaps = await Promise.all(docRefs.map((docRef) => docRef.get()));
+      return dSnaps.map((dSnap) => {
+        const data = dSnap.data();
+        if (!data) throw new Error(`could not find dSnap.data() at ${dSnap.ref.path}`);
+        return data;
+      });
+    },
+    { cacheKeyFn: (docRef) => docRef.path }
   );
 
-  const findOne = async (id: string, args?: Args): Promise<TDoc> => {
-    const key = cacheKeyPrefix + id;
-    const cacheDoc = await cache.get(key);
-    if (cacheDoc && args?.ttl) return JSON.parse(cacheDoc, reviver) as TDoc;
+  const findOne = async (
+    docRef: admin.firestore.DocumentReference<TDoc>,
+    args?: FindArgs
+  ): Promise<TDoc> => {
+    const cacheDoc = await cache.get(docRef.path);
+    if (cacheDoc && args?.ttlInSeconds) return JSON.parse(cacheDoc, reviver) as TDoc;
 
-    const doc = await loader.load(id);
-    if (args?.ttl) await cache.set(key, JSON.stringify(doc, replacer), { ttl: args.ttl });
+    const doc = await loader.load(docRef);
+    if (args?.ttlInSeconds)
+      await cache.set(docRef.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
     return doc;
   };
 
-  const findMany = async (ids: string[], args?: Args): Promise<TDoc[]> => {
-    return Promise.all(ids.map((id) => findOne(id, args)));
-  };
+  const findManyByQuery = async (
+    query: admin.firestore.Query<TDoc>,
+    args?: FindArgs
+  ): Promise<TDoc[]> => {
+    const qSnap = await query.get();
+    const qdSnaps = qSnap.docs;
 
-  const deleteFromCacheById = async (id: string) => {
-    const key = cacheKeyPrefix + id;
-    loader.clear(id);
-    await cache.delete(key);
-  };
+    for (const qdSnap of qdSnaps) {
+      const doc = qdSnap.data();
 
-  const primeLoader = async (docs: TDoc[], args?: Args) => {
-    for (const doc of docs) {
-      loader.prime(doc.id, doc);
-
-      const key = cacheKeyPrefix + doc.id;
-      const cacheDoc = await cache.get(key);
-      if (cacheDoc && args?.ttl)
-        await cache.set(key, JSON.stringify(doc, replacer), { ttl: args.ttl });
+      loader.prime(qdSnap.ref, doc);
+      if (args?.ttlInSeconds)
+        await cache.set(qdSnap.ref.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
     }
+
+    return qdSnaps.map((qdSnap) => qdSnap.data());
   };
 
-  return { cache, findOne, findMany, deleteFromCacheById, primeLoader };
+  const deleteFromCache = async (
+    docRef: admin.firestore.DocumentReference<TDoc>
+  ): Promise<void> => {
+    loader.clear(docRef);
+    await cache.delete(docRef.path);
+  };
+
+  return {
+    findOne,
+    findManyByQuery,
+    deleteFromCache,
+  };
 };
