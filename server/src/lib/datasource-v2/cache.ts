@@ -46,8 +46,10 @@ export const createCacheMethods = <TDoc>({
 
     for (const qdSnap of qdSnaps) {
       const doc = qdSnap.data();
-      if (!args?.ttlInSeconds) continue;
-      await cache.set(qdSnap.ref.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
+
+      loader.prime(qdSnap.ref, doc);
+      if (args?.ttlInSeconds)
+        await cache.set(qdSnap.ref.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
     }
 
     return qdSnaps.map((qdSnap) => qdSnap.data());
