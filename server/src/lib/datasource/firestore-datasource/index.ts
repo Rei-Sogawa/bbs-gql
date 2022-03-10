@@ -4,7 +4,7 @@ import * as admin from "firebase-admin";
 
 import { createCacheMethods, DeleteFromCache, FindManyByQuery, FindOne } from "./cache";
 
-type Ref<TDoc, TParams> = (params: TParams) => admin.firestore.CollectionReference<TDoc>;
+export type Ref<TDoc, TParams> = (params: TParams) => admin.firestore.CollectionReference<TDoc>;
 
 export class FirestoreDataSource<
   TDoc,
@@ -26,6 +26,6 @@ export class FirestoreDataSource<
   initialize({ context, cache }: { context?: TContext; cache?: KeyValueCache } = {}) {
     this.context = context;
     this.cache = cache || new InMemoryLRUCache();
-    Object.assign(this, createCacheMethods({ cache: this.cache }));
+    Object.assign(this, createCacheMethods({ ref: this.ref, cache: this.cache }));
   }
 }

@@ -2,6 +2,7 @@ import { KeyValueCache } from "apollo-server-caching";
 import DataLoader from "dataloader";
 import * as admin from "firebase-admin";
 
+import { Ref } from ".";
 import { replacer, reviver } from "./helper";
 
 type FindArgs = { ttlInSeconds: number };
@@ -20,7 +21,13 @@ export type DeleteFromCache<TDoc> = (
   docRef: admin.firestore.DocumentReference<TDoc>
 ) => Promise<void>;
 
-export const createCacheMethods = <TDoc>({ cache }: { cache: KeyValueCache }) => {
+export const createCacheMethods = <TDoc, TParams>({
+  ref,
+  cache,
+}: {
+  ref: Ref<TDoc, TParams>;
+  cache: KeyValueCache;
+}) => {
   const loader = new DataLoader<admin.firestore.DocumentReference<TDoc>, TDoc, string>(
     async (docRefs) => {
       const dSnaps = await Promise.all(docRefs.map((docRef) => docRef.get()));
@@ -34,9 +41,10 @@ export const createCacheMethods = <TDoc>({ cache }: { cache: KeyValueCache }) =>
   );
 
   const findOne = async (
-    docRef: admin.firestore.DocumentReference<TDoc>,
+    docRefFn: (ref: Ref<TDoc, TParams>) => admin.firestore.DocumentReference<TDoc>,
     args?: FindArgs
   ): Promise<TDoc> => {
+    const docRef = docRefFn(ref);
     const cacheDoc = await cache.get(docRef.path);
     if (cacheDoc && args?.ttlInSeconds) return JSON.parse(cacheDoc, reviver) as TDoc;
 
@@ -47,10 +55,10 @@ export const createCacheMethods = <TDoc>({ cache }: { cache: KeyValueCache }) =>
   };
 
   const findManyByQuery = async (
-    query: admin.firestore.Query<TDoc>,
+    queryFn: (ref: Ref<TDoc, TParams>) => admin.firestore.Query<TDoc>,
     args?: FindArgs
   ): Promise<TDoc[]> => {
-    const qSnap = await query.get();
+    const qSnap = await queryFn(ref).get();
     const qdSnaps = qSnap.docs;
 
     for (const qdSnap of qdSnaps) {
