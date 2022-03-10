@@ -24,7 +24,7 @@ describe("datasource", () => {
       users.initialize();
     });
 
-    it.skip("docRef.get read doc every time", async () => {
+    it.skip("docRef.get read doc from firestore", async () => {
       const userData = User.of();
       await users.ref().doc(userData.id).set(userData);
 
@@ -48,7 +48,7 @@ describe("datasource", () => {
       expect(userDocsCounter.read.count).toBe(1);
     });
 
-    it.skip("collectionRef.get read docs every time", async () => {
+    it.skip("collectionRef.get read docs from firestore", async () => {
       const userDataList = [User.of({ id: "1" }), User.of({ id: "2" })];
       await Promise.all(userDataList.map((userData) => users.ref().doc(userData.id).set(userData)));
 
@@ -64,7 +64,7 @@ describe("datasource", () => {
       expect(userDocsCounter.read.count).toBe(4);
     });
 
-    it("findManyByQuery add docs to loader, so findOne doc from loader cache", async () => {
+    it("after findMany read docs from firestore, findOne read doc from loader", async () => {
       const userDataList = [User.of({ id: "1" }), User.of({ id: "2" })];
       await Promise.all(userDataList.map((userData) => users.ref().doc(userData.id).set(userData)));
 
