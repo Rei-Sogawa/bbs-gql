@@ -12,7 +12,7 @@ export type FindOne<TDoc, TParams> = (
   args?: FindArgs
 ) => Promise<TDoc>;
 
-export type FindManyByQuery<TDoc, TParams> = (
+export type FindMany<TDoc, TParams> = (
   queryFn: (ref: Ref<TDoc, TParams>) => admin.firestore.Query<TDoc>,
   args?: FindArgs
 ) => Promise<TDoc[]>;
@@ -51,7 +51,7 @@ export const createCacheMethods = <TDoc, TParams>({
     return doc;
   };
 
-  const findManyByQuery: FindManyByQuery<TDoc, TParams> = async (queryFn, args?) => {
+  const findMany: FindMany<TDoc, TParams> = async (queryFn, args?) => {
     const qSnap = await queryFn(ref).get();
     const qdSnaps = qSnap.docs;
 
@@ -74,7 +74,7 @@ export const createCacheMethods = <TDoc, TParams>({
 
   return {
     findOne,
-    findManyByQuery,
+    findMany,
     deleteFromCache,
   };
 };

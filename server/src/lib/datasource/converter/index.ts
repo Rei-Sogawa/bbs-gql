@@ -1,19 +1,16 @@
 import * as admin from "firebase-admin";
 
-type Logger = {
-  onRead: () => void;
-  onWrite: () => void;
-};
+import { FirestoreCounter } from "./../../../__spec__/test-util/counter";
 
-export const Converter = <TDoc>(options?: {
-  logger?: Logger;
-}): admin.firestore.FirestoreDataConverter<TDoc> => ({
+export const Converter = <TDoc>(
+  counter?: FirestoreCounter
+): admin.firestore.FirestoreDataConverter<TDoc> => ({
   fromFirestore: (snap) => {
-    options?.logger?.onRead();
+    counter?.onRead();
     return snap.data() as TDoc;
   },
   toFirestore: (data) => {
-    options?.logger?.onWrite();
+    counter?.onWrite();
     return data;
   },
 });

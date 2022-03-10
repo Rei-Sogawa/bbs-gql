@@ -1,160 +1,81 @@
-// import * as admin from "firebase-admin";
+import * as admin from "firebase-admin";
 
 import { getDb } from "../firebase-app";
-// import { FirestoreDataSource } from "../lib/datasource/firestore-datasource";
-// import { IUser, User } from "../lib/entity/user";
-// import { Converter } from "./../lib/datasource/converter";
-// import { clearFirestore } from "./test-util/clear";
-// import { ReadCounter, WriteCounter } from "./test-util/counter";
-// import { wait } from "./test-util/wait";
+import { IUser, User } from "../lib/entity/user";
+import { Converter } from "./../lib/datasource/converter/index";
+import { FirestoreDataSource } from "./../lib/datasource/firestore-datasource/index";
+import { clearFirestore } from "./test-util/clear";
+import { FirestoreCounter } from "./test-util/counter";
 
 const db = getDb();
 
-// TODO: アクセス単位で datasource を初期化する必要ある。そのタイミングで cache だけ引き継ぐ
-// describe.skip("datasource", () => {
-//   let users: FirestoreDataSource<IUser>;
-//   let usersReadCounter: ReadCounter;
-//   let usersWriteCounter: WriteCounter;
+let userDocsCounter: FirestoreCounter;
+let usersRef: () => admin.firestore.CollectionReference<IUser>;
+let users: FirestoreDataSource<IUser, void, any>;
 
-//   beforeEach(async () => {
-//     await Promise.all([clearFirestore()]);
-//   });
-//   beforeEach(async () => {
-//     usersReadCounter = new ReadCounter("users");
-//     usersWriteCounter = new WriteCounter("users");
-//     const usersRef = db.collection("users").withConverter(
-//       Converter<IUser>({
-//         logger: {
-//           onRead: () => usersReadCounter.inc(),
-//           onWrite: () => usersWriteCounter.inc(),
-//         },
-//       })
-//     );
-//     users = new FirestoreDataSource<IUser>(usersRef);
-//     users.initialize();
-//   });
+describe("datasource", () => {
+  describe("loader", () => {
+    beforeEach(async () => {
+      await Promise.all([clearFirestore()]);
 
-//   afterAll(async () => {
-//     await Promise.all([clearFirestore()]);
-//   });
+      userDocsCounter = new FirestoreCounter({ collection: "users" });
+      usersRef = () => db.collection("users").withConverter(Converter<IUser>(userDocsCounter));
+      users = new FirestoreDataSource(usersRef);
+      users.initialize();
+    });
 
-//   it("findMany from firestore", async () => {
-//     const createdAt = new Date("2000-01-01");
+    it("docRef.get read doc every time", async () => {
+      const userData = User.of();
+      await users.ref().doc(userData.id).set(userData);
 
-//     const newDocs = Array.from({ length: 25 }).map((_, idx) =>
-//       User.of({
-//         id: idx.toString(),
-//         createdAt: admin.firestore.Timestamp.fromDate(createdAt),
-//         updatedAt: admin.firestore.Timestamp.fromDate(createdAt),
-//       })
-//     );
+      const readUserDocFirst = (await users.ref().doc(userData.id).get()).data();
+      const readUserDocAgain = (await users.ref().doc(userData.id).get()).data();
 
-//     await Promise.all(newDocs.map((user) => users.collection.doc(user.id).set(user)));
+      expect(readUserDocFirst).toStrictEqual(userData);
+      expect(readUserDocAgain).toStrictEqual(userData);
+      expect(userDocsCounter.read.count).toBe(2);
+    });
 
-//     // NOTE: read 25 docs from firestore
-//     const readDocs = await users.findMany(newDocs.map((user) => user.id));
+    it("findOne read doc from loader", async () => {
+      const userData = User.of();
+      await users.ref().doc(userData.id).set(userData);
 
-//     const updatedAt = new Date("2020-01-01");
+      const readUserDocFirst = await users.findOne((ref) => ref().doc(userData.id));
+      const readUserDocAgain = await users.findOne((ref) => ref().doc(userData.id));
 
-//     const editedDocs = newDocs.map((user) =>
-//       User.of({ ...user, updatedAt: admin.firestore.Timestamp.fromDate(updatedAt) })
-//     );
+      expect(readUserDocFirst).toStrictEqual(userData);
+      expect(readUserDocAgain).toStrictEqual(userData);
+      expect(userDocsCounter.read.count).toBe(1);
+    });
 
-//     await Promise.all(editedDocs.map((user) => users.collection.doc(user.id).set(user)));
+    it("collectionRef.get read docs every time", async () => {
+      const userDataList = [User.of({ id: "1" }), User.of({ id: "2" })];
+      await Promise.all(userDataList.map((userData) => users.ref().doc(userData.id).set(userData)));
 
-//     // NOTE: read 25 docs from firestore
-//     const readDocsAgain = await users.findMany(newDocs.map((user) => user.id));
+      const readUserDocsFirst = (await users.ref().orderBy("id", "asc").get()).docs.map((doc) =>
+        doc.data()
+      );
+      const readUserDocsAgain = (await users.ref().orderBy("id", "asc").get()).docs.map((doc) =>
+        doc.data()
+      );
 
-//     expect(newDocs).toStrictEqual(readDocs);
-//     expect(editedDocs).toStrictEqual(readDocsAgain);
-//     expect(usersReadCounter.count).toBe(50);
-//   });
+      expect(readUserDocsFirst).toStrictEqual(userDataList);
+      expect(readUserDocsAgain).toStrictEqual(userDataList);
+      expect(userDocsCounter.read.count).toBe(4);
+    });
 
-//   it("findMany from cache within ttl", async () => {
-//     const createdAt = new Date("2000-01-01");
+    it("findManyByQuery add docs to loader", async () => {
+      const userDataList = [User.of({ id: "1" }), User.of({ id: "2" })];
+      await Promise.all(userDataList.map((userData) => users.ref().doc(userData.id).set(userData)));
 
-//     const newDocs = Array.from({ length: 25 }).map((_, idx) =>
-//       User.of({
-//         id: idx.toString(),
-//         createdAt: admin.firestore.Timestamp.fromDate(createdAt),
-//         updatedAt: admin.firestore.Timestamp.fromDate(createdAt),
-//       })
-//     );
+      const readUserDocsFirst = await users.findMany((ref) => ref().orderBy("id", "asc"));
+      const readUserDocsAgain = await Promise.all(
+        userDataList.map((userData) => users.findOne((ref) => ref().doc(userData.id)))
+      );
 
-//     await Promise.all(newDocs.map((user) => users.collection.doc(user.id).set(user)));
-
-//     // NOTE: read 25 docs from firestore
-//     const readDocs = await users.findMany(
-//       newDocs.map((user) => user.id),
-//       { ttl: 60 }
-//     );
-
-//     const updatedAt = new Date("2020-01-01");
-
-//     const editedDocs = newDocs.map((user) =>
-//       User.of({ ...user, updatedAt: admin.firestore.Timestamp.fromDate(updatedAt) })
-//     );
-
-//     await Promise.all(editedDocs.map((user) => users.collection.doc(user.id).set(user)));
-
-//     // NOTE: read 25 docs from cache because within ttl
-//     const readDocsAgain = await users.findMany(
-//       newDocs.map((user) => user.id),
-//       { ttl: 60 }
-//     );
-
-//     expect(newDocs).toStrictEqual(readDocs);
-//     expect(newDocs).toStrictEqual(readDocsAgain);
-//     expect(usersReadCounter.count).toBe(25);
-//   });
-
-//   it("findMany from firestore after ttl", async () => {
-//     const createdAt = new Date("2000-01-01");
-
-//     const newDocs = Array.from({ length: 25 }).map((_, idx) =>
-//       User.of({
-//         id: idx.toString(),
-//         createdAt: admin.firestore.Timestamp.fromDate(createdAt),
-//         updatedAt: admin.firestore.Timestamp.fromDate(createdAt),
-//       })
-//     );
-
-//     await Promise.all(newDocs.map((user) => users.collection.doc(user.id).set(user)));
-
-//     // NOTE: read 25 docs from firestore
-//     const readDocs = await users.findMany(
-//       newDocs.map((user) => user.id),
-//       { ttl: 1 }
-//     );
-
-//     await wait(1_000);
-
-//     const updatedAt = new Date("2020-01-01");
-
-//     const editedDocs = newDocs.map((user) =>
-//       User.of({ ...user, updatedAt: admin.firestore.Timestamp.fromDate(updatedAt) })
-//     );
-
-//     await Promise.all(editedDocs.map((user) => users.collection.doc(user.id).set(user)));
-
-//     // NOTE: read 25 docs from firestore because after ttl
-//     const readDocsAgain = await users.findMany(
-//       newDocs.map((user) => user.id),
-//       { ttl: 1 }
-//     );
-
-//     expect(newDocs).toStrictEqual(readDocs);
-//     expect(editedDocs).toStrictEqual(readDocsAgain);
-//     expect(usersReadCounter.count).toBe(50);
-//   });
-// });
-
-it("trivial", async () => {
-  // const q = db
-  //   .collection("users")
-  //   .where("updatedAt", ">=", admin.firestore.Timestamp.now())
-  //   .orderBy("createdAt", "desc");
-  // console.log();
-  const qSnap = await db.collection("users").doc("1").collection("tweets").doc("1").get();
-  expect(1).toBe(1);
+      expect(readUserDocsFirst).toStrictEqual(userDataList);
+      expect(readUserDocsAgain).toStrictEqual(userDataList);
+      expect(userDocsCounter.read.count).toBe(2);
+    });
+  });
 });

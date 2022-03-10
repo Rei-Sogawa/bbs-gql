@@ -1,37 +1,48 @@
-abstract class Counter {
+export class Counter {
   static _id = 0;
 
   id: string;
   name: string;
   count = 0;
   constructor(name: string) {
-    this.id = (ReadCounter._id++).toString();
+    this.id = (Counter._id++).toString();
     this.name = name;
   }
   inc() {
     this.count++;
   }
-  abstract out(): void;
-  log() {
-    this.inc();
-    this.out();
-  }
 }
 
-export class ReadCounter extends Counter {
-  constructor(name: string) {
-    super(name);
-  }
-  out() {
-    console.debug(`${this.name}`.padEnd(30, " "), `read doc : ${this.count}`);
-  }
-}
+export class FirestoreCounter {
+  collection: string;
+  read: Counter;
+  write: Counter;
+  log: boolean;
 
-export class WriteCounter extends Counter {
-  constructor(name: string) {
-    super(name);
+  constructor({
+    collection,
+    read = new Counter("read"),
+    write = new Counter("write"),
+    log = false,
+  }: {
+    collection: string;
+    read?: Counter;
+    write?: Counter;
+    log?: boolean;
+  }) {
+    this.collection = collection;
+    this.read = read;
+    this.write = write;
+    this.log = log;
   }
-  out() {
-    console.debug(`${this.name}`.padEnd(30, " "), `write doc : ${this.count}`);
+
+  onRead() {
+    this.read.inc();
+    if (this.log) console.log(`read ${this.collection} : ${this.read.count}`);
+  }
+
+  onWrite() {
+    this.write.inc();
+    if (this.log) console.log(`write ${this.collection} : ${this.write.count}`);
   }
 }
