@@ -64,15 +64,13 @@ describe("datasource", () => {
       expect(userDocsCounter.read.count).toBe(4);
     });
 
-    it("findManyByQuery add docs to loader", async () => {
+    it("findManyByQuery add docs to loader, so findOne doc from loader cache", async () => {
       const userDataList = [User.of({ id: "1" }), User.of({ id: "2" })];
       await Promise.all(userDataList.map((userData) => users.ref().doc(userData.id).set(userData)));
 
       const readUserDocsFirst = await users.findMany((ref) => ref().orderBy("id", "asc"));
       const readUserDocsAgain = await Promise.all(
-        userDataList.map((userData) =>
-          users.findOne((ref) => ref().doc(userData.id), { ttlInSeconds: 10 })
-        )
+        userDataList.map((userData) => users.findOne((ref) => ref().doc(userData.id)))
       );
 
       expect(readUserDocsFirst).toStrictEqual(userDataList);
