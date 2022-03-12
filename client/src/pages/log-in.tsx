@@ -30,7 +30,7 @@ const LogInForm: VFC = () => {
       initialValues={initialValues}
       onSubmit={onSubmit}
       render={({ handleSubmit }) => (
-        <form onSubmit={handleSubmit} className="flex flex-col">
+        <form onSubmit={handleSubmit}>
           <Field name="email">
             {({ input }) => (
               <div className="form-control">
