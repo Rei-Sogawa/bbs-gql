@@ -18,7 +18,3 @@ export function getAdmin() {
 }
 export const getAuth = () => getAdmin().auth();
 export const getDb = () => getAdmin().firestore();
-
-export const verifyIdToken = async (idToken: string) => {
-  return await getAuth().verifyIdToken(idToken);
-};

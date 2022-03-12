@@ -1,29 +1,14 @@
 import { KeyValueCache } from "apollo-server-caching";
 import * as admin from "firebase-admin";
 
-import { getDb } from "../../src/firebase-app";
 import { ConverterCounter } from "../../src/lib/datasource/converter/counter";
 import { Converter } from "../../src/lib/datasource/converter/index";
 import { FirestoreDataSource } from "../../src/lib/datasource/firestore-datasource/index";
 import { clearFirestore } from "../test-util/clear";
-
-type IUserData = {
-  createdAt: admin.firestore.Timestamp;
-  updatedAt: admin.firestore.Timestamp;
-};
-
-class UserData {
-  static of(value: Partial<IUserData> = {}): IUserData {
-    return {
-      createdAt: admin.firestore.Timestamp.now(),
-      updatedAt: admin.firestore.Timestamp.now(),
-      ...value,
-    };
-  }
-}
+import { getDb } from "../test-util/setup";
+import { IUserData, UserData } from "./helper";
 
 const db = getDb();
-
 let userConverterCounter: ConverterCounter;
 let usersRef: () => admin.firestore.CollectionReference<IUserData>;
 let users: FirestoreDataSource<IUserData, void, any>;
