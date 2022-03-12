@@ -1,12 +1,12 @@
 import { KeyValueCache } from "apollo-server-caching";
 import * as admin from "firebase-admin";
 
-import { getDb } from "../src/firebase-app";
-import { ConverterCounter } from "../src/lib/datasource/converter/counter";
-import { Converter } from "../src/lib/datasource/converter/index";
-import { FirestoreDataSource } from "../src/lib/datasource/firestore-datasource/index";
-import { IUserData, UserData } from "../src/lib/entity/user";
-import { clearFirestore } from "./test-util/clear";
+import { getDb } from "../../src/firebase-app";
+import { ConverterCounter } from "../../src/lib/datasource/converter/counter";
+import { Converter } from "../../src/lib/datasource/converter/index";
+import { FirestoreDataSource } from "../../src/lib/datasource/firestore-datasource/index";
+import { IUserData, UserData } from "../../src/lib/entity/user";
+import { clearFirestore } from "../test-util/clear";
 
 const db = getDb();
 
