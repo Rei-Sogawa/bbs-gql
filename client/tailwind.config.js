@@ -1,4 +1,4 @@
 module.exports = {
-  purge: ["./index.html", "./src/**/*.{ts,tsx}"],
+  content: ["./index.html", "./src/**/*.{ts,tsx}"],
   plugins: [require("daisyui")],
 };
