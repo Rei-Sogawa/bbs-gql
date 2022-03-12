@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 
-import { ConverterCounter } from "./../../../__spec__/test-util/counter";
+import { ConverterCounter } from "./counter";
 
 export const Converter = <TData>(counter?: ConverterCounter): admin.firestore.FirestoreDataConverter<TData> => ({
   fromFirestore: (snap) => {
