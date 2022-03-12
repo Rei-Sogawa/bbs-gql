@@ -9,6 +9,7 @@ gql`
 
 export const App = () => {
   const { data } = useFetchTotalPhotosQuery();
+
   return (
     <div className="container mx-auto">
       <button className="btn">click me</button>
