@@ -19,30 +19,20 @@ export class ConverterCounter {
   write: Counter;
   log: boolean;
 
-  constructor({
-    collection,
-    read = new Counter("read"),
-    write = new Counter("write"),
-    log = false,
-  }: {
-    collection: string;
-    read?: Counter;
-    write?: Counter;
-    log?: boolean;
-  }) {
+  constructor({ collection, log = false }: { collection: string; log?: boolean }) {
     this.collection = collection;
-    this.read = read;
-    this.write = write;
+    this.read = new Counter("read");
+    this.write = new Counter("write");
     this.log = log;
   }
 
   onRead() {
     this.read.inc();
-    if (this.log) console.log(`read ${this.collection} : ${this.read.count}`);
+    if (this.log) console.log(`read ${this.collection} through converter : ${this.read.count}`);
   }
 
   onWrite() {
     this.write.inc();
-    if (this.log) console.log(`write ${this.collection} : ${this.write.count}`);
+    if (this.log) console.log(`write ${this.collection} through converter : ${this.write.count}`);
   }
 }
