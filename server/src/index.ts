@@ -23,7 +23,7 @@ async function start() {
 
   app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 
-  app.listen({ port: process.env.PORT || 8080 }, () => console.log("GraphQL Server started!"));
+  app.listen({ port: process.env.PORT || 3000 }, () => console.log("GraphQL Server started!"));
 }
 
 start();
