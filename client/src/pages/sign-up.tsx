@@ -1,4 +1,12 @@
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { VFC } from "react";
+
+const useSignUp = () => {
+  const signUp = ({ email, password }: { email: string; password: string }) => {
+    return createUserWithEmailAndPassword(getAuth(), email, password);
+  };
+  return signUp;
+};
 
 const SignUpForm: VFC = () => {
   return (
@@ -31,8 +39,8 @@ const SignUpForm: VFC = () => {
 
 export const SignUp: VFC = () => {
   return (
-    <div className="h-screen w-screen bg-gray-100 flex justify-center items-center">
-      <div className="w-xsm pt-4 pb-8 px-8 rounded-md bg-white">
+    <div className="h-screen w-screen bg-gray-100 flex justify-center items-start">
+      <div className="w-xsm mt-20 pt-4 pb-8 px-8 rounded-md bg-white">
         <div className="text-lg font-bold text-center">Sign Up</div>
         <SignUpForm />
       </div>
