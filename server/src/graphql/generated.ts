@@ -29,7 +29,7 @@ export type MutationSignUpArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  totalPhotos: Scalars['Int'];
+  me: User;
 };
 
 export type SignUpInput = {
@@ -116,7 +116,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
@@ -128,7 +127,6 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
   ID: Scalars['ID'];
-  Int: Scalars['Int'];
   Mutation: {};
   Query: {};
   SignUpInput: SignUpInput;
@@ -141,7 +139,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 }>;
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  totalPhotos?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 }>;
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{

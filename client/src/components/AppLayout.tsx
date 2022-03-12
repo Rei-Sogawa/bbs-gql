@@ -1,11 +1,15 @@
-import { ReactNode, VFC } from "react";
+import { getAuth } from "firebase/auth";
+import { ReactNode, useCallback, VFC } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useAuth } from "../contexts/Auth";
 import { routes } from "../routes";
 
 type AppLayoutProps = { children: ReactNode };
 
 export const AppLayout: VFC<AppLayoutProps> = ({ children }) => {
+  const { uid } = useAuth();
+  const signOut = useCallback(() => getAuth().signOut(), []);
   const navigate = useNavigate();
 
   return (
@@ -22,24 +26,32 @@ export const AppLayout: VFC<AppLayoutProps> = ({ children }) => {
               BBS
             </button>
 
-            <div className="flex">
-              <button
-                className="btn btn-link"
-                onClick={() => {
-                  navigate(routes["/sign-up"].path());
-                }}
-              >
-                Sign Up
-              </button>
-              <button
-                className="btn btn-link"
-                onClick={() => {
-                  navigate(routes["/log-in"].path());
-                }}
-              >
-                Log In
-              </button>
-            </div>
+            {uid ? (
+              <div>
+                <button className="btn btn-link" onClick={signOut}>
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="flex">
+                <button
+                  className="btn btn-link"
+                  onClick={() => {
+                    navigate(routes["/sign-up"].path());
+                  }}
+                >
+                  Sign Up
+                </button>
+                <button
+                  className="btn btn-link"
+                  onClick={() => {
+                    navigate(routes["/log-in"].path());
+                  }}
+                >
+                  Log In
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

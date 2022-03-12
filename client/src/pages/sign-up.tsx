@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import classNames from "classnames";
 import { VFC } from "react";
 import { Field, Form } from "react-final-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { useSignUpMutation } from "../graphql/generated";
 import { routes } from "../routes";
@@ -33,20 +33,22 @@ const useSignUp = () => {
 };
 
 const SignUpForm: VFC = () => {
-  const signUp = useSignUp();
-  const logIn = useLogIn();
+  const navigate = useNavigate();
 
   const initialValues: FormValues = { email: "", password: "", confirm: "", displayName: "" };
 
   const validate = (values: FormValues) => {
     let res = {};
-    if (values.password !== values.confirm) res = { ...res, confirm: "Must match" };
+    if (values.password !== values.confirm) res = { ...res, confirm: "Must match." };
     return res;
   };
 
+  const signUp = useSignUp();
+  const logIn = useLogIn();
   const onSubmit = async (values: FormValues) => {
     await signUp(values);
     await logIn(values);
+    navigate(routes["/"].path());
   };
 
   return (

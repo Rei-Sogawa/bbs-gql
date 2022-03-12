@@ -1,7 +1,7 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { VFC } from "react";
 import { Field, Form } from "react-final-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { routes } from "../routes";
 
@@ -18,10 +18,14 @@ export const useLogIn = () => {
 };
 
 const LogInForm: VFC = () => {
+  const navigate = useNavigate();
+
   const initialValues: FormValues = { email: "", password: "" };
 
-  const onSubmit = (values: FormValues) => {
-    console.log(values);
+  const login = useLogIn();
+  const onSubmit = async (values: FormValues) => {
+    await login(values);
+    navigate(routes["/"].path());
   };
 
   return (

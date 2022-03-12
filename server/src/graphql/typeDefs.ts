@@ -6,7 +6,7 @@ type Mutation {
 }
 
 type Query {
-  totalPhotos: Int!
+  me: User!
 }
 
 input SignUpInput {
