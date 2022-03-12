@@ -1,15 +1,17 @@
+import "./firebase-app";
+import "./index.css";
+
 import React from "react";
 import ReactDOM from "react-dom";
-import { Apollo } from "./apollo";
-import { App } from "./App";
 
-import "./index.css";
+import { App } from "./App";
+import { Auth } from "./context/Auth";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Apollo>
+    <Auth>
       <App />
-    </Apollo>
+    </Auth>
   </React.StrictMode>,
   document.getElementById("root")
 );
