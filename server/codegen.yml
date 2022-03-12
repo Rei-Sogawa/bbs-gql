@@ -8,3 +8,6 @@ generates:
     config:
       useIndexSignature: true
       enumsAsConst: true
+  src/graphql/typeDefs.ts:
+    plugins:
+      - "typescript-type-defs.js"

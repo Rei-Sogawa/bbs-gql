@@ -1,12 +1,10 @@
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
-import { readFileSync } from "fs";
 import expressPlayground from "graphql-playground-middleware-express";
 
+import { typeDefs } from "./graphql/typeDefs";
 import { dataSources } from "./lib/datasource/index";
 import { resolvers } from "./resolvers";
-
-const typeDefs = readFileSync("./typeDefs.graphql", "utf-8");
 
 async function start() {
   const app = express();
