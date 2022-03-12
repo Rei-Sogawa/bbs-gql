@@ -1,26 +1,42 @@
+import { gql } from "@apollo/client";
 import classNames from "classnames";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { VFC } from "react";
 import { Field, Form } from "react-final-form";
 import { Link } from "react-router-dom";
 
+import { useSignUpMutation } from "../graphql/generated";
+import { useLogIn } from "../hooks/useLogin";
 import { routes } from "../routes";
 
-const useSignUp = () => {
-  const signUp = ({ email, password }: { email: string; password: string }) => {
-    return createUserWithEmailAndPassword(getAuth(), email, password);
-  };
-  return signUp;
-};
+gql`
+  mutation signUp($input: SignUpInput!) {
+    signUp(input: $input) {
+      id
+      displayName
+    }
+  }
+`;
 
 type FormValues = {
   email: string;
   password: string;
   confirm: string;
+  displayName: string;
+};
+
+const useSignUp = () => {
+  const [mutation] = useSignUpMutation();
+  const signUp = async ({ displayName, email, password }: Omit<FormValues, "confirm">) => {
+    await mutation({ variables: { input: { displayName, email, password } } });
+  };
+  return signUp;
 };
 
 const SignUpForm: VFC = () => {
-  const initialValues = { email: "", password: "", confirm: "" };
+  const signUp = useSignUp();
+  const logIn = useLogIn();
+
+  const initialValues: FormValues = { email: "", password: "", confirm: "", displayName: "" };
 
   const validate = (values: FormValues) => {
     let res = {};
@@ -28,8 +44,9 @@ const SignUpForm: VFC = () => {
     return res;
   };
 
-  const onSubmit = (values: FormValues) => {
-    console.log(values);
+  const onSubmit = async (values: FormValues) => {
+    await signUp(values);
+    await logIn(values);
   };
 
   return (
@@ -95,6 +112,23 @@ const SignUpForm: VFC = () => {
             )}
           </Field>
 
+          <Field name="displayName">
+            {({ input }) => (
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Display Name</span>
+                </label>
+                <input
+                  type="text"
+                  className="input input-bordered input-primary"
+                  placeholder="DisplayName"
+                  required
+                  {...input}
+                />
+              </div>
+            )}
+          </Field>
+
           <button type="submit" className="mt-6 btn">
             Sign Up
           </button>
@@ -111,7 +145,7 @@ export const SignUp: VFC = () => {
         <div className="w-xsm py-4 px-8 mx-auto rounded-md bg-white flex flex-col space-y-2">
           <div className="text-lg font-bold text-center">Sign Up</div>
           <SignUpForm />
-          <Link className="link link-primary" to={routes["/log-in"].path()}>
+          <Link className="link link-primary ml-1" to={routes["/log-in"].path()}>
             Log In
           </Link>
         </div>

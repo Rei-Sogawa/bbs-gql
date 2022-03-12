@@ -5,21 +5,20 @@ import { Link } from "react-router-dom";
 
 import { routes } from "../routes";
 
-const useLogIn = () => {
-  const login = ({ email, password }: { email: string; password: string }) => {
+type FormValues = {
+  email: string;
+  password: string;
+};
+
+export const useLogIn = () => {
+  const login = ({ email, password }: FormValues) => {
     return signInWithEmailAndPassword(getAuth(), email, password);
   };
   return login;
 };
 
-type FormValues = {
-  email: string;
-  password: string;
-  confirm: string;
-};
-
 const LogInForm: VFC = () => {
-  const initialValues = { email: "", password: "", confirm: "" };
+  const initialValues: FormValues = { email: "", password: "" };
 
   const onSubmit = (values: FormValues) => {
     console.log(values);
@@ -82,7 +81,7 @@ export const LogIn: VFC = () => {
         <div className="w-xsm py-4 px-8 mx-auto rounded-md bg-white flex flex-col space-y-2">
           <div className="text-lg font-bold text-center">Log In</div>
           <LogInForm />
-          <Link className="link link-primary" to={routes["/sign-up"].path()}>
+          <Link className="link link-primary ml-1" to={routes["/sign-up"].path()}>
             Sign Up
           </Link>
         </div>

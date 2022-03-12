@@ -1,3 +1,18 @@
+type User {
+  id: ID!
+  displayName: String!
+}
+
 type Query {
   totalPhotos: Int!
+}
+
+input SignUpInput {
+  displayName: String!
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  signUp(input: SignUpInput!): User!
 }

@@ -5,10 +5,14 @@ generates:
     plugins:
       - "typescript"
       - "typescript-resolvers"
+      - add:
+          content: "import { Timestamp } from 'firebase-admin/firestore'"
     config:
       useIndexSignature: true
       enumsAsConst: true
       contextType: ../context#Context
+      mappers:
+        User: ../lib/entity/user#UserDoc
   src/graphql/typeDefs.ts:
     plugins:
       - "typescript-type-defs.js"
