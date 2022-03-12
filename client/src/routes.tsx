@@ -1,11 +1,12 @@
 import { pathBuilder } from "@rei-sogawa/path-builder";
-import { ReactNode, VFC } from "react";
 
 import { Index } from "./pages";
+import { LogIn } from "./pages/log-in";
 import { SignUp } from "./pages/sign-up";
 
 const INDEX = "/";
 const SIGN_UP = "/sign-up";
+const LOG_IN = "/log-in";
 
 export const routes = {
   [INDEX]: {
@@ -15,6 +16,10 @@ export const routes = {
   [SIGN_UP]: {
     path: pathBuilder(SIGN_UP),
     Component: SignUp,
+  },
+  [LOG_IN]: {
+    path: pathBuilder(LOG_IN),
+    Component: LogIn,
   },
 };
 

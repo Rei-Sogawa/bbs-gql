@@ -1,16 +1,15 @@
-import classNames from "classnames";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { VFC } from "react";
 import { Field, Form } from "react-final-form";
 import { Link } from "react-router-dom";
 
 import { routes } from "../routes";
 
-const useSignUp = () => {
-  const signUp = ({ email, password }: { email: string; password: string }) => {
-    return createUserWithEmailAndPassword(getAuth(), email, password);
+const useLogIn = () => {
+  const login = ({ email, password }: { email: string; password: string }) => {
+    return signInWithEmailAndPassword(getAuth(), email, password);
   };
-  return signUp;
+  return login;
 };
 
 type FormValues = {
@@ -19,14 +18,8 @@ type FormValues = {
   confirm: string;
 };
 
-const SignUpForm: VFC = () => {
+const LogInForm: VFC = () => {
   const initialValues = { email: "", password: "", confirm: "" };
-
-  const validate = (values: FormValues) => {
-    let res = {};
-    if (values.password !== values.confirm) res = { ...res, confirm: "Must match" };
-    return res;
-  };
 
   const onSubmit = (values: FormValues) => {
     console.log(values);
@@ -35,7 +28,6 @@ const SignUpForm: VFC = () => {
   return (
     <Form
       initialValues={initialValues}
-      validate={validate}
       onSubmit={onSubmit}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit} className="flex flex-col">
@@ -74,29 +66,8 @@ const SignUpForm: VFC = () => {
             )}
           </Field>
 
-          <Field name="confirm">
-            {({ input, meta }) => (
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Password Confirm</span>
-                </label>
-                <input
-                  type="password"
-                  className={classNames(
-                    "input input-bordered",
-                    meta.error && meta.touched ? "input-error" : "input-primary"
-                  )}
-                  placeholder="Password Confirm"
-                  required
-                  {...input}
-                />
-                {meta.error && meta.touched && <span className="ml-1 mt-2 text-sm text-red-600">{meta.error}</span>}
-              </div>
-            )}
-          </Field>
-
           <button type="submit" className="mt-6 btn">
-            Sign Up
+            Log In
           </button>
         </form>
       )}
@@ -104,15 +75,15 @@ const SignUpForm: VFC = () => {
   );
 };
 
-export const SignUp: VFC = () => {
+export const LogIn: VFC = () => {
   return (
     <div className="h-screen w-screen bg-gray-100">
       <div className="pt-24">
         <div className="w-xsm py-4 px-8 mx-auto rounded-md bg-white flex flex-col space-y-2">
-          <div className="text-lg font-bold text-center">Sign Up</div>
-          <SignUpForm />
-          <Link className="link link-primary" to={routes["/log-in"].path()}>
-            Log In
+          <div className="text-lg font-bold text-center">Log In</div>
+          <LogInForm />
+          <Link className="link link-primary" to={routes["/sign-up"].path()}>
+            Sign Up
           </Link>
         </div>
       </div>
