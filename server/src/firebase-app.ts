@@ -1,10 +1,6 @@
 import * as admin from "firebase-admin";
 
-import {
-  FIREBASE_AUTH_EMULATOR_HOST,
-  FIRESTORE_EMULATOR_HOST,
-  PROJECT_ID,
-} from "./__spec__/test-util/env-constants";
+import { FIREBASE_AUTH_EMULATOR_HOST, FIRESTORE_EMULATOR_HOST, PROJECT_ID } from "./__spec__/test-util/env-constants";
 
 if (process.env.NODE_ENV !== "production") {
   process.env.GCLOUD_PROJECT = PROJECT_ID;
@@ -22,3 +18,7 @@ export function getAdmin() {
 }
 export const getAuth = () => getAdmin().auth();
 export const getDb = () => getAdmin().firestore();
+
+export const verifyIdToken = async (idToken: string) => {
+  return await getAuth().verifyIdToken(idToken);
+};

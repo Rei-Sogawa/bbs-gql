@@ -10,6 +10,5 @@
     "esModuleInterop": true
   },
   "compileOnSave": true,
-  "include": ["src"],
-  "exclude": ["src/__spec__"]
+  "include": ["src"]
 }
