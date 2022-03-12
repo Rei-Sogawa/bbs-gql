@@ -5,8 +5,8 @@ import { Field, Form } from "react-final-form";
 import { Link } from "react-router-dom";
 
 import { useSignUpMutation } from "../graphql/generated";
-import { useLogIn } from "../hooks/useLogin";
 import { routes } from "../routes";
+import { useLogIn } from "./log-in";
 
 gql`
   mutation signUp($input: SignUpInput!) {
