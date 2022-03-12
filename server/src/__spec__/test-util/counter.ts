@@ -13,7 +13,7 @@ export class Counter {
   }
 }
 
-export class FirestoreCounter {
+export class ConverterCounter {
   collection: string;
   read: Counter;
   write: Counter;

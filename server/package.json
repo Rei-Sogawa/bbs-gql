@@ -4,9 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev:server": "ts-node-dev --respawn src/index",
-    "dev:emulators": "firebase emulators:start --only auth,firestore",
-    "gql:generate": "graphql-codegen --config codegen.yml",
+    "build": "tsc",
+    "dev": "ts-node-dev --respawn src/index",
+    "emu": "firebase emulators:start --only auth,firestore",
+    "gql": "graphql-codegen --config codegen.yml",
     "test": "jest --detectOpenHandles"
   },
   "dependencies": {

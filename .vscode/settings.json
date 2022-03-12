@@ -3,5 +3,5 @@
     "source.fixAll.eslint": true,
     "source.addMissingImports": true
   },
-  "prettier.printWidth": 100
+  "prettier.printWidth": 120
 }
