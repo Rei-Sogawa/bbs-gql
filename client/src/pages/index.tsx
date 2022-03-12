@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 import { VFC } from "react";
 
+import { AppLayout } from "../components/AppLayout";
 import { useFetchTotalPhotosQuery } from "../graphql/generated";
 
 gql`
@@ -11,5 +12,5 @@ gql`
 
 export const Index: VFC = () => {
   const { data } = useFetchTotalPhotosQuery();
-  return <div>{data?.totalPhotos}</div>;
+  return <AppLayout>{data?.totalPhotos}</AppLayout>;
 };

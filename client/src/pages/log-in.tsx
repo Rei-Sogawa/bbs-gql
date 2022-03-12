@@ -76,14 +76,19 @@ const LogInForm: VFC = () => {
 
 export const LogIn: VFC = () => {
   return (
-    <div className="h-screen w-screen bg-gray-100">
-      <div className="pt-24">
-        <div className="w-xsm py-4 px-8 mx-auto rounded-md bg-white flex flex-col space-y-2">
+    <div className="bg-gray-100 h-screen">
+      <div className="pt-20 bg-gray-100">
+        <div className="w-xsm py-4 px-8 mx-auto rounded-md bg-white">
           <div className="text-lg font-bold text-center">Log In</div>
           <LogInForm />
-          <Link className="link link-primary ml-1" to={routes["/sign-up"].path()}>
-            Sign Up
-          </Link>
+          <div className="mt-4 ml-1 flex flex-col space-y-1">
+            <Link className="link link-primary" to={routes["/sign-up"].path()}>
+              Sign Up
+            </Link>
+            <Link className="link link-primary" to={routes["/"].path()}>
+              Back
+            </Link>
+          </div>
         </div>
       </div>
     </div>
