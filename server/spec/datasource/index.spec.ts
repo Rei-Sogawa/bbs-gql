@@ -5,8 +5,22 @@ import { getDb } from "../../src/firebase-app";
 import { ConverterCounter } from "../../src/lib/datasource/converter/counter";
 import { Converter } from "../../src/lib/datasource/converter/index";
 import { FirestoreDataSource } from "../../src/lib/datasource/firestore-datasource/index";
-import { IUserData, UserData } from "../../src/lib/entity/user";
 import { clearFirestore } from "../test-util/clear";
+
+type IUserData = {
+  createdAt: admin.firestore.Timestamp;
+  updatedAt: admin.firestore.Timestamp;
+};
+
+class UserData {
+  static of(value: Partial<IUserData> = {}): IUserData {
+    return {
+      createdAt: admin.firestore.Timestamp.now(),
+      updatedAt: admin.firestore.Timestamp.now(),
+      ...value,
+    };
+  }
+}
 
 const db = getDb();
 
