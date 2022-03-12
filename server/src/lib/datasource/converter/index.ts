@@ -1,13 +1,11 @@
 import * as admin from "firebase-admin";
 
-import { FirestoreCounter } from "./../../../__spec__/test-util/counter";
+import { ConverterCounter } from "./../../../__spec__/test-util/counter";
 
-export const Converter = <TDoc>(
-  counter?: FirestoreCounter
-): admin.firestore.FirestoreDataConverter<TDoc> => ({
+export const Converter = <TData>(counter?: ConverterCounter): admin.firestore.FirestoreDataConverter<TData> => ({
   fromFirestore: (snap) => {
     counter?.onRead();
-    return snap.data() as TDoc;
+    return snap.data() as TData;
   },
   toFirestore: (data) => {
     counter?.onWrite();

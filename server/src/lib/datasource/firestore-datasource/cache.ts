@@ -5,59 +5,60 @@ import * as admin from "firebase-admin";
 import { Ref } from ".";
 import { replacer, reviver } from "./helper";
 
+type WithId<TData> = { id: string } & TData;
+
 type FindArgs = { ttlInSeconds: number };
 
-export type FindOne<TDoc, TParams> = (
-  docRefFn: (ref: Ref<TDoc, TParams>) => admin.firestore.DocumentReference<TDoc>,
+export type FindOne<TData, TParams> = (
+  docRefFn: (ref: Ref<TData, TParams>) => admin.firestore.DocumentReference<TData>,
   args?: FindArgs
-) => Promise<TDoc>;
+) => Promise<WithId<TData>>;
 
-export type FindMany<TDoc, TParams> = (
-  queryFn: (ref: Ref<TDoc, TParams>) => admin.firestore.Query<TDoc>,
+export type FindMany<TData, TParams> = (
+  queryFn: (ref: Ref<TData, TParams>) => admin.firestore.Query<TData>,
   args?: FindArgs
-) => Promise<TDoc[]>;
+) => Promise<WithId<TData>[]>;
 
-export type DeleteFromCache<TDoc, TParams> = (
-  docRefFn: (ref: Ref<TDoc, TParams>) => admin.firestore.DocumentReference<TDoc>
+export type DeleteFromCache<TData, TParams> = (
+  docRefFn: (ref: Ref<TData, TParams>) => admin.firestore.DocumentReference<TData>
 ) => Promise<void>;
 
-export const createCacheMethods = <TDoc, TParams>({
+export const createCacheMethods = <TData, TParams>({
   ref,
   cache,
 }: {
-  ref: Ref<TDoc, TParams>;
+  ref: Ref<TData, TParams>;
   cache: KeyValueCache;
 }) => {
-  const loader = new DataLoader<admin.firestore.DocumentReference<TDoc>, TDoc, string>(
+  const loader = new DataLoader<admin.firestore.DocumentReference<TData>, WithId<TData>, string>(
     async (docRefs) => {
       const dSnaps = await Promise.all(docRefs.map((docRef) => docRef.get()));
       return dSnaps.map((dSnap) => {
         const data = dSnap.data();
         if (!data) throw new Error(`could not find dSnap.data() at ${dSnap.ref.path}`);
-        return data;
+        return { id: dSnap.id, ...data };
       });
     },
     { cacheKeyFn: (docRef) => docRef.path }
   );
 
-  const findOne: FindOne<TDoc, TParams> = async (docRefFn, args?) => {
+  const findOne: FindOne<TData, TParams> = async (docRefFn, args?) => {
     const docRef = docRefFn(ref);
     const cacheDoc = await cache.get(docRef.path);
-    if (cacheDoc && args?.ttlInSeconds) return JSON.parse(cacheDoc, reviver) as TDoc;
-
+    if (cacheDoc && args?.ttlInSeconds) return JSON.parse(cacheDoc, reviver) as WithId<TData>;
     const doc = await loader.load(docRef);
-    if (args?.ttlInSeconds)
-      await cache.set(docRef.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
+    if (args?.ttlInSeconds) await cache.set(docRef.path, JSON.stringify(doc, replacer), { ttl: args.ttlInSeconds });
     return doc;
   };
 
-  const findMany: FindMany<TDoc, TParams> = async (queryFn, args?) => {
+  const findMany: FindMany<TData, TParams> = async (queryFn, args?) => {
     const qSnap = await queryFn(ref).get();
     const qdSnaps = qSnap.docs;
-    const res: TDoc[] = [];
+    const res: WithId<TData>[] = [];
 
     for (const qdSnap of qdSnaps) {
-      const doc = qdSnap.data();
+      const data = qdSnap.data();
+      const doc = { id: qdSnap.id, ...data };
       res.push(doc);
 
       loader.prime(qdSnap.ref, doc);
@@ -68,7 +69,7 @@ export const createCacheMethods = <TDoc, TParams>({
     return res;
   };
 
-  const deleteFromCache: DeleteFromCache<TDoc, TParams> = async (docRefFn) => {
+  const deleteFromCache: DeleteFromCache<TData, TParams> = async (docRefFn) => {
     const docRef = docRefFn(ref);
     loader.clear(docRef);
     await cache.delete(docRef.path);

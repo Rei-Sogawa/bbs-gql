@@ -4,21 +4,21 @@ import * as admin from "firebase-admin";
 
 import { createCacheMethods, DeleteFromCache, FindMany, FindOne } from "./cache";
 
-export type Ref<TDoc, TParams> = (params: TParams) => admin.firestore.CollectionReference<TDoc>;
+export type Ref<TData, TParams> = (params: TParams) => admin.firestore.CollectionReference<TData>;
 
 export class FirestoreDataSource<
-  TDoc,
+  TData,
   TParams extends Record<string, string> | void,
   TContext = any
 > extends DataSource {
   context?: TContext;
   cache!: KeyValueCache;
-  ref: Ref<TDoc, TParams>;
-  findOne!: FindOne<TDoc, TParams>;
-  findMany!: FindMany<TDoc, TParams>;
-  deleteFromCache!: DeleteFromCache<TDoc, TParams>;
+  ref: Ref<TData, TParams>;
+  findOne!: FindOne<TData, TParams>;
+  findMany!: FindMany<TData, TParams>;
+  deleteFromCache!: DeleteFromCache<TData, TParams>;
 
-  constructor(ref: Ref<TDoc, TParams>) {
+  constructor(ref: Ref<TData, TParams>) {
     super();
     this.ref = ref;
   }
