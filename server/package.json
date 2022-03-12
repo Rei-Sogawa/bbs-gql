@@ -2,6 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "license": "MIT",
+  "main": "dist/src/index.js",
   "scripts": {
     "build": "rimraf dist && tsc",
     "start": "node dist/src/index.js",
