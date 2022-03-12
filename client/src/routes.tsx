@@ -1,5 +1,5 @@
 import { pathBuilder } from "@rei-sogawa/path-builder";
-import { ReactNode } from "react";
+import { ReactNode, VFC } from "react";
 
 import { Index } from "./pages";
 import { SignUp } from "./pages/sign-up";
@@ -7,14 +7,7 @@ import { SignUp } from "./pages/sign-up";
 const INDEX = "/";
 const SIGN_UP = "/sign-up";
 
-type Routes = {
-  [key: string]: {
-    path: (() => string) | ((params: Record<string, string>) => string);
-    Component: ReactNode;
-  };
-};
-
-export const routes: Routes = {
+export const routes = {
   [INDEX]: {
     path: pathBuilder(INDEX),
     Component: Index,

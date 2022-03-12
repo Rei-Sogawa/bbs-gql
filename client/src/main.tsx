@@ -5,7 +5,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { App } from "./App";
-import { Auth } from "./context/Auth";
+import { Auth } from "./contexts/Auth";
 
 ReactDOM.render(
   <React.StrictMode>

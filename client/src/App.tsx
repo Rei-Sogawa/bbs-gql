@@ -1,8 +1,8 @@
 import { VFC } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import { Apollo } from "./context/Apollo";
-import { useAuth } from "./context/Auth";
+import { Apollo } from "./contexts/Apollo";
+import { useAuth } from "./contexts/Auth";
 import { paths, routes } from "./routes";
 
 export const App: VFC = () => {
