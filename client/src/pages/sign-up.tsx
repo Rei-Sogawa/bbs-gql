@@ -4,7 +4,7 @@ import { VFC } from "react";
 import { Field, Form } from "react-final-form";
 import { Link, useNavigate } from "react-router-dom";
 
-import { AppHeader } from "../components/AppHeader";
+import { AppHeading } from "../components/AppHeading";
 import { useSignUpMutation } from "../graphql/generated";
 import { routes } from "../routes";
 import { useLogIn } from "./log-in";
@@ -147,7 +147,7 @@ export const SignUp: VFC = () => {
       <div className="pt-20 bg-gray-100">
         <div className="w-screen-xs py-4 px-8 mx-auto rounded-md bg-white">
           <div className="text-center">
-            <AppHeader>Sign Up</AppHeader>
+            <AppHeading>Sign Up</AppHeading>
           </div>
           <SignUpForm />
           <div className="mt-4 ml-1 flex flex-col space-y-1">

@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 import { VFC } from "react";
 
 import { AppContainer } from "../../components/AppContainer";
-import { AppHeader } from "../../components/AppHeader";
+import { AppHeading } from "../../components/AppHeading";
 import { AppLayout } from "../../components/AppLayout";
 import { TopicForm, TopicFormProps } from "../../components/TopicForm";
 import { useCreateTopicMutation } from "../../graphql/generated";
@@ -28,7 +28,7 @@ export const TopicNew: VFC = () => {
     <AppLayout>
       <AppContainer size="md">
         <div className="text-center">
-          <AppHeader>Topic New Page!</AppHeader>
+          <AppHeading>Topic New Page!</AppHeading>
         </div>
         <TopicForm initialValues={initialValues} onSubmit={onSubmit} />
       </AppContainer>

@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 
-type AppHeaderProps = {
+type AppHeadingProps = {
   children: ReactNode;
 };
 
-export const AppHeader = ({ children }: AppHeaderProps) => {
+export const AppHeading = ({ children }: AppHeadingProps) => {
   return <div className="text-lg font-bold">{children}</div>;
 };

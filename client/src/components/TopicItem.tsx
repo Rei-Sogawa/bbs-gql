@@ -1,17 +1,15 @@
 import { gql } from "@apollo/client";
+import { format } from "date-fns";
+import { Link } from "react-router-dom";
 
 import { TopicItemFragment } from "../graphql/generated";
+import { routes } from "../routes";
 
 gql`
   fragment TopicItem on Topic {
     id
     title
-    description
     createdAt
-    user {
-      id
-      displayName
-    }
   }
 `;
 
@@ -22,8 +20,10 @@ type TopicItemProps = {
 export const TopicItem = ({ topic }: TopicItemProps) => {
   return (
     <div>
-      <div>{topic.title}</div>
-      <div>{topic.description}</div>
+      <Link to={routes["/topics/:topicId"].path({ topicId: topic.id })} className="link link-primary text-lg">
+        {topic.title}
+      </Link>
+      <div className="text-gray-500">{format(new Date(topic.createdAt), "yyyy-MM-dd HH:mm")}</div>
     </div>
   );
 };

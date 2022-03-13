@@ -72,7 +72,7 @@ export type User = {
   topics: Array<Topic>;
 };
 
-export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
+export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, createdAt: string };
 
 export type UserForMeFragment = { __typename?: 'User', id: string, displayName: string };
 
@@ -80,6 +80,11 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, displayName: string } };
+
+export type TopicsForIndexQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type TopicsForIndexQuery = { __typename?: 'Query', topics: Array<{ __typename?: 'Topic', id: string, title: string, createdAt: string }> };
 
 export type SignUpMutationVariables = Exact<{
   input: SignUpInput;
@@ -93,18 +98,13 @@ export type CreateTopicMutationVariables = Exact<{
 }>;
 
 
-export type CreateTopicMutation = { __typename?: 'Mutation', createTopic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+export type CreateTopicMutation = { __typename?: 'Mutation', createTopic: { __typename?: 'Topic', id: string, title: string, createdAt: string } };
 
 export const TopicItemFragmentDoc = gql`
     fragment TopicItem on Topic {
   id
   title
-  description
   createdAt
-  user {
-    id
-    displayName
-  }
 }
     `;
 export const UserForMeFragmentDoc = gql`
@@ -148,6 +148,41 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const TopicsForIndexDocument = gql`
+    query TopicsForIndex {
+  topics {
+    id
+    ...TopicItem
+  }
+}
+    ${TopicItemFragmentDoc}`;
+
+/**
+ * __useTopicsForIndexQuery__
+ *
+ * To run a query within a React component, call `useTopicsForIndexQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopicsForIndexQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTopicsForIndexQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTopicsForIndexQuery(baseOptions?: Apollo.QueryHookOptions<TopicsForIndexQuery, TopicsForIndexQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TopicsForIndexQuery, TopicsForIndexQueryVariables>(TopicsForIndexDocument, options);
+      }
+export function useTopicsForIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopicsForIndexQuery, TopicsForIndexQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TopicsForIndexQuery, TopicsForIndexQueryVariables>(TopicsForIndexDocument, options);
+        }
+export type TopicsForIndexQueryHookResult = ReturnType<typeof useTopicsForIndexQuery>;
+export type TopicsForIndexLazyQueryHookResult = ReturnType<typeof useTopicsForIndexLazyQuery>;
+export type TopicsForIndexQueryResult = Apollo.QueryResult<TopicsForIndexQuery, TopicsForIndexQueryVariables>;
 export const SignUpDocument = gql`
     mutation signUp($input: SignUpInput!) {
   signUp(input: $input) {

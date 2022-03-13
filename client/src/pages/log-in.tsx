@@ -3,7 +3,7 @@ import { VFC } from "react";
 import { Field, Form } from "react-final-form";
 import { Link, useNavigate } from "react-router-dom";
 
-import { AppHeader } from "../components/AppHeader";
+import { AppHeading } from "../components/AppHeading";
 import { routes } from "../routes";
 
 type FormValues = {
@@ -85,7 +85,7 @@ export const LogIn: VFC = () => {
       <div className="pt-20 bg-gray-100">
         <div className="w-screen-xs py-4 px-8 mx-auto rounded-md bg-white">
           <div className="text-center">
-            <AppHeader>Log In</AppHeader>
+            <AppHeading>Log In</AppHeading>
           </div>
           <LogInForm />
           <div className="mt-4 ml-1 flex flex-col space-y-1">
