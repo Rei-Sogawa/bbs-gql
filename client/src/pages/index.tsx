@@ -1,24 +1,13 @@
-import { gql } from "@apollo/client";
 import { VFC } from "react";
 
 import { AppContainer } from "../components/AppContainer";
 import { AppHeading } from "../components/AppHeading";
 import { AppLayout } from "../components/AppLayout";
 import { TopicItem } from "../components/TopicItem";
-import { useTopicsForIndexQuery } from "../graphql/generated";
-
-gql`
-  query TopicsForIndex {
-    topics {
-      id
-      ...TopicItem
-    }
-  }
-`;
+import { useTopics } from "../hooks/useTopics";
 
 export const Index: VFC = () => {
-  const { data } = useTopicsForIndexQuery();
-  const topics = data?.topics;
+  const topics = useTopics();
 
   return (
     <AppLayout>
@@ -28,13 +17,12 @@ export const Index: VFC = () => {
             <AppHeading>Topics!</AppHeading>
           </div>
           <div>
-            {topics &&
-              topics.map((topic) => (
-                <div key={topic.id}>
-                  <TopicItem topic={topic} />
-                  <div className="divider" />
-                </div>
-              ))}
+            {topics.map((topic) => (
+              <div key={topic.id}>
+                <TopicItem topic={topic} />
+                <div className="divider" />
+              </div>
+            ))}
           </div>
         </div>
       </AppContainer>

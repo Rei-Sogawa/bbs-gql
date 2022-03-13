@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client";
 import { format } from "date-fns";
 import { FaEllipsisV } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
 import { useAuth } from "../../../contexts/Auth";
-import { TopicForTopicDetailFragment, useTopicQuery } from "../../../graphql/generated";
+import { TopicForTopicDetailFragment } from "../../../graphql/generated";
+import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
 import { routes } from "../../../routes";
 
 gql`
@@ -27,7 +28,19 @@ type TopicDetailProps = {
 };
 
 const TopicDetail = ({ topic }: TopicDetailProps) => {
+  const navigate = useNavigate();
+
   const { uid } = useAuth();
+
+  const deleteTopic = useDeleteTopic();
+  const onDelete = async () => {
+    await deleteTopic({ variables: { id: topic.id } });
+    navigate(routes["/"].path());
+  };
+
+  const onEdit = () => {
+    navigate(routes["/topics/:topicId/edit"].path({ topicId: topic.id }));
+  };
 
   return (
     <div className="p-4 border rounded-md">
@@ -42,10 +55,14 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
                 </label>
                 <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
                   <li>
-                    <button className="btn btn-ghost">Edit</button>
+                    <button className="btn btn-ghost" onClick={onEdit}>
+                      Edit
+                    </button>
                   </li>
                   <li>
-                    <button className="btn btn-ghost">Delete</button>
+                    <button className="btn btn-ghost" onClick={onDelete}>
+                      Delete
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -65,19 +82,9 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
   );
 };
 
-gql`
-  query Topic($id: ID!) {
-    topic(id: $id) {
-      id
-      ...TopicForTopicDetail
-    }
-  }
-`;
-
 export const Topic = () => {
   const { topicId } = useParams();
-  const { data } = useTopicQuery({ variables: { id: topicId! } });
-  const topic = data?.topic;
+  const topic = useTopic(topicId!);
 
   return (
     <AppLayout>

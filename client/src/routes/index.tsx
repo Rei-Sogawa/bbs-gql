@@ -4,6 +4,7 @@ import { Index } from "../pages";
 import { LogIn } from "../pages/log-in";
 import { SignUp } from "../pages/sign-up";
 import { Topic } from "../pages/topics/[topicId]";
+import { TopicEdit } from "../pages/topics/[topicId]/edit";
 import { TopicNew } from "../pages/topics/new";
 import { WithAuth, WithoutAuth } from "./middleware";
 
@@ -12,6 +13,7 @@ const SIGN_UP = "/sign-up";
 const LOG_IN = "/log-in";
 const TOPIC_NEW = "/topics/new";
 const TOPIC_SHOW = "/topics/:topicId";
+const TOPIC_EDIT = "/topics/:topicId/edit";
 
 export const routes = {
   [INDEX]: {
@@ -38,6 +40,11 @@ export const routes = {
     path: pathBuilder(TOPIC_SHOW),
     Component: Topic,
     middleware: [],
+  },
+  [TOPIC_EDIT]: {
+    path: pathBuilder(TOPIC_EDIT),
+    Component: TopicEdit,
+    middleware: [WithAuth],
   },
 };
 

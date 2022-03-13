@@ -104,6 +104,28 @@ export type TopicsForIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type TopicsForIndexQuery = { __typename?: 'Query', topics: Array<{ __typename?: 'Topic', id: string, title: string, createdAt: string }> };
 
+export type CreateTopicMutationVariables = Exact<{
+  input: CreateTopicInput;
+}>;
+
+
+export type CreateTopicMutation = { __typename?: 'Mutation', createTopic: { __typename?: 'Topic', id: string, title: string, createdAt: string } };
+
+export type UpdateTopicMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: UpdateTopicInput;
+}>;
+
+
+export type UpdateTopicMutation = { __typename?: 'Mutation', updateTopic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+
+export type DeleteTopicMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteTopicMutation = { __typename?: 'Mutation', deleteTopic: { __typename?: 'Topic', id: string, title: string, createdAt: string } };
+
 export type SignUpMutationVariables = Exact<{
   input: SignUpInput;
 }>;
@@ -111,21 +133,23 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'User', id: string, displayName: string } };
 
-export type TopicForTopicDetailFragment = { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
+export type TopicForTopicEditFragment = { __typename?: 'Topic', id: string, title: string, description: string, user: { __typename?: 'User', id: string } };
 
-export type TopicQueryVariables = Exact<{
+export type TopicForTopicEditQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type TopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+export type TopicForTopicEditQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, user: { __typename?: 'User', id: string } } };
 
-export type CreateTopicMutationVariables = Exact<{
-  input: CreateTopicInput;
+export type TopicForTopicDetailFragment = { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
+
+export type TopicForTopicQueryVariables = Exact<{
+  id: Scalars['ID'];
 }>;
 
 
-export type CreateTopicMutation = { __typename?: 'Mutation', createTopic: { __typename?: 'Topic', id: string, title: string, createdAt: string } };
+export type TopicForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
 
 export const TopicItemFragmentDoc = gql`
     fragment TopicItem on Topic {
@@ -138,6 +162,16 @@ export const UserForMeFragmentDoc = gql`
     fragment UserForMe on User {
   id
   displayName
+}
+    `;
+export const TopicForTopicEditFragmentDoc = gql`
+    fragment TopicForTopicEdit on Topic {
+  id
+  title
+  description
+  user {
+    id
+  }
 }
     `;
 export const TopicForTopicDetailFragmentDoc = gql`
@@ -222,6 +256,109 @@ export function useTopicsForIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type TopicsForIndexQueryHookResult = ReturnType<typeof useTopicsForIndexQuery>;
 export type TopicsForIndexLazyQueryHookResult = ReturnType<typeof useTopicsForIndexLazyQuery>;
 export type TopicsForIndexQueryResult = Apollo.QueryResult<TopicsForIndexQuery, TopicsForIndexQueryVariables>;
+export const CreateTopicDocument = gql`
+    mutation CreateTopic($input: CreateTopicInput!) {
+  createTopic(input: $input) {
+    id
+    ...TopicItem
+  }
+}
+    ${TopicItemFragmentDoc}`;
+export type CreateTopicMutationFn = Apollo.MutationFunction<CreateTopicMutation, CreateTopicMutationVariables>;
+
+/**
+ * __useCreateTopicMutation__
+ *
+ * To run a mutation, you first call `useCreateTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTopicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTopicMutation, { data, loading, error }] = useCreateTopicMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTopicMutation(baseOptions?: Apollo.MutationHookOptions<CreateTopicMutation, CreateTopicMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTopicMutation, CreateTopicMutationVariables>(CreateTopicDocument, options);
+      }
+export type CreateTopicMutationHookResult = ReturnType<typeof useCreateTopicMutation>;
+export type CreateTopicMutationResult = Apollo.MutationResult<CreateTopicMutation>;
+export type CreateTopicMutationOptions = Apollo.BaseMutationOptions<CreateTopicMutation, CreateTopicMutationVariables>;
+export const UpdateTopicDocument = gql`
+    mutation UpdateTopic($id: ID!, $input: UpdateTopicInput!) {
+  updateTopic(id: $id, input: $input) {
+    id
+    ...TopicForTopicDetail
+  }
+}
+    ${TopicForTopicDetailFragmentDoc}`;
+export type UpdateTopicMutationFn = Apollo.MutationFunction<UpdateTopicMutation, UpdateTopicMutationVariables>;
+
+/**
+ * __useUpdateTopicMutation__
+ *
+ * To run a mutation, you first call `useUpdateTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTopicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTopicMutation, { data, loading, error }] = useUpdateTopicMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateTopicMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTopicMutation, UpdateTopicMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTopicMutation, UpdateTopicMutationVariables>(UpdateTopicDocument, options);
+      }
+export type UpdateTopicMutationHookResult = ReturnType<typeof useUpdateTopicMutation>;
+export type UpdateTopicMutationResult = Apollo.MutationResult<UpdateTopicMutation>;
+export type UpdateTopicMutationOptions = Apollo.BaseMutationOptions<UpdateTopicMutation, UpdateTopicMutationVariables>;
+export const DeleteTopicDocument = gql`
+    mutation DeleteTopic($id: ID!) {
+  deleteTopic(id: $id) {
+    id
+    ...TopicItem
+  }
+}
+    ${TopicItemFragmentDoc}`;
+export type DeleteTopicMutationFn = Apollo.MutationFunction<DeleteTopicMutation, DeleteTopicMutationVariables>;
+
+/**
+ * __useDeleteTopicMutation__
+ *
+ * To run a mutation, you first call `useDeleteTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTopicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTopicMutation, { data, loading, error }] = useDeleteTopicMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteTopicMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTopicMutation, DeleteTopicMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTopicMutation, DeleteTopicMutationVariables>(DeleteTopicDocument, options);
+      }
+export type DeleteTopicMutationHookResult = ReturnType<typeof useDeleteTopicMutation>;
+export type DeleteTopicMutationResult = Apollo.MutationResult<DeleteTopicMutation>;
+export type DeleteTopicMutationOptions = Apollo.BaseMutationOptions<DeleteTopicMutation, DeleteTopicMutationVariables>;
 export const SignUpDocument = gql`
     mutation signUp($input: SignUpInput!) {
   signUp(input: $input) {
@@ -256,8 +393,44 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
-export const TopicDocument = gql`
-    query Topic($id: ID!) {
+export const TopicForTopicEditDocument = gql`
+    query TopicForTopicEdit($id: ID!) {
+  topic(id: $id) {
+    id
+    ...TopicForTopicEdit
+  }
+}
+    ${TopicForTopicEditFragmentDoc}`;
+
+/**
+ * __useTopicForTopicEditQuery__
+ *
+ * To run a query within a React component, call `useTopicForTopicEditQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopicForTopicEditQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTopicForTopicEditQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTopicForTopicEditQuery(baseOptions: Apollo.QueryHookOptions<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>(TopicForTopicEditDocument, options);
+      }
+export function useTopicForTopicEditLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>(TopicForTopicEditDocument, options);
+        }
+export type TopicForTopicEditQueryHookResult = ReturnType<typeof useTopicForTopicEditQuery>;
+export type TopicForTopicEditLazyQueryHookResult = ReturnType<typeof useTopicForTopicEditLazyQuery>;
+export type TopicForTopicEditQueryResult = Apollo.QueryResult<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>;
+export const TopicForTopicDocument = gql`
+    query TopicForTopic($id: ID!) {
   topic(id: $id) {
     id
     ...TopicForTopicDetail
@@ -266,63 +439,29 @@ export const TopicDocument = gql`
     ${TopicForTopicDetailFragmentDoc}`;
 
 /**
- * __useTopicQuery__
+ * __useTopicForTopicQuery__
  *
- * To run a query within a React component, call `useTopicQuery` and pass it any options that fit your needs.
- * When your component renders, `useTopicQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useTopicForTopicQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopicForTopicQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useTopicQuery({
+ * const { data, loading, error } = useTopicForTopicQuery({
  *   variables: {
  *      id: // value for 'id'
  *   },
  * });
  */
-export function useTopicQuery(baseOptions: Apollo.QueryHookOptions<TopicQuery, TopicQueryVariables>) {
+export function useTopicForTopicQuery(baseOptions: Apollo.QueryHookOptions<TopicForTopicQuery, TopicForTopicQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TopicQuery, TopicQueryVariables>(TopicDocument, options);
+        return Apollo.useQuery<TopicForTopicQuery, TopicForTopicQueryVariables>(TopicForTopicDocument, options);
       }
-export function useTopicLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopicQuery, TopicQueryVariables>) {
+export function useTopicForTopicLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopicForTopicQuery, TopicForTopicQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TopicQuery, TopicQueryVariables>(TopicDocument, options);
+          return Apollo.useLazyQuery<TopicForTopicQuery, TopicForTopicQueryVariables>(TopicForTopicDocument, options);
         }
-export type TopicQueryHookResult = ReturnType<typeof useTopicQuery>;
-export type TopicLazyQueryHookResult = ReturnType<typeof useTopicLazyQuery>;
-export type TopicQueryResult = Apollo.QueryResult<TopicQuery, TopicQueryVariables>;
-export const CreateTopicDocument = gql`
-    mutation createTopic($input: CreateTopicInput!) {
-  createTopic(input: $input) {
-    id
-    ...TopicItem
-  }
-}
-    ${TopicItemFragmentDoc}`;
-export type CreateTopicMutationFn = Apollo.MutationFunction<CreateTopicMutation, CreateTopicMutationVariables>;
-
-/**
- * __useCreateTopicMutation__
- *
- * To run a mutation, you first call `useCreateTopicMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateTopicMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createTopicMutation, { data, loading, error }] = useCreateTopicMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateTopicMutation(baseOptions?: Apollo.MutationHookOptions<CreateTopicMutation, CreateTopicMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateTopicMutation, CreateTopicMutationVariables>(CreateTopicDocument, options);
-      }
-export type CreateTopicMutationHookResult = ReturnType<typeof useCreateTopicMutation>;
-export type CreateTopicMutationResult = Apollo.MutationResult<CreateTopicMutation>;
-export type CreateTopicMutationOptions = Apollo.BaseMutationOptions<CreateTopicMutation, CreateTopicMutationVariables>;
+export type TopicForTopicQueryHookResult = ReturnType<typeof useTopicForTopicQuery>;
+export type TopicForTopicLazyQueryHookResult = ReturnType<typeof useTopicForTopicLazyQuery>;
+export type TopicForTopicQueryResult = Apollo.QueryResult<TopicForTopicQuery, TopicForTopicQueryVariables>;

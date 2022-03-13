@@ -1,4 +1,4 @@
-import { compose } from "ramda";
+import { compose, omit } from "ramda";
 
 import { getAuth } from "../../firebase-app";
 import { Resolvers } from "../../graphql/generated";
@@ -19,7 +19,7 @@ export const Mutation: Resolvers["Mutation"] = {
     return users.findOne((ref) => ref().doc(uid));
   },
   createTopic: async (_parent, args, context) => {
-    await isLoggedIn(context);
+    isLoggedIn(context);
 
     const { title, description } = args.input;
     const { uid } = context;
@@ -29,5 +29,37 @@ export const Mutation: Resolvers["Mutation"] = {
     const dRef = await topics.ref().add(newTopicData);
 
     return topics.findOne((ref) => ref().doc(dRef.id));
+  },
+  updateTopic: async (_parent, args, context) => {
+    isLoggedIn(context);
+
+    const id = args.id;
+    const { title, description } = args.input;
+    const { uid } = context;
+    const { topics } = context.dataSources;
+
+    const topicDoc = await topics.findOne((ref) => ref().doc(id));
+    if (topicDoc.userId !== uid) throw new Error("Cannot write topic");
+
+    const editTopicData = TopicData.parse(omit(["id"], { ...topicDoc, title, description }));
+    await topics.ref().doc(id).set(editTopicData);
+    topics.deleteFromCache((ref) => ref().doc(id));
+
+    return topics.findOne((ref) => ref().doc(id));
+  },
+  deleteTopic: async (_parent, args, context) => {
+    isLoggedIn(context);
+
+    const { id } = args;
+    const { uid } = context;
+    const { topics } = context.dataSources;
+
+    const topicDoc = await topics.findOne((ref) => ref().doc(id));
+    if (topicDoc.userId !== uid) throw new Error("Cannot write topic");
+
+    await topics.ref().doc(id).delete();
+    topics.deleteFromCache((ref) => ref().doc(id));
+
+    return topicDoc;
   },
 };
