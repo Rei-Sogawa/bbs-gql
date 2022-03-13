@@ -4,9 +4,7 @@ import { ReactNode, useMemo, VFC } from "react";
 
 import { useAuth } from "./Auth";
 
-const httpLink = createHttpLink({ uri: import.meta.env.VITE_ENDPOINT });
-
-const getAuthLink = (token: string | undefined = undefined) => {
+const getAuthLink = (token?: string) => {
   return setContext((_, { headers }) => {
     return {
       headers: {
@@ -17,9 +15,11 @@ const getAuthLink = (token: string | undefined = undefined) => {
   });
 };
 
-const cache = new InMemoryCache();
+const getClient = (token?: string) => {
+  const httpLink = createHttpLink({ uri: import.meta.env.VITE_ENDPOINT });
 
-const getClient = (token: string | undefined = undefined) => {
+  const cache = new InMemoryCache();
+
   return new ApolloClient({
     link: getAuthLink(token).concat(httpLink),
     cache,
@@ -32,6 +32,6 @@ type ApolloProps = {
 
 export const Apollo: VFC<ApolloProps> = ({ children }) => {
   const { token } = useAuth();
-  const client = useMemo(() => getClient(token), []);
+  const client = useMemo(() => getClient(token), [token]);
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };

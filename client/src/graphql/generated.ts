@@ -13,6 +13,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  DateTime: string;
 };
 
 export type Mutation = {
@@ -36,18 +37,29 @@ export type SignUpInput = {
   password: Scalars['String'];
 };
 
-export type User = {
-  __typename?: 'User';
-  displayName: Scalars['String'];
+export type Topic = {
+  __typename?: 'Topic';
+  createdAt: Scalars['DateTime'];
+  description: Scalars['String'];
   id: Scalars['ID'];
+  title: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
-export type MeFragment = { __typename?: 'User', id: string, displayName: string };
+export type User = {
+  __typename?: 'User';
+  createdAt: Scalars['DateTime'];
+  displayName: Scalars['String'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type UserForMeFragment = { __typename?: 'User', id: string, displayName: string, createdAt: string };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, displayName: string } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, displayName: string, createdAt: string } };
 
 export type SignUpMutationVariables = Exact<{
   input: SignUpInput;
@@ -56,20 +68,21 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'User', id: string, displayName: string } };
 
-export const MeFragmentDoc = gql`
-    fragment Me on User {
+export const UserForMeFragmentDoc = gql`
+    fragment UserForMe on User {
   id
   displayName
+  createdAt
 }
     `;
 export const MeDocument = gql`
     query me {
   me {
     id
-    ...Me
+    ...UserForMe
   }
 }
-    ${MeFragmentDoc}`;
+    ${UserForMeFragmentDoc}`;
 
 /**
  * __useMeQuery__

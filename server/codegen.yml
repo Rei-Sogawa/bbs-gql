@@ -6,11 +6,13 @@ generates:
       - "typescript"
       - "typescript-resolvers"
       - add:
-          content: "import { Timestamp } from 'firebase-admin/firestore'"
+          content: "import * as admin from 'firebase-admin'"
     config:
       useIndexSignature: true
       enumsAsConst: true
       contextType: ../context#Context
+      scalars:
+        DateTime: admin.firestore.Timestamp
       mappers:
         User: ../lib/entity/user#UserDoc
   src/graphql/typeDefs.ts:

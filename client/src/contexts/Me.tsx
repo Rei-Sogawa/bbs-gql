@@ -1,13 +1,14 @@
 import { gql } from "@apollo/client";
 import { createContext, ReactNode, useContext, VFC } from "react";
 
-import { MeFragment, useMeQuery } from "../graphql/generated";
+import { useMeQuery, UserForMeFragment } from "../graphql/generated";
 import { useAuth } from "./Auth";
 
 gql`
-  fragment Me on User {
+  fragment UserForMe on User {
     id
     displayName
+    createdAt
   }
 `;
 
@@ -15,12 +16,12 @@ gql`
   query me {
     me {
       id
-      ...Me
+      ...UserForMe
     }
   }
 `;
 
-const MeContext = createContext<MeFragment | undefined>(undefined);
+const MeContext = createContext<UserForMeFragment | undefined>(undefined);
 
 type MeProps = {
   children: ReactNode;
@@ -31,6 +32,7 @@ export const Me: VFC<MeProps> = ({ children }) => {
   const { data: meData } = useMeQuery({ skip: !uid });
   if (!uid) return <>{children}</>;
   if (!meData) return null;
+  console.log(meData.me);
   return <MeContext.Provider value={meData.me}>{children}</MeContext.Provider>;
 };
 

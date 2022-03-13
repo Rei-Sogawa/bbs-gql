@@ -1,6 +1,6 @@
-import { UserData } from "../lib/entity/user";
-import { getAuth } from "./../firebase-app";
-import { Resolvers } from "./../graphql/generated";
+import { getAuth } from "../../firebase-app";
+import { Resolvers } from "../../graphql/generated";
+import { UserData } from "../../lib/entity/user";
 
 export const Mutation: Resolvers["Mutation"] = {
   signUp: async (_parent, args, { dataSources: { users } }) => {

@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
+scalar DateTime
+
 type Mutation {
   signUp(input: SignUpInput!): User!
 }
@@ -15,8 +17,18 @@ input SignUpInput {
   password: String!
 }
 
+type Topic {
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  title: String!
+  updatedAt: DateTime!
+}
+
 type User {
+  createdAt: DateTime!
   displayName: String!
   id: ID!
+  updatedAt: DateTime!
 }
 `;
