@@ -3,7 +3,7 @@ import { omit } from "ramda";
 import { z } from "zod";
 
 export const UserDocSchema = z.object({
-  id: z.string().min(1),
+  id: z.string().min(1).nullable(),
   displayName: z.string().min(1),
   createdAt: z.instanceof(admin.firestore.Timestamp),
   updatedAt: z.instanceof(admin.firestore.Timestamp),
@@ -16,7 +16,7 @@ export type IUserDoc = z.infer<typeof UserDocSchema>;
 export type IUserData = z.infer<typeof UserDataSchema>;
 
 export class UserDoc implements IUserDoc {
-  id = "";
+  id = null;
   displayName = "";
   createdAt = admin.firestore.Timestamp.now();
   updatedAt = admin.firestore.Timestamp.now();
