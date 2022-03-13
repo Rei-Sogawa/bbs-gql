@@ -4,8 +4,8 @@ import { compose, omit } from "ramda";
 import { getAuth } from "../../firebase-app";
 import { Resolvers } from "../../graphql/generated";
 import { isLoggedIn } from "../../lib/authorization/isLoggedIn";
+import { TopicData } from "../../lib/entity/topic";
 import { UserData } from "../../lib/entity/user";
-import { TopicData } from "./../../lib/entity/topic";
 
 export const Mutation: Resolvers["Mutation"] = {
   signUp: async (_parent, args, context) => {
