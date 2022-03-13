@@ -1,5 +1,6 @@
 import { getAuth } from "firebase/auth";
 import { ReactNode, useCallback, VFC } from "react";
+import { FaPen, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../contexts/Auth";
@@ -27,10 +28,26 @@ export const AppLayout: VFC<AppLayoutProps> = ({ children }) => {
             </button>
 
             {uid ? (
-              <div>
-                <button className="btn btn-link" onClick={signOut}>
-                  Sign Out
+              <div className="flex space-x-6">
+                <button className="btn btn-primary flex items-center space-x-2">
+                  <FaPen size="20" />
+                  <div>Add Topic</div>
                 </button>
+
+                <div>
+                  <div className="dropdown dropdown-end">
+                    <label tabIndex={0} className="btn btn-circle">
+                      <FaUser size="24" />
+                    </label>
+                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+                      <li>
+                        <button className="btn btn-ghost" onClick={signOut}>
+                          Sign Out
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="flex">
