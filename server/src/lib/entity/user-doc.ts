@@ -33,3 +33,19 @@ export class UserDoc implements IUserDoc {
     UserDocSchema.parse(Object.assign(this, { updatedAt: admin.firestore.Timestamp.now(), ...value }));
   }
 }
+
+// authService.create({})
+// const user = new User({})
+// userRepository.create(user)
+// return userDoc
+
+// const topic = topicRepository.find(id)
+// canWriteTopic({ uid }, topic)
+// topic.update({})
+// topicRepository.update(topic)
+// return topic
+
+// const topic = topicRepository.find(id)
+// canWriteTopic({ uid }, topic)
+// topicRepository.delete(id)
+// return topic
