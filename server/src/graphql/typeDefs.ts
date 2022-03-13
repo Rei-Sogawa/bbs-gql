@@ -35,5 +35,6 @@ type Topic {
 type User {
   displayName: String!
   id: ID!
+  topics: [Topic!]!
 }
 `;

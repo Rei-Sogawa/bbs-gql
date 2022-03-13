@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { UserDoc } from '../lib/entity/user';
+import { TopicDoc } from '../lib/entity/topic';
 import { Context } from '../context';
 import * as admin from 'firebase-admin'
 export type Maybe<T> = T | null;
@@ -7,7 +8,6 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -65,6 +65,7 @@ export type User = {
   __typename?: 'User';
   displayName: Scalars['String'];
   id: Scalars['ID'];
+  topics: Array<Topic>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -145,7 +146,7 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Topic: ResolverTypeWrapper<Omit<Topic, 'user'> & { user: ResolversTypes['User'] }>;
+  Topic: ResolverTypeWrapper<TopicDoc>;
   User: ResolverTypeWrapper<UserDoc>;
 }>;
 
@@ -159,7 +160,7 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   SignUpInput: SignUpInput;
   String: Scalars['String'];
-  Topic: Omit<Topic, 'user'> & { user: ResolversParentTypes['User'] };
+  Topic: TopicDoc;
   User: UserDoc;
 }>;
 
@@ -189,6 +190,7 @@ export type TopicResolvers<ContextType = Context, ParentType extends ResolversPa
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  topics?: Resolver<Array<ResolversTypes['Topic']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
