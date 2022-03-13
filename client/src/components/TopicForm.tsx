@@ -52,7 +52,7 @@ export const TopicForm = ({ initialValues, onSubmit }: TopicFormProps) => {
             )}
           </Field>
 
-          <button type="submit" className="mt-6 btn">
+          <button type="submit" className="mt-4 btn">
             Save
           </button>
         </form>

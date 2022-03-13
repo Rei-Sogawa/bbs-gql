@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 import { VFC } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { AppContainer } from "../../components/AppContainer";
 import { AppHeading } from "../../components/AppHeading";
@@ -37,6 +37,11 @@ export const TopicNew: VFC = () => {
           <AppHeading>Topic New Page!</AppHeading>
         </div>
         <TopicForm initialValues={initialValues} onSubmit={onSubmit} />
+        <div className="mt-2 ml-2">
+          <Link className="link link-primary" to={routes["/"].path()}>
+            Back
+          </Link>
+        </div>
       </AppContainer>
     </AppLayout>
   );

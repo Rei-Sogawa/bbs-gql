@@ -132,7 +132,7 @@ const SignUpForm: VFC = () => {
             )}
           </Field>
 
-          <button type="submit" className="mt-6 btn">
+          <button type="submit" className="mt-4 btn">
             Sign Up
           </button>
         </form>
