@@ -1,9 +1,9 @@
 import { Resolvers } from "../../graphql/generated";
-import { assertLoggedIn } from "../../lib/authorization/assertLoggedIn";
+import { isLoggedIn } from "../../lib/authorization/isLoggedIn";
 
 export const Query: Resolvers["Query"] = {
   me: (_parent, _args, context) => {
-    assertLoggedIn(context);
+    isLoggedIn(context);
     const { users } = context.dataSources;
     return users.findOne((ref) => ref().doc(context.uid));
   },

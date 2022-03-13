@@ -1,8 +1,8 @@
-import compose from "ramda/src/compose";
+import { compose } from "ramda";
 
 import { getAuth } from "../../firebase-app";
 import { Resolvers } from "../../graphql/generated";
-import { assertLoggedIn } from "../../lib/authorization/assertLoggedIn";
+import { isLoggedIn } from "../../lib/authorization/isLoggedIn";
 import { UserData } from "../../lib/entity/user";
 import { TopicData } from "./../../lib/entity/topic";
 
@@ -11,14 +11,15 @@ export const Mutation: Resolvers["Mutation"] = {
     const { displayName, email, password } = args.input;
     const { users } = context.dataSources;
 
-    const authUser = await getAuth().createUser({ email, password });
-    const newUserData = compose(UserData.parse, UserData.of)({ displayName });
-    await users.ref().doc(authUser.uid).set(newUserData);
+    const { uid } = await getAuth().createUser({ email, password });
 
-    return users.findOne((ref) => ref().doc(authUser.uid));
+    const newUserData = compose(UserData.parse, UserData.of)({ displayName });
+    await users.ref().doc(uid).set(newUserData);
+
+    return users.findOne((ref) => ref().doc(uid));
   },
   createTopic: async (_parent, args, context) => {
-    await assertLoggedIn(context);
+    await isLoggedIn(context);
 
     const { title, description } = args.input;
     const { uid } = context;
