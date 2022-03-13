@@ -16,9 +16,20 @@ export type Scalars = {
   DateTime: string;
 };
 
+export type CreateTopicInput = {
+  description: Scalars['String'];
+  title: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createTopic: Topic;
   signUp: User;
+};
+
+
+export type MutationCreateTopicArgs = {
+  input: CreateTopicInput;
 };
 
 
@@ -44,22 +55,21 @@ export type Topic = {
   id: Scalars['ID'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+  user: User;
 };
 
 export type User = {
   __typename?: 'User';
-  createdAt: Scalars['DateTime'];
   displayName: Scalars['String'];
   id: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
 };
 
-export type UserForMeFragment = { __typename?: 'User', id: string, displayName: string, createdAt: string };
+export type UserForMeFragment = { __typename?: 'User', id: string, displayName: string };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, displayName: string, createdAt: string } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, displayName: string } };
 
 export type SignUpMutationVariables = Exact<{
   input: SignUpInput;
@@ -72,7 +82,6 @@ export const UserForMeFragmentDoc = gql`
     fragment UserForMe on User {
   id
   displayName
-  createdAt
 }
     `;
 export const MeDocument = gql`

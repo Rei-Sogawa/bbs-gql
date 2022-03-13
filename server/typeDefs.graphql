@@ -3,8 +3,7 @@ scalar DateTime
 type User {
   id: ID!
   displayName: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  topics: [Topic!]!
 }
 
 type Topic {
@@ -13,6 +12,11 @@ type Topic {
   description: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  user: User!
+}
+
+type Query {
+  me: User!
 }
 
 input SignUpInput {
@@ -21,10 +25,12 @@ input SignUpInput {
   password: String!
 }
 
-type Mutation {
-  signUp(input: SignUpInput!): User!
+input CreateTopicInput {
+  title: String!
+  description: String!
 }
 
-type Query {
-  me: User!
+type Mutation {
+  signUp(input: SignUpInput!): User!
+  createTopic(input: CreateTopicInput!): Topic!
 }

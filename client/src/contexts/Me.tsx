@@ -8,7 +8,6 @@ gql`
   fragment UserForMe on User {
     id
     displayName
-    createdAt
   }
 `;
 
@@ -32,7 +31,6 @@ export const Me: VFC<MeProps> = ({ children }) => {
   const { data: meData } = useMeQuery({ skip: !uid });
   if (!uid) return <>{children}</>;
   if (!meData) return null;
-  console.log(meData.me);
   return <MeContext.Provider value={meData.me}>{children}</MeContext.Provider>;
 };
 
