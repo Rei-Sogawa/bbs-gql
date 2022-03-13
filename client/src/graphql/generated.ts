@@ -93,6 +93,15 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'User', id: string, displayName: string } };
 
+export type TopicForTopicDetailFragment = { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
+
+export type TopicQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type TopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+
 export type CreateTopicMutationVariables = Exact<{
   input: CreateTopicInput;
 }>;
@@ -111,6 +120,18 @@ export const UserForMeFragmentDoc = gql`
     fragment UserForMe on User {
   id
   displayName
+}
+    `;
+export const TopicForTopicDetailFragmentDoc = gql`
+    fragment TopicForTopicDetail on Topic {
+  id
+  title
+  description
+  createdAt
+  user {
+    id
+    displayName
+  }
 }
     `;
 export const MeDocument = gql`
@@ -217,6 +238,42 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export const TopicDocument = gql`
+    query Topic($id: ID!) {
+  topic(id: $id) {
+    id
+    ...TopicForTopicDetail
+  }
+}
+    ${TopicForTopicDetailFragmentDoc}`;
+
+/**
+ * __useTopicQuery__
+ *
+ * To run a query within a React component, call `useTopicQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopicQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTopicQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTopicQuery(baseOptions: Apollo.QueryHookOptions<TopicQuery, TopicQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TopicQuery, TopicQueryVariables>(TopicDocument, options);
+      }
+export function useTopicLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopicQuery, TopicQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TopicQuery, TopicQueryVariables>(TopicDocument, options);
+        }
+export type TopicQueryHookResult = ReturnType<typeof useTopicQuery>;
+export type TopicLazyQueryHookResult = ReturnType<typeof useTopicLazyQuery>;
+export type TopicQueryResult = Apollo.QueryResult<TopicQuery, TopicQueryVariables>;
 export const CreateTopicDocument = gql`
     mutation createTopic($input: CreateTopicInput!) {
   createTopic(input: $input) {
