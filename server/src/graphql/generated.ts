@@ -27,7 +27,9 @@ export type CreateTopicInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   createTopic: Topic;
+  deleteTopic: Topic;
   signUp: User;
+  updateTopic: Topic;
 };
 
 
@@ -36,8 +38,19 @@ export type MutationCreateTopicArgs = {
 };
 
 
+export type MutationDeleteTopicArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationSignUpArgs = {
   input: SignUpInput;
+};
+
+
+export type MutationUpdateTopicArgs = {
+  id: Scalars['ID'];
+  input: UpdateTopicInput;
 };
 
 export type Query = {
@@ -66,6 +79,11 @@ export type Topic = {
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
+};
+
+export type UpdateTopicInput = {
+  description: Scalars['String'];
+  title: Scalars['String'];
 };
 
 export type User = {
@@ -154,6 +172,7 @@ export type ResolversTypes = ResolversObject<{
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   Topic: ResolverTypeWrapper<TopicDoc>;
+  UpdateTopicInput: UpdateTopicInput;
   User: ResolverTypeWrapper<UserDoc>;
 }>;
 
@@ -168,6 +187,7 @@ export type ResolversParentTypes = ResolversObject<{
   SignUpInput: SignUpInput;
   String: Scalars['String'];
   Topic: TopicDoc;
+  UpdateTopicInput: UpdateTopicInput;
   User: UserDoc;
 }>;
 
@@ -177,7 +197,9 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationCreateTopicArgs, 'input'>>;
+  deleteTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationDeleteTopicArgs, 'id'>>;
   signUp?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'input'>>;
+  updateTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationUpdateTopicArgs, 'id' | 'input'>>;
 }>;
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{

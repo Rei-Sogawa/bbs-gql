@@ -26,6 +26,11 @@ input CreateTopicInput {
   description: String!
 }
 
+input UpdateTopicInput {
+  title: String!
+  description: String!
+}
+
 type Query {
   me: User!
   topic(id: ID!): Topic!
@@ -35,4 +40,6 @@ type Query {
 type Mutation {
   signUp(input: SignUpInput!): User!
   createTopic(input: CreateTopicInput!): Topic!
+  updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
+  deleteTopic(id: ID!): Topic!
 }

@@ -24,7 +24,9 @@ export type CreateTopicInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   createTopic: Topic;
+  deleteTopic: Topic;
   signUp: User;
+  updateTopic: Topic;
 };
 
 
@@ -33,8 +35,19 @@ export type MutationCreateTopicArgs = {
 };
 
 
+export type MutationDeleteTopicArgs = {
+  id: Scalars['ID'];
+};
+
+
 export type MutationSignUpArgs = {
   input: SignUpInput;
+};
+
+
+export type MutationUpdateTopicArgs = {
+  id: Scalars['ID'];
+  input: UpdateTopicInput;
 };
 
 export type Query = {
@@ -63,6 +76,11 @@ export type Topic = {
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
+};
+
+export type UpdateTopicInput = {
+  description: Scalars['String'];
+  title: Scalars['String'];
 };
 
 export type User = {

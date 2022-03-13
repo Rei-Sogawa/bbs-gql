@@ -10,7 +10,9 @@ scalar DateTime
 
 type Mutation {
   createTopic(input: CreateTopicInput!): Topic!
+  deleteTopic(id: ID!): Topic!
   signUp(input: SignUpInput!): User!
+  updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
 }
 
 type Query {
@@ -32,6 +34,11 @@ type Topic {
   title: String!
   updatedAt: DateTime!
   user: User!
+}
+
+input UpdateTopicInput {
+  description: String!
+  title: String!
 }
 
 type User {
