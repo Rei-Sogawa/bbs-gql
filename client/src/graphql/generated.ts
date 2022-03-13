@@ -62,7 +62,10 @@ export type User = {
   __typename?: 'User';
   displayName: Scalars['String'];
   id: Scalars['ID'];
+  topics: Array<Topic>;
 };
+
+export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
 
 export type UserForMeFragment = { __typename?: 'User', id: string, displayName: string };
 
@@ -78,6 +81,25 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'User', id: string, displayName: string } };
 
+export type CreateTopicMutationVariables = Exact<{
+  input: CreateTopicInput;
+}>;
+
+
+export type CreateTopicMutation = { __typename?: 'Mutation', createTopic: { __typename?: 'Topic', id: string } };
+
+export const TopicItemFragmentDoc = gql`
+    fragment TopicItem on Topic {
+  id
+  title
+  description
+  createdAt
+  user {
+    id
+    displayName
+  }
+}
+    `;
 export const UserForMeFragmentDoc = gql`
     fragment UserForMe on User {
   id
@@ -153,3 +175,36 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export const CreateTopicDocument = gql`
+    mutation createTopic($input: CreateTopicInput!) {
+  createTopic(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateTopicMutationFn = Apollo.MutationFunction<CreateTopicMutation, CreateTopicMutationVariables>;
+
+/**
+ * __useCreateTopicMutation__
+ *
+ * To run a mutation, you first call `useCreateTopicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTopicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTopicMutation, { data, loading, error }] = useCreateTopicMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTopicMutation(baseOptions?: Apollo.MutationHookOptions<CreateTopicMutation, CreateTopicMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTopicMutation, CreateTopicMutationVariables>(CreateTopicDocument, options);
+      }
+export type CreateTopicMutationHookResult = ReturnType<typeof useCreateTopicMutation>;
+export type CreateTopicMutationResult = Apollo.MutationResult<CreateTopicMutation>;
+export type CreateTopicMutationOptions = Apollo.BaseMutationOptions<CreateTopicMutation, CreateTopicMutationVariables>;
