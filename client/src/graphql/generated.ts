@@ -40,6 +40,13 @@ export type MutationSignUpArgs = {
 export type Query = {
   __typename?: 'Query';
   me: User;
+  topic: Topic;
+  topics: Array<Topic>;
+};
+
+
+export type QueryTopicArgs = {
+  id: Scalars['ID'];
 };
 
 export type SignUpInput = {
@@ -86,7 +93,7 @@ export type CreateTopicMutationVariables = Exact<{
 }>;
 
 
-export type CreateTopicMutation = { __typename?: 'Mutation', createTopic: { __typename?: 'Topic', id: string } };
+export type CreateTopicMutation = { __typename?: 'Mutation', createTopic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
 
 export const TopicItemFragmentDoc = gql`
     fragment TopicItem on Topic {
@@ -179,9 +186,10 @@ export const CreateTopicDocument = gql`
     mutation createTopic($input: CreateTopicInput!) {
   createTopic(input: $input) {
     id
+    ...TopicItem
   }
 }
-    `;
+    ${TopicItemFragmentDoc}`;
 export type CreateTopicMutationFn = Apollo.MutationFunction<CreateTopicMutation, CreateTopicMutationVariables>;
 
 /**

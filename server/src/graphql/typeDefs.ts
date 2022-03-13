@@ -15,6 +15,8 @@ type Mutation {
 
 type Query {
   me: User!
+  topic(id: ID!): Topic!
+  topics: [Topic!]!
 }
 
 input SignUpInput {

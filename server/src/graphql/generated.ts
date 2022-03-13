@@ -43,6 +43,13 @@ export type MutationSignUpArgs = {
 export type Query = {
   __typename?: 'Query';
   me: User;
+  topic: Topic;
+  topics: Array<Topic>;
+};
+
+
+export type QueryTopicArgs = {
+  id: Scalars['ID'];
 };
 
 export type SignUpInput = {
@@ -175,6 +182,8 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  topic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<QueryTopicArgs, 'id'>>;
+  topics?: Resolver<Array<ResolversTypes['Topic']>, ParentType, ContextType>;
 }>;
 
 export type TopicResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Topic'] = ResolversParentTypes['Topic']> = ResolversObject<{

@@ -15,10 +15,6 @@ type Topic {
   user: User!
 }
 
-type Query {
-  me: User!
-}
-
 input SignUpInput {
   displayName: String!
   email: String!
@@ -30,10 +26,13 @@ input CreateTopicInput {
   description: String!
 }
 
-type Mutation {
-  signUp(input: SignUpInput!): User!
+type Query {
+  me: User!
+  topic(id: ID!): Topic!
+  topics: [Topic!]!
 }
 
 type Mutation {
+  signUp(input: SignUpInput!): User!
   createTopic(input: CreateTopicInput!): Topic!
 }
