@@ -1,3 +1,4 @@
+import * as admin from "firebase-admin";
 import { compose, omit } from "ramda";
 
 import { getAuth } from "../../firebase-app";
@@ -26,14 +27,14 @@ export const Mutation: Resolvers["Mutation"] = {
     const { topics } = context.dataSources;
 
     const newTopicData = compose(TopicData.parse, TopicData.of)({ title, description, userId: uid });
-    const dRef = await topics.ref().add(newTopicData);
+    const { id } = await topics.ref().add(newTopicData);
 
-    return topics.findOne((ref) => ref().doc(dRef.id));
+    return topics.findOne((ref) => ref().doc(id));
   },
   updateTopic: async (_parent, args, context) => {
     isLoggedIn(context);
 
-    const id = args.id;
+    const { id } = args;
     const { title, description } = args.input;
     const { uid } = context;
     const { topics } = context.dataSources;
@@ -41,7 +42,8 @@ export const Mutation: Resolvers["Mutation"] = {
     const topicDoc = await topics.findOne((ref) => ref().doc(id));
     if (topicDoc.userId !== uid) throw new Error("Cannot write topic");
 
-    const editTopicData = TopicData.parse(omit(["id"], { ...topicDoc, title, description }));
+    const editTopicData = omit(["id"], { ...topicDoc, title, description, updatedAt: admin.firestore.Timestamp.now() });
+    TopicData.parse(editTopicData);
     await topics.ref().doc(id).set(editTopicData);
     topics.deleteFromCache((ref) => ref().doc(id));
 
