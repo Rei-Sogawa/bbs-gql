@@ -24,7 +24,7 @@ export const TopicItem = ({ topic }: TopicItemProps) => {
       <Link to={routes["/topics/:topicId"].path({ topicId: topic.id })} className="link link-primary">
         <AppHeading>{topic.title}</AppHeading>
       </Link>
-      <div className="text-gray-500">{format(new Date(topic.createdAt), "yyyy-MM-dd HH:mm")}</div>
+      <div className="text-gray-500 text-sm">{format(new Date(topic.createdAt), "yyyy-MM-dd HH:mm")}</div>
     </div>
   );
 };

@@ -1,11 +1,13 @@
 import { gql } from "@apollo/client";
 import { VFC } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { AppContainer } from "../../components/AppContainer";
 import { AppHeading } from "../../components/AppHeading";
 import { AppLayout } from "../../components/AppLayout";
 import { TopicForm, TopicFormProps } from "../../components/TopicForm";
 import { useCreateTopicMutation } from "../../graphql/generated";
+import { routes } from "../../routes";
 
 gql`
   mutation createTopic($input: CreateTopicInput!) {
@@ -17,11 +19,15 @@ gql`
 `;
 
 export const TopicNew: VFC = () => {
+  const navigate = useNavigate();
+
   const initialValues: TopicFormProps["initialValues"] = { title: "", description: "" };
 
   const [createTopic] = useCreateTopicMutation();
   const onSubmit: TopicFormProps["onSubmit"] = async (v) => {
-    const res = await createTopic({ variables: { input: v } });
+    const { data } = await createTopic({ variables: { input: v } });
+    if (!data) return;
+    navigate(routes["/topics/:topicId"].path({ topicId: data.createTopic.id }));
   };
 
   return (

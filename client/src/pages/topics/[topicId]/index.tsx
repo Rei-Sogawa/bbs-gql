@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 import { format } from "date-fns";
 import { Link, useParams } from "react-router-dom";
 
+import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
 import { TopicForTopicDetailFragment, useTopicQuery } from "../../../graphql/generated";
 import { routes } from "../../../routes";
@@ -27,10 +28,10 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
   return (
     <div className="card border">
       <div className="card-body">
-        <div className="card-title">{topic.title}</div>
-        <div className="flex space-x-4">
+        <AppHeading>{topic.title}</AppHeading>
+        <div className="flex space-x-4 items-center">
           <div className="font-bold">{topic.user.displayName}</div>
-          <div className="text-gray-500">{format(new Date(topic.createdAt), "yyyy/MM/dd HH:mm")}</div>
+          <div className="text-gray-500 text-sm">{format(new Date(topic.createdAt), "yyyy/MM/dd HH:mm")}</div>
         </div>
         <div>{topic.description}</div>
       </div>
@@ -57,7 +58,9 @@ export const Topic = () => {
       <div className="w-screen-md mx-auto my-6">
         {topic && (
           <div className="flex flex-col">
-            <div className="text-lg font-bold text-center">{topic.title}</div>
+            <div className="text-center">
+              <AppHeading>{topic.title}</AppHeading>
+            </div>
             <div className="text-sm breadcrumbs">
               <ul>
                 <li>

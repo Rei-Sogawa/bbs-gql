@@ -25,7 +25,7 @@ export const Index: VFC = () => {
       <AppContainer size="md">
         <div className="flex flex-col space-y-2">
           <div className="text-center">
-            <AppHeading>Index Page!</AppHeading>
+            <AppHeading>Topics!</AppHeading>
           </div>
           <div>
             {topics &&
