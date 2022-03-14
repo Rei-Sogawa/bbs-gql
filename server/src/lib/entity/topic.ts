@@ -12,7 +12,7 @@ const TopicSchema = z.object({
   userId: z.string().min(1),
 });
 
-type TopicRaw = z.infer<typeof TopicSchema>;
+export type TopicRaw = z.infer<typeof TopicSchema>;
 
 export type TopicRawData = Omit<TopicRaw, "id">;
 

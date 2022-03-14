@@ -10,7 +10,7 @@ const UserSchema = z.object({
   updatedAt: z.instanceof(admin.firestore.Timestamp),
 });
 
-type UserRaw = z.infer<typeof UserSchema>;
+export type UserRaw = z.infer<typeof UserSchema>;
 
 export type UserRawData = Omit<UserRaw, "id">;
 
