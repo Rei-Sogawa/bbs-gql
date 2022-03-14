@@ -12,7 +12,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = await getAuth().createUser({ email, password });
 
     const user = new UserEntity({ id: uid, displayName });
-    return userRepository.update(user.toRaw());
+    return userRepository.create(user.toRawData());
   },
 
   createTopic: async (_parent, args, context) => {

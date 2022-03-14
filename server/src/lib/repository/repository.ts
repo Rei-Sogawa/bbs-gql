@@ -3,6 +3,10 @@ import * as admin from "firebase-admin";
 
 import { createRootCollectionLoader } from "./helper/createLoader";
 
+type Exact<T, R> = T extends R ? (R extends T ? T : never) : never;
+
+type WithId<T> = T & { id: string };
+
 export class RootCollectionRepository<TRawData> {
   ref: admin.firestore.CollectionReference<TRawData>;
   loader: DataLoader<string, TRawData>;
@@ -22,18 +26,18 @@ export class RootCollectionRepository<TRawData> {
     }
   }
 
-  async create(value: TRawData) {
+  async create<Value = TRawData>(value: Exact<Value, TRawData>) {
     const { id } = await this.ref.add(value);
     return { id, ...value };
   }
 
-  async update(value: { id: string } & TRawData) {
+  async update<Value = WithId<TRawData>>(value: Exact<Value, WithId<TRawData>>) {
     await this.ref.doc(value.id).set(value);
     this.deleteCache(value.id);
     return value;
   }
 
-  async delete(value: { id: string } & TRawData) {
+  async delete<Value = WithId<TRawData>>(value: Exact<Value, WithId<TRawData>>) {
     await this.ref.doc(value.id).delete();
     this.deleteCache(value.id);
     return value;
