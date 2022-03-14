@@ -17,9 +17,13 @@ export class RootCollectionRepository<TRawData> {
   }
 
   async findById(id: string) {
+    return this.loader.load(id).then((value) => ({ id, ...value }));
+  }
+
+  async findByIdSafely(id: string) {
     try {
-      const res = await this.loader.load(id);
-      return { id, ...res };
+      const value = await this.loader.load(id);
+      return { id, ...value };
     } catch (e) {
       console.error(e);
       return undefined;

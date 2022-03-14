@@ -35,7 +35,6 @@ export const Mutation: Resolvers["Mutation"] = {
     const { topicRepository } = context.repositories;
 
     const topicRaw = await topicRepository.findById(id);
-    if (!topicRaw) throw new Error("Cannot find topic");
     const topic = new TopicEntity(topicRaw);
     if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
 
@@ -51,7 +50,6 @@ export const Mutation: Resolvers["Mutation"] = {
     const { topicRepository } = context.repositories;
 
     const topicRaw = await topicRepository.findById(id);
-    if (!topicRaw) throw new Error("Cannot find topic");
     const topic = new TopicEntity(topicRaw);
     if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
 
