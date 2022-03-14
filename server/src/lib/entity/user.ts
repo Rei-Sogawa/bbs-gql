@@ -5,7 +5,7 @@ import { Entity } from "./entity";
 
 const UserSchema = z.object({
   id: z.string(),
-  displayName: z.string(),
+  displayName: z.string().min(1),
   createdAt: z.instanceof(admin.firestore.Timestamp),
   updatedAt: z.instanceof(admin.firestore.Timestamp),
 });

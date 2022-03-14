@@ -36,8 +36,8 @@ export class TopicEntity extends Entity<TopicRaw> implements TopicRaw {
     return new TopicEntity(value);
   }
 
-  edit(value: Pick<TopicEntity, "title" | "description">) {
-    Object.assign(this, value);
+  edit(value: Pick<TopicRaw, "title" | "description">) {
+    Object.assign(this, value, { updatedAt: admin.firestore.Timestamp.now() });
   }
 
   isCreatedBy(value: { userId: string }) {
