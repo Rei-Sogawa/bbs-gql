@@ -33,9 +33,10 @@ export class RootCollectionRepository<TRawData> {
     return value;
   }
 
-  async deleteById(id: string) {
-    await this.ref.doc(id).delete();
-    this.deleteCache(id);
+  async delete(value: { id: string } & TRawData) {
+    await this.ref.doc(value.id).delete();
+    this.deleteCache(value.id);
+    return value;
   }
 
   deleteCache(id: string) {

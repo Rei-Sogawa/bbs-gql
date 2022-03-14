@@ -23,7 +23,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const { topicRepository } = context.repositories;
 
     const topic = TopicEntity.new({ title, description, userId: uid });
-    return topicRepository.create(topic.toRaw());
+    return topicRepository.create(topic.toRawData());
   },
 
   updateTopic: async (_parent, args, context) => {
@@ -37,7 +37,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const topicRaw = await topicRepository.findById(id);
     if (!topicRaw) throw new Error("Cannot find topic");
     const topic = new TopicEntity(topicRaw);
-    if (topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
+    if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
 
     topic.edit({ title, description });
     return topicRepository.update(topic.toRaw());
@@ -53,8 +53,8 @@ export const Mutation: Resolvers["Mutation"] = {
     const topicRaw = await topicRepository.findById(id);
     if (!topicRaw) throw new Error("Cannot find topic");
     const topic = new TopicEntity(topicRaw);
-    if (topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
+    if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
 
-    return topicRepository.deleteById(topic.id);
+    return topicRepository.delete(topic.toRaw());
   },
 };
