@@ -7,12 +7,12 @@ export class Entity<Raw> {
 
   toRaw() {
     const { ...props } = this;
-    return props;
+    return props as unknown as Raw;
   }
 
   toRawData() {
     const { ...props } = this;
     const { id: _id, ...data } = props;
-    return data;
+    return data as unknown as Omit<Raw, "id">;
   }
 }

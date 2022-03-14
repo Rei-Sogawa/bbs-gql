@@ -23,6 +23,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const { topicRepository } = context.repositories;
 
     const topic = TopicEntity.new({ title, description, userId: uid });
+    console.log(topic.toRaw());
     return topicRepository.create(topic.toRawData());
   },
 
