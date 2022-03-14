@@ -1,33 +1,46 @@
 import * as admin from "firebase-admin";
 import { z } from "zod";
 
-import { WithId } from "./types";
+import { Entity } from "./entity";
 
-export const TopicDataSchema = z.object({
+const TopicSchema = z.object({
+  id: z.string(),
   title: z.string().min(1),
-  description: z.string(),
+  description: z.string().min(1),
   createdAt: z.instanceof(admin.firestore.Timestamp),
   updatedAt: z.instanceof(admin.firestore.Timestamp),
   userId: z.string().min(1),
 });
 
-export type ITopicData = z.infer<typeof TopicDataSchema>;
+type ITopicSchema = z.infer<typeof TopicSchema>;
 
-export class TopicData {
-  static of(value: Partial<ITopicData> = {}): ITopicData {
-    const defaultValue: ITopicData = {
-      title: "",
-      description: "",
-      createdAt: admin.firestore.Timestamp.now(),
-      updatedAt: admin.firestore.Timestamp.now(),
-      userId: "",
-    };
-    return { ...defaultValue, ...value };
+export type TopicData = Omit<ITopicSchema, "id">;
+
+export class TopicEntity extends Entity implements ITopicSchema {
+  title = "";
+  description = "";
+  createdAt = admin.firestore.Timestamp.now();
+  updatedAt = admin.firestore.Timestamp.now();
+  userId = "";
+
+  validate() {
+    TopicSchema.parse(this.toRaw());
   }
 
-  static parse(value: ITopicData): ITopicData {
-    return TopicDataSchema.parse(value);
+  constructor(value: Partial<TopicEntity>) {
+    super(value);
+    Object.assign(this, value);
+  }
+
+  static new(value: Pick<TopicEntity, "title" | "description" | "userId">) {
+    return new TopicEntity(value);
+  }
+
+  edit(value: Pick<TopicEntity, "title" | "description">) {
+    Object.assign(this, value);
+  }
+
+  isCreatedBy(value: { userId: string }) {
+    return this.userId === value.userId;
   }
 }
-
-export type TopicDoc = WithId<ITopicData>;

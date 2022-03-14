@@ -4,16 +4,17 @@ import { isLoggedIn } from "../../lib/authorization/isLoggedIn";
 export const Query: Resolvers["Query"] = {
   me: (_parent, _args, context) => {
     isLoggedIn(context);
-    const { users } = context.dataSources;
-    return users.findOne((ref) => ref().doc(context.uid));
+    const { uid } = context;
+    const { userRepository } = context.repositories;
+    return userRepository.findById(uid);
   },
   topic: (_parent, args, context) => {
     const { id } = args;
-    const { topics } = context.dataSources;
-    return topics.findOne((ref) => ref().doc(id));
+    const { topicRepository } = context.repositories;
+    return topicRepository.findById(id);
   },
   topics: (_parent, _args, context) => {
-    const { topics } = context.dataSources;
-    return topics.findMany((ref) => ref().orderBy("createdAt", "desc"));
+    const { topicRepository } = context.repositories;
+    return topicRepository.findAll();
   },
 };

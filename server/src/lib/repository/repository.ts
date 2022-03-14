@@ -1,7 +1,7 @@
 import DataLoader from "dataloader";
 import * as admin from "firebase-admin";
 
-import { createRootCollectionLoader } from "./createLoader";
+import { createRootCollectionLoader } from "./helper/createLoader";
 
 export class RootCollectionRepository<TRawData> {
   ref: admin.firestore.CollectionReference<TRawData>;
@@ -15,7 +15,7 @@ export class RootCollectionRepository<TRawData> {
   async findById(id: string) {
     try {
       const res = await this.loader.load(id);
-      return res;
+      return { id, ...res };
     } catch (e) {
       console.error(e);
       return undefined;
@@ -24,12 +24,12 @@ export class RootCollectionRepository<TRawData> {
 
   async create(value: TRawData) {
     const { id } = await this.ref.add(value);
-    return { id };
+    return { id, ...value };
   }
 
-  async update(id: string, value: TRawData) {
-    await this.ref.doc(id).set(value);
-    this.deleteCache(id);
+  async update(value: { id: string } & TRawData) {
+    await this.ref.doc(value.id).set(value);
+    this.deleteCache(value.id);
     return value;
   }
 

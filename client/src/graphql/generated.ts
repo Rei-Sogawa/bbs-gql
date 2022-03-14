@@ -104,6 +104,20 @@ export type TopicsForIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type TopicsForIndexQuery = { __typename?: 'Query', topics: Array<{ __typename?: 'Topic', id: string, title: string, createdAt: string }> };
 
+export type TopicForTopicQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type TopicForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+
+export type TopicForTopicEditQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type TopicForTopicEditQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, user: { __typename?: 'User', id: string } } };
+
 export type CreateTopicMutationVariables = Exact<{
   input: CreateTopicInput;
 }>;
@@ -135,21 +149,7 @@ export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: '
 
 export type TopicForTopicEditFragment = { __typename?: 'Topic', id: string, title: string, description: string, user: { __typename?: 'User', id: string } };
 
-export type TopicForTopicEditQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type TopicForTopicEditQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, user: { __typename?: 'User', id: string } } };
-
 export type TopicForTopicDetailFragment = { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
-
-export type TopicForTopicQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type TopicForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
 
 export const TopicItemFragmentDoc = gql`
     fragment TopicItem on Topic {
@@ -256,6 +256,78 @@ export function useTopicsForIndexLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type TopicsForIndexQueryHookResult = ReturnType<typeof useTopicsForIndexQuery>;
 export type TopicsForIndexLazyQueryHookResult = ReturnType<typeof useTopicsForIndexLazyQuery>;
 export type TopicsForIndexQueryResult = Apollo.QueryResult<TopicsForIndexQuery, TopicsForIndexQueryVariables>;
+export const TopicForTopicDocument = gql`
+    query TopicForTopic($id: ID!) {
+  topic(id: $id) {
+    id
+    ...TopicForTopicDetail
+  }
+}
+    ${TopicForTopicDetailFragmentDoc}`;
+
+/**
+ * __useTopicForTopicQuery__
+ *
+ * To run a query within a React component, call `useTopicForTopicQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopicForTopicQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTopicForTopicQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTopicForTopicQuery(baseOptions: Apollo.QueryHookOptions<TopicForTopicQuery, TopicForTopicQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TopicForTopicQuery, TopicForTopicQueryVariables>(TopicForTopicDocument, options);
+      }
+export function useTopicForTopicLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopicForTopicQuery, TopicForTopicQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TopicForTopicQuery, TopicForTopicQueryVariables>(TopicForTopicDocument, options);
+        }
+export type TopicForTopicQueryHookResult = ReturnType<typeof useTopicForTopicQuery>;
+export type TopicForTopicLazyQueryHookResult = ReturnType<typeof useTopicForTopicLazyQuery>;
+export type TopicForTopicQueryResult = Apollo.QueryResult<TopicForTopicQuery, TopicForTopicQueryVariables>;
+export const TopicForTopicEditDocument = gql`
+    query TopicForTopicEdit($id: ID!) {
+  topic(id: $id) {
+    id
+    ...TopicForTopicEdit
+  }
+}
+    ${TopicForTopicEditFragmentDoc}`;
+
+/**
+ * __useTopicForTopicEditQuery__
+ *
+ * To run a query within a React component, call `useTopicForTopicEditQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopicForTopicEditQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTopicForTopicEditQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTopicForTopicEditQuery(baseOptions: Apollo.QueryHookOptions<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>(TopicForTopicEditDocument, options);
+      }
+export function useTopicForTopicEditLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>(TopicForTopicEditDocument, options);
+        }
+export type TopicForTopicEditQueryHookResult = ReturnType<typeof useTopicForTopicEditQuery>;
+export type TopicForTopicEditLazyQueryHookResult = ReturnType<typeof useTopicForTopicEditLazyQuery>;
+export type TopicForTopicEditQueryResult = Apollo.QueryResult<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>;
 export const CreateTopicDocument = gql`
     mutation CreateTopic($input: CreateTopicInput!) {
   createTopic(input: $input) {
@@ -393,75 +465,3 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
-export const TopicForTopicEditDocument = gql`
-    query TopicForTopicEdit($id: ID!) {
-  topic(id: $id) {
-    id
-    ...TopicForTopicEdit
-  }
-}
-    ${TopicForTopicEditFragmentDoc}`;
-
-/**
- * __useTopicForTopicEditQuery__
- *
- * To run a query within a React component, call `useTopicForTopicEditQuery` and pass it any options that fit your needs.
- * When your component renders, `useTopicForTopicEditQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTopicForTopicEditQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useTopicForTopicEditQuery(baseOptions: Apollo.QueryHookOptions<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>(TopicForTopicEditDocument, options);
-      }
-export function useTopicForTopicEditLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>(TopicForTopicEditDocument, options);
-        }
-export type TopicForTopicEditQueryHookResult = ReturnType<typeof useTopicForTopicEditQuery>;
-export type TopicForTopicEditLazyQueryHookResult = ReturnType<typeof useTopicForTopicEditLazyQuery>;
-export type TopicForTopicEditQueryResult = Apollo.QueryResult<TopicForTopicEditQuery, TopicForTopicEditQueryVariables>;
-export const TopicForTopicDocument = gql`
-    query TopicForTopic($id: ID!) {
-  topic(id: $id) {
-    id
-    ...TopicForTopicDetail
-  }
-}
-    ${TopicForTopicDetailFragmentDoc}`;
-
-/**
- * __useTopicForTopicQuery__
- *
- * To run a query within a React component, call `useTopicForTopicQuery` and pass it any options that fit your needs.
- * When your component renders, `useTopicForTopicQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTopicForTopicQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useTopicForTopicQuery(baseOptions: Apollo.QueryHookOptions<TopicForTopicQuery, TopicForTopicQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TopicForTopicQuery, TopicForTopicQueryVariables>(TopicForTopicDocument, options);
-      }
-export function useTopicForTopicLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopicForTopicQuery, TopicForTopicQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TopicForTopicQuery, TopicForTopicQueryVariables>(TopicForTopicDocument, options);
-        }
-export type TopicForTopicQueryHookResult = ReturnType<typeof useTopicForTopicQuery>;
-export type TopicForTopicLazyQueryHookResult = ReturnType<typeof useTopicForTopicLazyQuery>;
-export type TopicForTopicQueryResult = Apollo.QueryResult<TopicForTopicQuery, TopicForTopicQueryVariables>;

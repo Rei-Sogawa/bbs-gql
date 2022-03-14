@@ -1,29 +1,34 @@
 import * as admin from "firebase-admin";
 import { z } from "zod";
 
-import { WithId } from "./types";
+import { Entity } from "./entity";
 
-export const UserDataSchema = z.object({
-  displayName: z.string().min(1),
+const UserSchema = z.object({
+  id: z.string(),
+  displayName: z.string(),
   createdAt: z.instanceof(admin.firestore.Timestamp),
   updatedAt: z.instanceof(admin.firestore.Timestamp),
 });
 
-export type IUserData = z.infer<typeof UserDataSchema>;
+type IUserSchema = z.infer<typeof UserSchema>;
 
-export class UserData {
-  static of(value: Partial<IUserData> = {}): IUserData {
-    const defaultValue: IUserData = {
-      displayName: "",
-      createdAt: admin.firestore.Timestamp.now(),
-      updatedAt: admin.firestore.Timestamp.now(),
-    };
-    return { ...defaultValue, ...value };
+export type UserData = Omit<IUserSchema, "id">;
+
+export class UserEntity extends Entity implements IUserSchema {
+  displayName = "";
+  createdAt = admin.firestore.Timestamp.now();
+  updatedAt = admin.firestore.Timestamp.now();
+
+  validate() {
+    UserSchema.parse(this.toRaw());
   }
 
-  static parse(value: IUserData): IUserData {
-    return UserDataSchema.parse(value);
+  constructor(value: Partial<UserEntity>) {
+    super(value);
+    Object.assign(this, value);
+  }
+
+  static new(value: Pick<UserEntity, "displayName">) {
+    return new UserEntity(value);
   }
 }
-
-export type UserDoc = WithId<IUserData>;

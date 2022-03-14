@@ -1,7 +1,7 @@
 import { Config, ExpressContext } from "apollo-server-express";
 
 import { getAuth, getDb } from "./firebase-app";
-import { createRepositories, Repositories } from "./lib/_repository/index";
+import { createRepositories, Repositories } from "./lib/repository/index";
 
 export type ServerContext = {
   uid?: string;

@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { UserDoc } from '../lib/entity/user';
-import { TopicDoc } from '../lib/entity/topic';
+import { IUserSchema } from '../lib/entity/user';
+import { ITopicSchema } from '../lib/entity/topic';
 import { Context } from '../context';
 import * as admin from 'firebase-admin'
 export type Maybe<T> = T | null;
@@ -171,9 +171,9 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Topic: ResolverTypeWrapper<TopicDoc>;
+  Topic: ResolverTypeWrapper<ITopicSchema>;
   UpdateTopicInput: UpdateTopicInput;
-  User: ResolverTypeWrapper<UserDoc>;
+  User: ResolverTypeWrapper<IUserSchema>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -186,9 +186,9 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   SignUpInput: SignUpInput;
   String: Scalars['String'];
-  Topic: TopicDoc;
+  Topic: ITopicSchema;
   UpdateTopicInput: UpdateTopicInput;
-  User: UserDoc;
+  User: IUserSchema;
 }>;
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {

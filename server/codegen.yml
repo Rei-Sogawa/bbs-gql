@@ -14,8 +14,8 @@ generates:
       scalars:
         DateTime: admin.firestore.Timestamp
       mappers:
-        User: ../lib/entity/user#UserDoc
-        Topic: ../lib/entity/topic#TopicDoc
+        User: ../lib/entity/user#IUserSchema
+        Topic: ../lib/entity/topic#ITopicSchema
   src/graphql/typeDefs.ts:
     plugins:
       - "typescript-type-defs.js"

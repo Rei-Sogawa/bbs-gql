@@ -4,7 +4,6 @@ import expressPlayground from "graphql-playground-middleware-express";
 
 import { serverContext } from "./context";
 import { typeDefs } from "./graphql/typeDefs";
-import { dataSources } from "./lib/datasource/index";
 import { resolvers } from "./resolvers";
 
 async function start() {
@@ -13,7 +12,6 @@ async function start() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    dataSources,
     context: serverContext,
   });
 
