@@ -10,11 +10,11 @@ const UserSchema = z.object({
   updatedAt: z.instanceof(admin.firestore.Timestamp),
 });
 
-type IUserSchema = z.infer<typeof UserSchema>;
+type UserRaw = z.infer<typeof UserSchema>;
 
-export type UserData = Omit<IUserSchema, "id">;
+export type UserRawData = Omit<UserRaw, "id">;
 
-export class UserEntity extends Entity implements IUserSchema {
+export class UserEntity extends Entity<UserRaw> implements UserRaw {
   displayName = "";
   createdAt = admin.firestore.Timestamp.now();
   updatedAt = admin.firestore.Timestamp.now();
@@ -23,12 +23,12 @@ export class UserEntity extends Entity implements IUserSchema {
     UserSchema.parse(this.toRaw());
   }
 
-  constructor(value: Partial<UserEntity>) {
+  constructor(value: Partial<UserRaw>) {
     super(value);
     Object.assign(this, value);
   }
 
-  static new(value: Pick<UserEntity, "displayName">) {
+  static new(value: Pick<UserRaw, "displayName">) {
     return new UserEntity(value);
   }
 }

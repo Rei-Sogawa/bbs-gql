@@ -12,11 +12,11 @@ const TopicSchema = z.object({
   userId: z.string().min(1),
 });
 
-type ITopicSchema = z.infer<typeof TopicSchema>;
+type TopicRaw = z.infer<typeof TopicSchema>;
 
-export type TopicData = Omit<ITopicSchema, "id">;
+export type TopicRawData = Omit<TopicRaw, "id">;
 
-export class TopicEntity extends Entity implements ITopicSchema {
+export class TopicEntity extends Entity<TopicRaw> implements TopicRaw {
   title = "";
   description = "";
   createdAt = admin.firestore.Timestamp.now();

@@ -1,7 +1,7 @@
-export class Entity {
+export class Entity<Raw> {
   id = "";
 
-  constructor(value: Partial<Entity>) {
+  constructor(value: Partial<Raw>) {
     Object.assign(this, value);
   }
 
