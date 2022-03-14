@@ -27,12 +27,12 @@ export class TopicEntity extends Entity<TopicRaw> implements TopicRaw {
     TopicSchema.parse(this.toRaw());
   }
 
-  constructor(value: Partial<TopicEntity>) {
+  constructor(value: Partial<TopicRaw>) {
     super(value);
     Object.assign(this, value);
   }
 
-  static new(value: Pick<TopicEntity, "title" | "description" | "userId">) {
+  static new(value: Pick<TopicRaw, "title" | "description" | "userId">) {
     return new TopicEntity(value);
   }
 
