@@ -28,7 +28,7 @@ export class UserEntity extends Entity<UserRaw> implements UserRaw {
     Object.assign(this, value);
   }
 
-  static new(value: Pick<UserRaw, "displayName">) {
+  static new(value: Pick<UserRaw, "id" | "displayName">) {
     return new UserEntity(value);
   }
 }

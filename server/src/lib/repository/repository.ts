@@ -35,6 +35,10 @@ export class RootCollectionRepository<TRawData> {
     return { id, ...value };
   }
 
+  async createWithId<Value = WithId<TRawData>>(value: Exact<Value, WithId<TRawData>>) {
+    return this.update(value);
+  }
+
   async update<Value = WithId<TRawData>>(value: Exact<Value, WithId<TRawData>>) {
     await this.ref.doc(value.id).set(value);
     this.deleteCache(value.id);
