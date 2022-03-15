@@ -7,7 +7,7 @@
     "build": "rimraf dist && tsc",
     "start": "node dist/src/index.js",
     "dev": "ts-node-dev --respawn src/index",
-    "emu": "firebase emulators:start --only auth,firestore",
+    "emu": "firebase emulators:start --only auth,firestore --import=./emulators-export --export-on-exit",
     "gql": "graphql-codegen --config codegen.yml",
     "test": "jest --detectOpenHandles"
   },
