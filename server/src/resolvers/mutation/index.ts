@@ -12,7 +12,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = await getAuth().createUser({ email, password });
 
     const user = UserEntity.new({ id: uid, displayName });
-    return userRepository.createWithId(user.toRaw());
+    return userRepository.create(user).then((res) => res.toRaw());
   },
 
   createTopic: async (_parent, args, context) => {
@@ -23,7 +23,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const { topicRepository } = context.repositories;
 
     const topic = TopicEntity.new({ title, description, userId: uid });
-    return topicRepository.create(topic.toRawData());
+    return topicRepository.create(topic).then((res) => res.toRaw());
   },
 
   updateTopic: async (_parent, args, context) => {
@@ -34,12 +34,11 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicRepository } = context.repositories;
 
-    const topicRaw = await topicRepository.findById(id);
-    const topic = new TopicEntity(topicRaw);
+    const topic = await topicRepository.findById(id);
     if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
 
     topic.edit({ title, description });
-    return topicRepository.update(topic.toRaw());
+    return topicRepository.update(topic).then((res) => res.toRaw());
   },
 
   deleteTopic: async (_parent, args, context) => {
@@ -49,10 +48,9 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicRepository } = context.repositories;
 
-    const topicRaw = await topicRepository.findById(id);
-    const topic = new TopicEntity(topicRaw);
+    const topic = await topicRepository.findById(id);
     if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
 
-    return topicRepository.delete(topic.toRaw());
+    return topicRepository.delete(topic).then((res) => res.toRaw());
   },
 };

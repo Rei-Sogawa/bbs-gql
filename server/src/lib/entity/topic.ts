@@ -16,24 +16,31 @@ export type TopicRaw = z.infer<typeof TopicSchema>;
 
 export type TopicRawData = Omit<TopicRaw, "id">;
 
-export class TopicEntity extends Entity<TopicRaw> implements TopicRaw {
+export class TopicEntity extends Entity<TopicRaw> {
+  static new(value: Pick<TopicRaw, "title" | "description" | "userId">) {
+    return new TopicEntity(value);
+  }
+
+  id = "";
   title = "";
   description = "";
   createdAt = admin.firestore.Timestamp.now();
   updatedAt = admin.firestore.Timestamp.now();
   userId = "";
 
-  validate() {
-    TopicSchema.parse(this.toRaw());
-  }
-
   constructor(value: Partial<TopicRaw>) {
-    super(value);
+    super();
     Object.assign(this, value);
   }
 
-  static new(value: Pick<TopicRaw, "title" | "description" | "userId">) {
-    return new TopicEntity(value);
+  toRaw() {
+    const { ...raw } = this;
+    return raw;
+  }
+
+  toRawData() {
+    const { id, ...rawData } = this;
+    return rawData;
   }
 
   edit(value: Pick<TopicRaw, "title" | "description">) {

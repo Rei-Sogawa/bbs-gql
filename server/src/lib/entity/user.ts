@@ -14,21 +14,28 @@ export type UserRaw = z.infer<typeof UserSchema>;
 
 export type UserRawData = Omit<UserRaw, "id">;
 
-export class UserEntity extends Entity<UserRaw> implements UserRaw {
+export class UserEntity extends Entity<UserRaw> {
+  static new(value: Pick<UserRaw, "id" | "displayName">) {
+    return new UserEntity(value);
+  }
+
+  id = "";
   displayName = "";
   createdAt = admin.firestore.Timestamp.now();
   updatedAt = admin.firestore.Timestamp.now();
 
-  validate() {
-    UserSchema.parse(this.toRaw());
-  }
-
   constructor(value: Partial<UserRaw>) {
-    super(value);
+    super();
     Object.assign(this, value);
   }
 
-  static new(value: Pick<UserRaw, "id" | "displayName">) {
-    return new UserEntity(value);
+  toRaw() {
+    const { ...raw } = this;
+    return raw;
+  }
+
+  toRawData() {
+    const { id, ...rawData } = this;
+    return rawData;
   }
 }
