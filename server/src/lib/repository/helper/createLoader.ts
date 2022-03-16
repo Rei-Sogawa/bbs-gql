@@ -1,8 +1,9 @@
 import DataLoader from "dataloader";
 import * as admin from "firebase-admin";
 
-export const createRootCollectionLoader = <Data>(ref: admin.firestore.CollectionReference<Data>) => {
-  return new DataLoader<string, Data & { id: string }>((keys) =>
+export type RootCollectionLoader<IData> = DataLoader<string, IData & { id: string }>;
+export const createRootCollectionLoader = <IData>(ref: admin.firestore.CollectionReference<IData>) => {
+  return new DataLoader<string, IData & { id: string }>((keys) =>
     Promise.all(
       keys.map(async (id) => {
         const dSnap = await ref.doc(id).get();
@@ -14,10 +15,11 @@ export const createRootCollectionLoader = <Data>(ref: admin.firestore.Collection
   );
 };
 
-export const createSubCollectionLoader = <Data, Key extends { id: string }>(
-  ref: (params: Omit<Key, "id">) => admin.firestore.CollectionReference<Data>
+export type SubCollectionLoader<IData, Key extends { id: string }> = DataLoader<Key, IData & { id: string }>;
+export const createSubCollectionLoader = <IData, Key extends { id: string }>(
+  ref: (params: Omit<Key, "id">) => admin.firestore.CollectionReference<IData>
 ) => {
-  return new DataLoader<Key, Data & { id: string }>((keys) =>
+  return new DataLoader<Key, IData & { id: string }>((keys) =>
     Promise.all(
       keys.map(async (key) => {
         const { id, ...params } = key;
