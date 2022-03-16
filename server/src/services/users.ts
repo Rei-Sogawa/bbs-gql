@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { curry, omit, pipe } from "ramda";
+import { curry, insert, omit, pipe } from "ramda";
 import { z } from "zod";
 
 import { createRootCollectionLoader, RootCollectionLoader } from "./../lib/repository/helper/createLoader";
@@ -26,37 +26,22 @@ const of = (value: Partial<IUser>) => ({
   ...value,
 });
 
-const createForSignUp: (value: Pick<IUser, "id" | "displayName">) => IUser = pipe(of, schema.parse);
+const create: (value: Pick<IUser, "id" | "displayName">) => IUser = pipe(of, schema.parse);
 
 export const UserEntity = {
-  createForSignUp,
+  create,
 };
 
 // Repository
 type UsersRef = admin.firestore.CollectionReference<IUserDate>;
 type UsersLoader = RootCollectionLoader<IUserDate>;
 
-const createRef = (db: admin.firestore.Firestore) => {
-  const converter = createTypedConverter<IUserDate>();
-  return db.collection("users").withConverter(converter);
-};
-const createLoader = (db: admin.firestore.Firestore) => {
-  const ref = createRef(db);
-  const loader = createRootCollectionLoader(ref);
-  return loader;
-};
+const converter = createTypedConverter<IUserDate>();
+const createRef = (db: admin.firestore.Firestore) => db.collection("users").withConverter(converter);
+const createLoader = (db: admin.firestore.Firestore) => pipe(createRef, createRootCollectionLoader)(db);
 
-const findById = curry((loader: UsersLoader, id: string) => loader.load(id));
-const insert = curry(async (ref: UsersRef, user: IUser) => {
-  const userData = omit(["id"], user);
-  if (user.id) {
-    await ref.doc(user.id).set(userData);
-    return user;
-  } else {
-    const { id } = await ref.add(userData);
-    return { ...user, id };
-  }
-});
+const get = curry((loader: UsersLoader, id: string) => loader.load(id));
+const set = curry(async (ref: UsersRef, user: IUser) => ref.doc(user.id).set(omit(["id"], user)));
 
 export const UserRepository = {
   of(db: admin.firestore.Firestore) {
@@ -64,8 +49,8 @@ export const UserRepository = {
     const loader = createLoader(db);
 
     return {
-      findById: findById(loader),
-      insert: insert(ref),
+      get: get(loader),
+      set: set(ref),
     };
   },
 };
