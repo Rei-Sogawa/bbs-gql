@@ -1,8 +1,7 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { UserRaw } from '../lib/entity/user';
-import { TopicRaw } from '../lib/entity/topic';
+import { __User__ } from '../lib/entity/user';
+import { __Topic__ } from '../lib/entity/topic';
 import { Context } from '../context';
-import * as admin from 'firebase-admin'
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -16,7 +15,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  DateTime: admin.firestore.Timestamp;
+  DateTime: Date;
 };
 
 export type CreateTopicInput = {
@@ -171,9 +170,9 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Topic: ResolverTypeWrapper<TopicRaw>;
+  Topic: ResolverTypeWrapper<__Topic__>;
   UpdateTopicInput: UpdateTopicInput;
-  User: ResolverTypeWrapper<UserRaw>;
+  User: ResolverTypeWrapper<__User__>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -186,9 +185,9 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   SignUpInput: SignUpInput;
   String: Scalars['String'];
-  Topic: TopicRaw;
+  Topic: __Topic__;
   UpdateTopicInput: UpdateTopicInput;
-  User: UserRaw;
+  User: __User__;
 }>;
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {

@@ -1,7 +1,7 @@
 import { GraphQLScalarType, Kind, ValueNode } from "graphql";
 
-// NOTE: incoming (parseValue) : string -> Timestamp
-//       outgoing (serialize)  : Timestamp -> string
+// NOTE: incoming (parseValue) : string -> Date
+//       outgoing (serialize)  : Date -> string
 export const DateTime = new GraphQLScalarType({
   name: "DateTime",
   description: "A valid date time value.",

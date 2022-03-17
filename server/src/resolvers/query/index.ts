@@ -14,7 +14,6 @@ export const Query: Resolvers["Query"] = {
   topic: (_parent, args, context) => {
     const { id } = args;
     const { TopicRepository } = context.repositories;
-
     return TopicRepository.get(id);
   },
 
