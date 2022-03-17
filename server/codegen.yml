@@ -5,17 +5,15 @@ generates:
     plugins:
       - "typescript"
       - "typescript-resolvers"
-      - add:
-          content: "import * as admin from 'firebase-admin'"
     config:
       useIndexSignature: true
       enumsAsConst: true
       contextType: ../context#Context
       scalars:
-        DateTime: admin.firestore.Timestamp
+        DateTime: Date
       mappers:
-        User: ../lib/entity/user#UserRaw
-        Topic: ../lib/entity/topic#TopicRaw
+        User: ../lib/entity/user#__User__
+        Topic: ../lib/entity/topic#__Topic__
   src/graphql/typeDefs.ts:
     plugins:
       - "typescript-type-defs.js"

@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase-admin/firestore";
 import { GraphQLScalarType, Kind, ValueNode } from "graphql";
 
 // NOTE: incoming (parseValue) : string -> Timestamp
@@ -8,19 +7,19 @@ export const DateTime = new GraphQLScalarType({
   description: "A valid date time value.",
   parseValue(value) {
     if (typeof value !== "string") throw new Error("DateTime parseValue failed");
-    return Timestamp.fromDate(new Date(value));
+    return new Date(value);
   },
   parseLiteral(ast: ValueNode) {
     switch (ast.kind) {
       case Kind.STRING:
-        return Timestamp.fromDate(new Date(ast.value));
+        return new Date(ast.value);
       default:
         return null;
     }
   },
   serialize(value) {
-    if (value instanceof Timestamp) {
-      return value.toDate().toISOString();
+    if (value instanceof Date) {
+      return value.toISOString();
     }
     throw new Error("DateTime serialize failed");
   },

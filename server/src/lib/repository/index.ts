@@ -1,11 +1,11 @@
 import * as admin from "firebase-admin";
 
-import { TopicRepository } from "./topic";
-import { UserRepository } from "./user";
+import { UserData } from "../entity/user";
+import { createTimestampConverter } from "./helper/createConverter";
 
-export const createRepositories = (db: admin.firestore.Firestore) => ({
-  userRepository: new UserRepository(db),
-  topicRepository: new TopicRepository(db),
-});
+export const createRepositories = (db: admin.firestore.Firestore) => {
+  const usersRef = db.collection("users").withConverter(createTimestampConverter<UserData>());
+  const topicsRef = db.collection("topics").withConverter(createTimestampConverter<TopicData>());
+};
 
 export type Repositories = ReturnType<typeof createRepositories>;

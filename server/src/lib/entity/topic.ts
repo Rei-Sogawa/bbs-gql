@@ -1,53 +1,45 @@
-import * as admin from "firebase-admin";
+import { mergeLeft, pipe } from "ramda";
 import { z } from "zod";
 
-import { Entity } from "./entity";
+const Topic = z
+  .object({
+    id: z.string(),
+    title: z.string().min(1),
+    description: z.string().min(1),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    userId: z.string().min(1),
+  })
+  .strict();
 
-const TopicSchema = z.object({
-  id: z.string(),
-  title: z.string().min(1),
-  description: z.string().min(1),
-  createdAt: z.instanceof(admin.firestore.Timestamp),
-  updatedAt: z.instanceof(admin.firestore.Timestamp),
-  userId: z.string().min(1),
+type Topic = z.infer<typeof Topic>;
+export type __Topic = Topic;
+export type TopicData = Omit<Topic, "id">;
+
+const of = (value: Partial<Topic>): Topic => ({
+  id: "",
+  title: "",
+  description: "",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  userId: "",
+  ...value,
 });
 
-export type TopicRaw = z.infer<typeof TopicSchema>;
+type CreateInput = Pick<Topic, "title" | "description">;
+export const create: ({ title, description }: CreateInput) => Topic = pipe(of, Topic.parse);
 
-export type TopicRawData = Omit<TopicRaw, "id">;
+type EditInput = Pick<Topic, "title" | "description">;
+export const edit: ({ title, description }: EditInput) => Topic = pipe(
+  mergeLeft({ updatedAt: new Date() }),
+  of,
+  Topic.parse
+);
 
-export class TopicEntity extends Entity<TopicRaw> {
-  static new(value: Pick<TopicRaw, "title" | "description" | "userId">) {
-    return new TopicEntity(value);
-  }
+export const isCreatedBy = (topic: Topic, { userId }: { userId: string }) => topic.id === userId;
 
-  id = "";
-  title = "";
-  description = "";
-  createdAt = admin.firestore.Timestamp.now();
-  updatedAt = admin.firestore.Timestamp.now();
-  userId = "";
-
-  constructor(value: Partial<TopicRaw>) {
-    super();
-    Object.assign(this, value);
-  }
-
-  toRaw() {
-    const { ...raw } = this;
-    return raw;
-  }
-
-  toRawData() {
-    const { id, ...rawData } = this;
-    return rawData;
-  }
-
-  edit(value: Pick<TopicRaw, "title" | "description">) {
-    Object.assign(this, value, { updatedAt: admin.firestore.Timestamp.now() });
-  }
-
-  isCreatedBy(value: { userId: string }) {
-    return this.userId === value.userId;
-  }
-}
+export const TopicEntity = {
+  create,
+  edit,
+  isCreatedBy,
+};

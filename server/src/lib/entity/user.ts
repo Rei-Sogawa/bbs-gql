@@ -1,41 +1,30 @@
-import * as admin from "firebase-admin";
+import { pipe } from "ramda";
 import { z } from "zod";
 
-import { Entity } from "./entity";
+const User = z
+  .object({
+    id: z.string(),
+    displayName: z.string().min(1),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+  })
+  .strict();
 
-const UserSchema = z.object({
-  id: z.string(),
-  displayName: z.string().min(1),
-  createdAt: z.instanceof(admin.firestore.Timestamp),
-  updatedAt: z.instanceof(admin.firestore.Timestamp),
+type User = z.infer<typeof User>;
+export type __User__ = User;
+export type UserData = Omit<User, "id">;
+
+const of = (value: Partial<User>): User => ({
+  id: "",
+  displayName: "",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  ...value,
 });
 
-export type UserRaw = z.infer<typeof UserSchema>;
+type CreateInput = Pick<User, "id" | "displayName">;
+export const create: ({ id, displayName }: CreateInput) => User = pipe(of, User.parse);
 
-export type UserRawData = Omit<UserRaw, "id">;
-
-export class UserEntity extends Entity<UserRaw> {
-  static new(value: Pick<UserRaw, "id" | "displayName">) {
-    return new UserEntity(value);
-  }
-
-  id = "";
-  displayName = "";
-  createdAt = admin.firestore.Timestamp.now();
-  updatedAt = admin.firestore.Timestamp.now();
-
-  constructor(value: Partial<UserRaw>) {
-    super();
-    Object.assign(this, value);
-  }
-
-  toRaw() {
-    const { ...raw } = this;
-    return raw;
-  }
-
-  toRawData() {
-    const { id, ...rawData } = this;
-    return rawData;
-  }
-}
+export const UserEntity = {
+  create,
+};
