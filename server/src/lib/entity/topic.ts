@@ -1,4 +1,4 @@
-import { mergeLeft, pipe } from "ramda";
+import { mergeLeft, mergeRight, pipe } from "ramda";
 import { z } from "zod";
 
 const Topic = z
@@ -30,9 +30,9 @@ type CreateInput = Pick<Topic, "title" | "description" | "userId">;
 export const create: ({ title, description, userId }: CreateInput) => Topic = pipe(of, Topic.parse);
 
 type EditInput = Pick<Topic, "title" | "description">;
-export const edit: ({ title, description }: EditInput) => Topic = pipe(
+export const edit: (topic: Topic, { title, description }: EditInput) => Topic = pipe(
+  mergeRight,
   mergeLeft({ updatedAt: new Date() }),
-  of,
   Topic.parse
 );
 

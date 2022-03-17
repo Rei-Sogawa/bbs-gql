@@ -1,3 +1,5 @@
+import { mergeRight } from "ramda";
+
 import { getAuth } from "../../firebase-app";
 import { Resolvers } from "../../graphql/generated";
 import { isLoggedIn } from "../../lib/authorization/isLoggedIn";
@@ -24,8 +26,8 @@ export const Mutation: Resolvers["Mutation"] = {
     const { TopicRepository } = context.repositories;
 
     const topic = TopicEntity.create({ title, description, userId: uid });
-    await TopicRepository.add(topic);
-    return topic;
+    const { id } = await TopicRepository.add(topic);
+    return mergeRight(topic, { id });
   },
 
   updateTopic: async (_parent, args, context) => {
@@ -39,7 +41,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const topic = await TopicRepository.get(id);
     if (!TopicEntity.isCreatedBy(topic, { userId: uid })) throw new Error("Cannot write topic");
 
-    const editedTopic = TopicEntity.edit({ title, description });
+    const editedTopic = TopicEntity.edit(topic, { title, description });
     await TopicRepository.update(editedTopic);
     return editedTopic;
   },
