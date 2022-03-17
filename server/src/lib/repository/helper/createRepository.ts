@@ -9,10 +9,27 @@ export const createRootCollectionRepository = <Entity extends { id: string }>(
   const loader = createRootCollectionLoader<Omit<Entity, "id">>(ref);
 
   const _get = (id: string) => loader.load(id);
-  const _set = (entity: Entity) => ref.doc(entity.id).set(omit(["id"], entity));
-  const _add = (entity: Entity) => ref.add(omit(["id"], entity));
-  const _update = (entity: Entity) => ref.doc(entity.id).update(omit(["id"], entity));
-  const _delete = (entity: Entity) => ref.doc(entity.id).delete();
+
+  const _set = (entity: Entity) =>
+    ref
+      .doc(entity.id)
+      .set(omit(["id"], entity))
+      .then(() => entity);
+
+  const _add = (entity: Entity) =>
+    ref.add(omit(["id"], entity)).then(() => entity);
+
+  const _update = (entity: Entity) =>
+    ref
+      .doc(entity.id)
+      .update(omit(["id"], entity))
+      .then(() => entity);
+
+  const _delete = (entity: Entity) =>
+    ref
+      .doc(entity.id)
+      .delete()
+      .then(() => entity);
 
   return {
     ref,
