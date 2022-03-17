@@ -3,15 +3,15 @@ import { omit } from "ramda";
 
 import { createRootCollectionLoader } from "./createLoader";
 
-export const createRootCollectionRepository = <Entity extends { id: string }, Data>(
-  ref: admin.firestore.CollectionReference<Data>
+export const createRootCollectionRepository = <Entity extends { id: string }>(
+  ref: admin.firestore.CollectionReference<Omit<Entity, "id">>
 ) => {
-  const loader = createRootCollectionLoader(ref);
+  const loader = createRootCollectionLoader<Omit<Entity, "id">>(ref);
 
-  const _get = loader.load;
-  const _set = (entity: Entity) => ref.doc(entity.id).set(omit(["id"], entity) as unknown as Data);
-  const _add = (entity: Entity) => ref.add(omit(["id"], entity) as unknown as Data);
-  const _update = (entity: Entity) => ref.doc(entity.id).update(omit(["id"], entity) as unknown as Data);
+  const _get = (id: string) => loader.load(id);
+  const _set = (entity: Entity) => ref.doc(entity.id).set(omit(["id"], entity));
+  const _add = (entity: Entity) => ref.add(omit(["id"], entity));
+  const _update = (entity: Entity) => ref.doc(entity.id).update(omit(["id"], entity));
   const _delete = (entity: Entity) => ref.doc(entity.id).delete();
 
   return {

@@ -36,7 +36,7 @@ export const edit: ({ title, description }: EditInput) => Topic = pipe(
   Topic.parse
 );
 
-export const isCreatedBy = (topic: Topic, { userId }: { userId: string }) => topic.id === userId;
+export const isCreatedBy = (topic: Topic, { userId }: { userId: string }) => topic.userId === userId;
 
 export const TopicEntity = {
   create,

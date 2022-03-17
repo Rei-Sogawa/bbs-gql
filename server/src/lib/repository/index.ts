@@ -9,8 +9,8 @@ export const createRepositories = (db: admin.firestore.Firestore) => {
   const usersRef = db.collection("users").withConverter(createTimestampConverter<UserData>());
   const topicsRef = db.collection("topics").withConverter(createTimestampConverter<TopicData>());
 
-  const UserRepository = createRootCollectionRepository<User, UserData>(usersRef);
-  const TopicRepository = createRootCollectionRepository<Topic, TopicData>(topicsRef);
+  const UserRepository = createRootCollectionRepository<User>(usersRef);
+  const TopicRepository = createRootCollectionRepository<Topic>(topicsRef);
 
   return { UserRepository, TopicRepository };
 };
