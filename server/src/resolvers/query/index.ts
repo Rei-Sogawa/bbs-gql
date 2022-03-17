@@ -6,21 +6,24 @@ export const Query: Resolvers["Query"] = {
     isLoggedIn(context);
 
     const { uid } = context;
-    const { userRepository } = context.repositories;
+    const { UserRepository } = context.repositories;
 
-    return userRepository.findById(uid).then((user) => user.toRaw());
+    return UserRepository.get(uid);
   },
 
   topic: (_parent, args, context) => {
     const { id } = args;
-    const { topicRepository } = context.repositories;
+    const { TopicRepository } = context.repositories;
 
-    return topicRepository.findById(id).then((topic) => topic.toRaw());
+    return TopicRepository.get(id);
   },
 
   topics: (_parent, _args, context) => {
-    const { topicRepository } = context.repositories;
+    const { TopicRepository } = context.repositories;
 
-    return topicRepository.findAll().then((topics) => topics.map((topic) => topic.toRaw()));
+    return TopicRepository.ref
+      .orderBy("createdAt", "desc")
+      .get()
+      .then((snap) => snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
   },
 };

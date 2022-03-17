@@ -10,7 +10,7 @@ const User = z
   })
   .strict();
 
-type User = z.infer<typeof User>;
+export type User = z.infer<typeof User>;
 export type __User__ = User;
 export type UserData = Omit<User, "id">;
 

@@ -12,8 +12,8 @@ const Topic = z
   })
   .strict();
 
-type Topic = z.infer<typeof Topic>;
-export type __Topic = Topic;
+export type Topic = z.infer<typeof Topic>;
+export type __Topic__ = Topic;
 export type TopicData = Omit<Topic, "id">;
 
 const of = (value: Partial<Topic>): Topic => ({
@@ -26,8 +26,8 @@ const of = (value: Partial<Topic>): Topic => ({
   ...value,
 });
 
-type CreateInput = Pick<Topic, "title" | "description">;
-export const create: ({ title, description }: CreateInput) => Topic = pipe(of, Topic.parse);
+type CreateInput = Pick<Topic, "title" | "description" | "userId">;
+export const create: ({ title, description, userId }: CreateInput) => Topic = pipe(of, Topic.parse);
 
 type EditInput = Pick<Topic, "title" | "description">;
 export const edit: ({ title, description }: EditInput) => Topic = pipe(
