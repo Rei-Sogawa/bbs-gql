@@ -1,29 +1,30 @@
-import * as admin from "firebase-admin";
 import { pipe } from "ramda";
 import { z } from "zod";
 
-// Entity
-const schema = z
+// User
+const Schema = z
   .object({
     id: z.string().min(1),
     displayName: z.string().min(1),
-    createdAt: z.instanceof(admin.firestore.Timestamp),
-    updatedAt: z.instanceof(admin.firestore.Timestamp),
+    createdAt: z.date(),
+    updatedAt: z.date(),
   })
   .strict();
 
-export type IUser = z.infer<typeof schema>;
+type ISchema = z.infer<typeof Schema>;
+export type IUser = ISchema;
 export type IUserDate = Omit<IUser, "id">;
 
 const of = (value: Partial<IUser>) => ({
   id: "",
   displayName: "",
-  createdAt: admin.firestore.Timestamp.now(),
-  updatedAt: admin.firestore.Timestamp.now(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
   ...value,
 });
 
-const create: (value: Pick<IUser, "id" | "displayName">) => IUser = pipe(of, schema.parse);
+type ICreateInput = Pick<IUser, "id" | "displayName">;
+const create: ({ id, displayName }: ICreateInput) => IUser = pipe(of, Schema.parse);
 
 export const UserEntity = {
   create,
