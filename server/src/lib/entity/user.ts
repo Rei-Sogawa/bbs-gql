@@ -12,7 +12,6 @@ const User = z
 
 export type User = z.infer<typeof User>;
 export type UserMapper = User;
-export type UserData = Omit<User, "id">;
 
 const of = (value: Partial<User>): User => ({
   id: "",
@@ -23,7 +22,7 @@ const of = (value: Partial<User>): User => ({
 });
 
 type CreateInput = Pick<User, "id" | "displayName">;
-export const create: ({ id, displayName }: CreateInput) => User = pipe(of, User.parse);
+const create: ({ id, displayName }: CreateInput) => User = pipe(of, User.parse);
 
 export const UserEntity = {
   create,

@@ -19,10 +19,18 @@ export type Scalars = {
 export type Comment = {
   __typename?: 'Comment';
   content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  parent?: Maybe<TopicOrComment>;
+  parent: TopicOrComment;
   root: Topic;
+  updatedAt: Scalars['DateTime'];
   user: User;
+};
+
+export type CreateCommentInput = {
+  content: Scalars['String'];
+  parentId: Scalars['String'];
+  rootId: Scalars['String'];
 };
 
 export type CreateTopicInput = {
@@ -32,10 +40,16 @@ export type CreateTopicInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createComment: Comment;
   createTopic: Topic;
   deleteTopic: Topic;
   signUp: User;
   updateTopic: Topic;
+};
+
+
+export type MutationCreateCommentArgs = {
+  input?: InputMaybe<CreateCommentInput>;
 };
 
 

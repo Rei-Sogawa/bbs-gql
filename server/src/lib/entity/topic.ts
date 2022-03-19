@@ -14,7 +14,6 @@ const Topic = z
 
 export type Topic = z.infer<typeof Topic>;
 export type TopicMapper = Topic;
-export type TopicData = Omit<Topic, "id">;
 
 const of = (value: Partial<Topic>): Topic => ({
   id: "",
@@ -27,16 +26,16 @@ const of = (value: Partial<Topic>): Topic => ({
 });
 
 type CreateInput = Pick<Topic, "title" | "content" | "userId">;
-export const create: ({ title, content, userId }: CreateInput) => Topic = pipe(of, Topic.parse);
+const create: ({ title, content, userId }: CreateInput) => Topic = pipe(of, Topic.parse);
 
 type EditInput = Pick<Topic, "title" | "content">;
-export const edit: (topic: Topic, { title, content }: EditInput) => Topic = pipe(
+const edit: (topic: Topic, { title, content }: EditInput) => Topic = pipe(
   mergeRight,
   mergeLeft({ updatedAt: new Date() }),
   Topic.parse
 );
 
-export const isCreatedBy = (topic: Topic, { userId }: { userId: string }) => topic.userId === userId;
+const isCreatedBy = (topic: Topic, { userId }: { userId: string }) => topic.userId === userId;
 
 export const TopicEntity = {
   create,

@@ -3,10 +3,18 @@ import { gql } from "apollo-server-express";
 export const typeDefs = gql`
 type Comment {
   content: String!
+  createdAt: DateTime!
   id: ID!
-  parent: TopicOrComment
+  parent: TopicOrComment!
   root: Topic!
+  updatedAt: DateTime!
   user: User!
+}
+
+input CreateCommentInput {
+  content: String!
+  parentId: String!
+  rootId: String!
 }
 
 input CreateTopicInput {
@@ -17,6 +25,7 @@ input CreateTopicInput {
 scalar DateTime
 
 type Mutation {
+  createComment(input: CreateCommentInput): Comment!
   createTopic(input: CreateTopicInput!): Topic!
   deleteTopic(id: ID!): Topic!
   signUp(input: SignUpInput!): User!

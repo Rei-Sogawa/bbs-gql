@@ -20,9 +20,17 @@ type Topic {
 type Comment {
   id: ID!
   content: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   root: Topic!
-  parent: TopicOrComment
+  parent: TopicOrComment!
   user: User!
+}
+
+type Query {
+  me: User!
+  topic(id: ID!): Topic!
+  topics: [Topic!]!
 }
 
 input SignUpInput {
@@ -41,10 +49,10 @@ input UpdateTopicInput {
   content: String!
 }
 
-type Query {
-  me: User!
-  topic(id: ID!): Topic!
-  topics: [Topic!]!
+input CreateCommentInput {
+  content: String!
+  rootId: String!
+  parentId: String!
 }
 
 type Mutation {
@@ -52,4 +60,5 @@ type Mutation {
   createTopic(input: CreateTopicInput!): Topic!
   updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
   deleteTopic(id: ID!): Topic!
+  createComment(input: CreateCommentInput): Comment!
 }
