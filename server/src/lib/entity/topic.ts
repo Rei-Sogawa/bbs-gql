@@ -31,7 +31,7 @@ const create: (value: CreateInput) => ITopic = pipe(CreateInput.parse, of, Topic
 const EditInput = Topic.pick({ title: true, content: true }).strict();
 type IEditInput = z.infer<typeof EditInput>;
 const edit: (topic: ITopic, value: IEditInput) => ITopic = pipe(
-  mergeRight,
+  (topic, value) => mergeRight(topic, EditInput.parse(value)),
   mergeLeft({ updatedAt: new Date() }),
   Topic.parse
 );
