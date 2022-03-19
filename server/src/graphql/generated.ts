@@ -1,13 +1,13 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { UserMapper } from '../lib/entity/user';
 import { TopicMapper } from '../lib/entity/topic';
+import { CommentMapper } from '../lib/entity/comment';
 import { Context } from '../context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -189,7 +189,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Comment: ResolverTypeWrapper<Omit<Comment, 'parent' | 'root' | 'user'> & { parent: ResolversTypes['TopicOrComment'], root: ResolversTypes['Topic'], user: ResolversTypes['User'] }>;
+  Comment: ResolverTypeWrapper<CommentMapper>;
   CreateCommentInput: CreateCommentInput;
   CreateTopicInput: CreateTopicInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
@@ -207,7 +207,7 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
-  Comment: Omit<Comment, 'parent' | 'root' | 'user'> & { parent: ResolversParentTypes['TopicOrComment'], root: ResolversParentTypes['Topic'], user: ResolversParentTypes['User'] };
+  Comment: CommentMapper;
   CreateCommentInput: CreateCommentInput;
   CreateTopicInput: CreateTopicInput;
   DateTime: Scalars['DateTime'];

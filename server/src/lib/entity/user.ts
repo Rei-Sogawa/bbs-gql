@@ -21,8 +21,9 @@ const of = (value: Partial<User>): User => ({
   ...value,
 });
 
-type CreateInput = Pick<User, "id" | "displayName">;
-const create: ({ id, displayName }: CreateInput) => User = pipe(of, User.parse);
+const CreateInput = User.pick({ id: true, displayName: true }).strict();
+type CreateInput = z.infer<typeof CreateInput>;
+const create: (value: CreateInput) => User = pipe(CreateInput.parse, of, User.parse);
 
 export const UserEntity = {
   create,

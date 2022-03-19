@@ -25,11 +25,13 @@ const of = (value: Partial<Topic>): Topic => ({
   ...value,
 });
 
-type CreateInput = Pick<Topic, "title" | "content" | "userId">;
-const create: ({ title, content, userId }: CreateInput) => Topic = pipe(of, Topic.parse);
+const CreateInput = Topic.pick({ title: true, content: true, userId: true }).strict();
+type CreateInput = z.infer<typeof CreateInput>;
+const create: (value: CreateInput) => Topic = pipe(CreateInput.parse, of, Topic.parse);
 
-type EditInput = Pick<Topic, "title" | "content">;
-const edit: (topic: Topic, { title, content }: EditInput) => Topic = pipe(
+const EditInput = Topic.pick({ title: true, content: true }).strict();
+type EditInput = z.infer<typeof EditInput>;
+const edit: (topic: Topic, value: EditInput) => Topic = pipe(
   mergeRight,
   mergeLeft({ updatedAt: new Date() }),
   Topic.parse
