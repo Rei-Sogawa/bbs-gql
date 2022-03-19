@@ -1,4 +1,4 @@
-import { pipe } from "ramda";
+import { pick, pipe } from "ramda";
 import { z } from "zod";
 
 const Comment = z
@@ -26,9 +26,12 @@ const of = (value: Partial<IComment>): IComment => ({
   ...value,
 });
 
-const CreateInput = Comment.pick({ content: true, rootId: true, parentId: true, userId: true }).strict();
-type ICreateInput = z.infer<typeof CreateInput>;
-const create: (input: ICreateInput) => IComment = pipe(CreateInput.parse, of, Comment.parse);
+type ICreateInput = Pick<IComment, "content" | "rootId" | "parentId" | "userId">;
+const create: (input: ICreateInput) => IComment = pipe(
+  pick(["content", "rootId", "parentId", "userId"]),
+  of,
+  Comment.parse
+);
 
 export const CommentEntity = {
   create,

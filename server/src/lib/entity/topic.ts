@@ -1,4 +1,4 @@
-import { mergeLeft, mergeRight, pipe } from "ramda";
+import { mergeLeft, mergeRight, pick, pipe } from "ramda";
 import { z } from "zod";
 
 const Topic = z
@@ -24,14 +24,12 @@ const of = (value: Partial<ITopic>): ITopic => ({
   ...value,
 });
 
-const CreateInput = Topic.pick({ title: true, content: true, userId: true }).strict();
-type CreateInput = z.infer<typeof CreateInput>;
-const create: (value: CreateInput) => ITopic = pipe(CreateInput.parse, of, Topic.parse);
+type ICreateInput = Pick<ITopic, "title" | "content" | "userId">;
+const create: (value: ICreateInput) => ITopic = pipe(pick(["title", "content", "userId"]), of, Topic.parse);
 
-const EditInput = Topic.pick({ title: true, content: true }).strict();
-type IEditInput = z.infer<typeof EditInput>;
+type IEditInput = Pick<ITopic, "title" | "content">;
 const edit: (topic: ITopic, value: IEditInput) => ITopic = pipe(
-  (topic, value) => mergeRight(topic, EditInput.parse(value)),
+  (topic, value) => mergeRight(topic, pick(["title", "content"], value)),
   mergeLeft({ updatedAt: new Date() }),
   Topic.parse
 );

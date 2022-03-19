@@ -1,4 +1,4 @@
-import { pipe } from "ramda";
+import { pick, pipe } from "ramda";
 import { z } from "zod";
 
 const User = z
@@ -20,9 +20,8 @@ const of = (value: Partial<IUser>): IUser => ({
   ...value,
 });
 
-const CreateInput = User.pick({ id: true, displayName: true }).strict();
-type ICreateInput = z.infer<typeof CreateInput>;
-const create: (value: ICreateInput) => IUser = pipe(CreateInput.parse, of, User.parse);
+type ICreateInput = Pick<IUser, "id" | "displayName">;
+const create: (value: ICreateInput) => IUser = pipe(pick(["id", "displayName"]), of, User.parse);
 
 export const UserEntity = {
   create,
