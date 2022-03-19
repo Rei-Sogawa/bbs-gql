@@ -12,8 +12,8 @@ generates:
       scalars:
         DateTime: Date
       mappers:
-        User: ../lib/entity/user#__User__
-        Topic: ../lib/entity/topic#__Topic__
+        User: ../lib/entity/user#UserMapper
+        Topic: ../lib/entity/topic#TopicMapper
   src/graphql/typeDefs.ts:
     plugins:
       - "typescript-type-defs.js"

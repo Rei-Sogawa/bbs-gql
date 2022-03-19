@@ -1,6 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { __User__ } from '../lib/entity/user';
-import { __Topic__ } from '../lib/entity/topic';
+import { UserMapper } from '../lib/entity/user';
+import { TopicMapper } from '../lib/entity/topic';
 import { Context } from '../context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -170,9 +170,9 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Topic: ResolverTypeWrapper<__Topic__>;
+  Topic: ResolverTypeWrapper<TopicMapper>;
   UpdateTopicInput: UpdateTopicInput;
-  User: ResolverTypeWrapper<__User__>;
+  User: ResolverTypeWrapper<UserMapper>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -185,9 +185,9 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   SignUpInput: SignUpInput;
   String: Scalars['String'];
-  Topic: __Topic__;
+  Topic: TopicMapper;
   UpdateTopicInput: UpdateTopicInput;
-  User: __User__;
+  User: UserMapper;
 }>;
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {

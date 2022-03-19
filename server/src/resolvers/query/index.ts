@@ -23,6 +23,6 @@ export const Query: Resolvers["Query"] = {
     return TopicRepository.ref
       .orderBy("createdAt", "desc")
       .get()
-      .then((snap) => snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      .then((snap) => snap.docs.map((doc) => doc.data()));
   },
 };

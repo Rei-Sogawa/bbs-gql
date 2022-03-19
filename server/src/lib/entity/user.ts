@@ -11,7 +11,7 @@ const User = z
   .strict();
 
 export type User = z.infer<typeof User>;
-export type __User__ = User;
+export type UserMapper = User;
 export type UserData = Omit<User, "id">;
 
 const of = (value: Partial<User>): User => ({

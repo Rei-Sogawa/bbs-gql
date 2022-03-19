@@ -13,7 +13,7 @@ const Topic = z
   .strict();
 
 export type Topic = z.infer<typeof Topic>;
-export type __Topic__ = Topic;
+export type TopicMapper = Topic;
 export type TopicData = Omit<Topic, "id">;
 
 const of = (value: Partial<Topic>): Topic => ({
