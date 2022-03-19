@@ -6,7 +6,7 @@ import { createRootCollectionRepository } from "./../repository/helper/createRep
 import { createTimestampConverter } from "./helper/createConverter";
 
 const createTopicRepository = (ref: admin.firestore.CollectionReference<ITopic>) => {
-  const repository = createRootCollectionRepository<ITopic>(ref);
+  const repository = createRootCollectionRepository(ref);
   return {
     ...repository,
     findAll: () =>
@@ -21,7 +21,7 @@ export const createRepositories = (db: admin.firestore.Firestore) => {
   const usersRef = db.collection("users").withConverter(createTimestampConverter<IUser>());
   const topicsRef = db.collection("topics").withConverter(createTimestampConverter<ITopic>());
 
-  const UserRepository = createRootCollectionRepository<IUser>(usersRef);
+  const UserRepository = createRootCollectionRepository(usersRef);
   const TopicRepository = createTopicRepository(topicsRef);
 
   return { UserRepository, TopicRepository };
