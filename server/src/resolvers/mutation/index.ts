@@ -1,8 +1,6 @@
-import { mergeRight } from "ramda";
-
 import { getAuth } from "../../firebase-app";
 import { Resolvers } from "../../graphql/generated";
-import { isLoggedIn } from "../../lib/authorization/isLoggedIn";
+import { authorize } from "../../lib/authorization/authorize";
 import { TopicEntity } from "../../lib/entity/topic";
 import { UserEntity } from "../../lib/entity/user";
 
@@ -14,24 +12,22 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = await getAuth().createUser({ email, password });
 
     const user = UserEntity.create({ id: uid, displayName });
-    await UserRepository.set(user);
-    return user;
+    return UserRepository.set(user);
   },
 
-  createTopic: async (_parent, args, context) => {
-    isLoggedIn(context);
+  createTopic: (_parent, args, context) => {
+    authorize(context);
 
     const { title, description } = args.input;
     const { uid } = context;
     const { TopicRepository } = context.repositories;
 
     const topic = TopicEntity.create({ title, description, userId: uid });
-    const { id } = await TopicRepository.add(topic);
-    return mergeRight(topic, { id });
+    return TopicRepository.add(topic);
   },
 
   updateTopic: async (_parent, args, context) => {
-    isLoggedIn(context);
+    authorize(context);
 
     const { id } = args;
     const { title, description } = args.input;
@@ -42,12 +38,11 @@ export const Mutation: Resolvers["Mutation"] = {
     if (!TopicEntity.isCreatedBy(topic, { userId: uid })) throw new Error("Cannot write topic");
 
     const editedTopic = TopicEntity.edit(topic, { title, description });
-    await TopicRepository.update(editedTopic);
-    return editedTopic;
+    return TopicRepository.update(editedTopic);
   },
 
   deleteTopic: async (_parent, args, context) => {
-    isLoggedIn(context);
+    authorize(context);
 
     const { id } = args;
     const { uid } = context;
@@ -56,7 +51,6 @@ export const Mutation: Resolvers["Mutation"] = {
     const topic = await TopicRepository.get(id);
     if (!TopicEntity.isCreatedBy(topic, { userId: uid })) throw new Error("Cannot write topic");
 
-    await TopicRepository.delete(topic);
-    return topic;
+    return TopicRepository.delete(topic);
   },
 };

@@ -1,9 +1,9 @@
 import { Resolvers } from "../../graphql/generated";
-import { isLoggedIn } from "../../lib/authorization/isLoggedIn";
+import { authorize } from "../../lib/authorization/authorize";
 
 export const Query: Resolvers["Query"] = {
   me: (_parent, _args, context) => {
-    isLoggedIn(context);
+    authorize(context);
 
     const { uid } = context;
     const { UserRepository } = context.repositories;
