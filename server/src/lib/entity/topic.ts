@@ -12,10 +12,9 @@ const Topic = z
   })
   .strict();
 
-export type Topic = z.infer<typeof Topic>;
-export type TopicMapper = Topic;
+export type ITopic = z.infer<typeof Topic>;
 
-const of = (value: Partial<Topic>): Topic => ({
+const of = (value: Partial<ITopic>): ITopic => ({
   id: "",
   title: "",
   content: "",
@@ -27,17 +26,17 @@ const of = (value: Partial<Topic>): Topic => ({
 
 const CreateInput = Topic.pick({ title: true, content: true, userId: true }).strict();
 type CreateInput = z.infer<typeof CreateInput>;
-const create: (value: CreateInput) => Topic = pipe(CreateInput.parse, of, Topic.parse);
+const create: (value: CreateInput) => ITopic = pipe(CreateInput.parse, of, Topic.parse);
 
 const EditInput = Topic.pick({ title: true, content: true }).strict();
-type EditInput = z.infer<typeof EditInput>;
-const edit: (topic: Topic, value: EditInput) => Topic = pipe(
+type IEditInput = z.infer<typeof EditInput>;
+const edit: (topic: ITopic, value: IEditInput) => ITopic = pipe(
   mergeRight,
   mergeLeft({ updatedAt: new Date() }),
   Topic.parse
 );
 
-const isCreatedBy = (topic: Topic, { userId }: { userId: string }) => topic.userId === userId;
+const isCreatedBy = (topic: ITopic, { userId }: { userId: string }) => topic.userId === userId;
 
 export const TopicEntity = {
   create,

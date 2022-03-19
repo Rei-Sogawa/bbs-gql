@@ -13,10 +13,9 @@ const Comment = z
   })
   .strict();
 
-export type Comment = z.infer<typeof Comment>;
-export type CommentMapper = Comment;
+export type IComment = z.infer<typeof Comment>;
 
-const of = (value: Partial<Comment>): Comment => ({
+const of = (value: Partial<IComment>): IComment => ({
   id: "",
   content: "",
   createdAt: new Date(),
@@ -28,8 +27,8 @@ const of = (value: Partial<Comment>): Comment => ({
 });
 
 const CreateInput = Comment.pick({ content: true, rootId: true, parentId: true, userId: true }).strict();
-type CreateInput = z.infer<typeof CreateInput>;
-const create: (input: CreateInput) => Comment = pipe(CreateInput.parse, of, Comment.parse);
+type ICreateInput = z.infer<typeof CreateInput>;
+const create: (input: ICreateInput) => IComment = pipe(CreateInput.parse, of, Comment.parse);
 
 export const CommentEntity = {
   create,

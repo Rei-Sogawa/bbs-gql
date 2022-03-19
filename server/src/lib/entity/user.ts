@@ -10,10 +10,9 @@ const User = z
   })
   .strict();
 
-export type User = z.infer<typeof User>;
-export type UserMapper = User;
+export type IUser = z.infer<typeof User>;
 
-const of = (value: Partial<User>): User => ({
+const of = (value: Partial<IUser>): IUser => ({
   id: "",
   displayName: "",
   createdAt: new Date(),
@@ -22,8 +21,8 @@ const of = (value: Partial<User>): User => ({
 });
 
 const CreateInput = User.pick({ id: true, displayName: true }).strict();
-type CreateInput = z.infer<typeof CreateInput>;
-const create: (value: CreateInput) => User = pipe(CreateInput.parse, of, User.parse);
+type ICreateInput = z.infer<typeof CreateInput>;
+const create: (value: ICreateInput) => IUser = pipe(CreateInput.parse, of, User.parse);
 
 export const UserEntity = {
   create,

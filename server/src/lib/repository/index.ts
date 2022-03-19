@@ -1,12 +1,12 @@
 import * as admin from "firebase-admin";
 
-import { Topic } from "../entity/topic";
-import { User } from "../entity/user";
+import { ITopic } from "../entity/topic";
+import { IUser } from "../entity/user";
 import { createRootCollectionRepository } from "./../repository/helper/createRepository";
 import { createTimestampConverter } from "./helper/createConverter";
 
-const createTopicRepository = (ref: admin.firestore.CollectionReference<Topic>) => {
-  const repository = createRootCollectionRepository<Topic>(ref);
+const createTopicRepository = (ref: admin.firestore.CollectionReference<ITopic>) => {
+  const repository = createRootCollectionRepository<ITopic>(ref);
   return {
     ...repository,
     findAll: () =>
@@ -18,10 +18,10 @@ const createTopicRepository = (ref: admin.firestore.CollectionReference<Topic>) 
 };
 
 export const createRepositories = (db: admin.firestore.Firestore) => {
-  const usersRef = db.collection("users").withConverter(createTimestampConverter<User>());
-  const topicsRef = db.collection("topics").withConverter(createTimestampConverter<Topic>());
+  const usersRef = db.collection("users").withConverter(createTimestampConverter<IUser>());
+  const topicsRef = db.collection("topics").withConverter(createTimestampConverter<ITopic>());
 
-  const UserRepository = createRootCollectionRepository<User>(usersRef);
+  const UserRepository = createRootCollectionRepository<IUser>(usersRef);
   const TopicRepository = createTopicRepository(topicsRef);
 
   return { UserRepository, TopicRepository };

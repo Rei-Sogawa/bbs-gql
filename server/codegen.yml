@@ -12,9 +12,9 @@ generates:
       scalars:
         DateTime: Date
       mappers:
-        User: ../lib/entity/user#UserMapper
-        Topic: ../lib/entity/topic#TopicMapper
-        Comment: ../lib/entity/comment#CommentMapper
+        User: ../lib/entity/user#IUser
+        Topic: ../lib/entity/topic#ITopic
+        Comment: ../lib/entity/comment#IComment
   src/graphql/typeDefs.ts:
     plugins:
       - "typescript-type-defs.js"

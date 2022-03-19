@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { UserMapper } from '../lib/entity/user';
-import { TopicMapper } from '../lib/entity/topic';
-import { CommentMapper } from '../lib/entity/comment';
+import { IUser } from '../lib/entity/user';
+import { ITopic } from '../lib/entity/topic';
+import { IComment } from '../lib/entity/comment';
 import { Context } from '../context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -189,7 +189,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Comment: ResolverTypeWrapper<CommentMapper>;
+  Comment: ResolverTypeWrapper<IComment>;
   CreateCommentInput: CreateCommentInput;
   CreateTopicInput: CreateTopicInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
@@ -198,16 +198,16 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Topic: ResolverTypeWrapper<TopicMapper>;
+  Topic: ResolverTypeWrapper<ITopic>;
   TopicOrComment: ResolversTypes['Comment'] | ResolversTypes['Topic'];
   UpdateTopicInput: UpdateTopicInput;
-  User: ResolverTypeWrapper<UserMapper>;
+  User: ResolverTypeWrapper<IUser>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
-  Comment: CommentMapper;
+  Comment: IComment;
   CreateCommentInput: CreateCommentInput;
   CreateTopicInput: CreateTopicInput;
   DateTime: Scalars['DateTime'];
@@ -216,10 +216,10 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   SignUpInput: SignUpInput;
   String: Scalars['String'];
-  Topic: TopicMapper;
+  Topic: ITopic;
   TopicOrComment: ResolversParentTypes['Comment'] | ResolversParentTypes['Topic'];
   UpdateTopicInput: UpdateTopicInput;
-  User: UserMapper;
+  User: IUser;
 }>;
 
 export type CommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = ResolversObject<{
