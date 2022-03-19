@@ -1,18 +1,18 @@
 import { Config, ExpressContext } from "apollo-server-express";
+import * as admin from "firebase-admin";
 
 import { getAuth, getDb } from "./firebase-app";
 import { createRepositories, Repositories } from "./lib/repository";
-import { AuthService, createAuthService } from "./lib/service/auth";
 
 export type ServerContext = {
   uid?: string;
-  services: { AuthService: AuthService };
+  services: { AuthService: admin.auth.Auth };
   repositories: Repositories;
 };
 
 export const serverContext: Config<ExpressContext>["context"] = async ({ req }): Promise<ServerContext> => {
   const db = getDb();
-  const AuthService = createAuthService();
+  const AuthService = getAuth();
 
   const idToken = req.header("authorization")?.split("Bearer ")[1];
   if (!idToken) return { services: { AuthService }, repositories: createRepositories(db) };
