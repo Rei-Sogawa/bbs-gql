@@ -14,7 +14,7 @@ gql`
   fragment TopicForTopicEdit on Topic {
     id
     title
-    description
+    content
     user {
       id
     }
@@ -26,7 +26,7 @@ type TopicEditViewProps = { topic: TopicForTopicEditFragment };
 export const TopicEditView = ({ topic }: TopicEditViewProps) => {
   const navigate = useNavigate();
 
-  const initialValues: TopicFormProps["initialValues"] = { title: topic.title, description: topic.description };
+  const initialValues: TopicFormProps["initialValues"] = { title: topic.title, content: topic.content };
 
   const updateTopic = useUpdateTopic();
   const onSubmit: TopicFormProps["onSubmit"] = async (v) => {

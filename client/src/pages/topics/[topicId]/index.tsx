@@ -51,7 +51,7 @@ gql`
   fragment TopicForTopicDetail on Topic {
     id
     title
-    description
+    content
     createdAt
     user {
       id
@@ -80,7 +80,7 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
           <div className="text-gray-500 text-sm">{format(new Date(topic.createdAt), "yyyy/MM/dd HH:mm")}</div>
         </div>
 
-        <div className="whitespace-pre-line">{topic.description}</div>
+        <div className="whitespace-pre-line">{topic.content}</div>
       </div>
     </div>
   );

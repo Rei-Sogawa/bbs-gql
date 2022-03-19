@@ -8,11 +8,11 @@ export const Mutation: Resolvers["Mutation"] = {
   createTopic: (_parent, args, context) => {
     authorize(context);
 
-    const { title, description } = args.input;
+    const { title, content } = args.input;
     const { uid } = context;
     const { TopicRepository } = context.repositories;
 
-    const topic = TopicEntity.create({ title, description, userId: uid });
+    const topic = TopicEntity.create({ title, content, userId: uid });
     return TopicRepository.add(topic);
   },
 
@@ -20,13 +20,13 @@ export const Mutation: Resolvers["Mutation"] = {
     authorize(context);
 
     const { id } = args;
-    const { title, description } = args.input;
+    const { title, content } = args.input;
     const { uid } = context;
     const { TopicRepository } = context.repositories;
 
     const topic = await TopicRepository.get(id);
     if (!TopicEntity.isCreatedBy(topic, { userId: uid })) throw new Error("Cannot write topic");
-    const editedTopic = TopicEntity.edit(topic, { title, description });
+    const editedTopic = TopicEntity.edit(topic, { title, content });
     return TopicRepository.update(editedTopic);
   },
 

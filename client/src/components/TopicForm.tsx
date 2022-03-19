@@ -2,7 +2,7 @@ import { Field, Form } from "react-final-form";
 
 export type FormValues = {
   title: string;
-  description: string;
+  content: string;
 };
 
 export type TopicFormProps = {
@@ -34,16 +34,16 @@ export const TopicForm = ({ initialValues, onSubmit }: TopicFormProps) => {
             )}
           </Field>
 
-          <Field name="description">
+          <Field name="content">
             {({ input }) => (
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Description</span>
+                  <span className="label-text">content</span>
                 </label>
                 <textarea
                   type="text"
                   className="textarea textarea-bordered textarea-primary"
-                  placeholder="Description"
+                  placeholder="content"
                   required
                   rows={10}
                   {...input}

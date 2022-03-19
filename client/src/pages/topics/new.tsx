@@ -11,7 +11,7 @@ import { routes } from "../../routes";
 export const TopicNew: VFC = () => {
   const navigate = useNavigate();
 
-  const initialValues: TopicFormProps["initialValues"] = { title: "", description: "" };
+  const initialValues: TopicFormProps["initialValues"] = { title: "", content: "" };
 
   const createTopic = useCreateTopic();
   const onSubmit: TopicFormProps["onSubmit"] = async (v) => {

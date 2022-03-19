@@ -16,8 +16,17 @@ export type Scalars = {
   DateTime: string;
 };
 
+export type Comment = {
+  __typename?: 'Comment';
+  content: Scalars['String'];
+  id: Scalars['ID'];
+  parent?: Maybe<TopicOrComment>;
+  root: Topic;
+  user: User;
+};
+
 export type CreateTopicInput = {
-  description: Scalars['String'];
+  content: Scalars['String'];
   title: Scalars['String'];
 };
 
@@ -70,16 +79,18 @@ export type SignUpInput = {
 
 export type Topic = {
   __typename?: 'Topic';
+  content: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
   id: Scalars['ID'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
 };
 
+export type TopicOrComment = Comment | Topic;
+
 export type UpdateTopicInput = {
-  description: Scalars['String'];
+  content: Scalars['String'];
   title: Scalars['String'];
 };
 
@@ -109,14 +120,14 @@ export type TopicForTopicQueryVariables = Exact<{
 }>;
 
 
-export type TopicForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+export type TopicForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
 
 export type TopicForTopicEditQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type TopicForTopicEditQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, description: string, user: { __typename?: 'User', id: string } } };
+export type TopicForTopicEditQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, content: string, user: { __typename?: 'User', id: string } } };
 
 export type CreateTopicMutationVariables = Exact<{
   input: CreateTopicInput;
@@ -131,7 +142,7 @@ export type UpdateTopicMutationVariables = Exact<{
 }>;
 
 
-export type UpdateTopicMutation = { __typename?: 'Mutation', updateTopic: { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+export type UpdateTopicMutation = { __typename?: 'Mutation', updateTopic: { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
 
 export type DeleteTopicMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -147,9 +158,9 @@ export type SignUpMutationVariables = Exact<{
 
 export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'User', id: string, displayName: string } };
 
-export type TopicForTopicEditFragment = { __typename?: 'Topic', id: string, title: string, description: string, user: { __typename?: 'User', id: string } };
+export type TopicForTopicEditFragment = { __typename?: 'Topic', id: string, title: string, content: string, user: { __typename?: 'User', id: string } };
 
-export type TopicForTopicDetailFragment = { __typename?: 'Topic', id: string, title: string, description: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
+export type TopicForTopicDetailFragment = { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
 
 export const TopicItemFragmentDoc = gql`
     fragment TopicItem on Topic {
@@ -168,7 +179,7 @@ export const TopicForTopicEditFragmentDoc = gql`
     fragment TopicForTopicEdit on Topic {
   id
   title
-  description
+  content
   user {
     id
   }
@@ -178,7 +189,7 @@ export const TopicForTopicDetailFragmentDoc = gql`
     fragment TopicForTopicDetail on Topic {
   id
   title
-  description
+  content
   createdAt
   user {
     id

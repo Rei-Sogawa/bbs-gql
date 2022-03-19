@@ -1,8 +1,16 @@
 import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
+type Comment {
+  content: String!
+  id: ID!
+  parent: TopicOrComment
+  root: Topic!
+  user: User!
+}
+
 input CreateTopicInput {
-  description: String!
+  content: String!
   title: String!
 }
 
@@ -28,16 +36,18 @@ input SignUpInput {
 }
 
 type Topic {
+  content: String!
   createdAt: DateTime!
-  description: String!
   id: ID!
   title: String!
   updatedAt: DateTime!
   user: User!
 }
 
+union TopicOrComment = Comment | Topic
+
 input UpdateTopicInput {
-  description: String!
+  content: String!
   title: String!
 }
 

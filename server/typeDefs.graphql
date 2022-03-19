@@ -6,12 +6,22 @@ type User {
   topics: [Topic!]!
 }
 
+union TopicOrComment = Topic | Comment
+
 type Topic {
   id: ID!
   title: String!
-  description: String!
+  content: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  user: User!
+}
+
+type Comment {
+  id: ID!
+  content: String!
+  root: Topic!
+  parent: TopicOrComment
   user: User!
 }
 
@@ -23,12 +33,12 @@ input SignUpInput {
 
 input CreateTopicInput {
   title: String!
-  description: String!
+  content: String!
 }
 
 input UpdateTopicInput {
   title: String!
-  description: String!
+  content: String!
 }
 
 type Query {
