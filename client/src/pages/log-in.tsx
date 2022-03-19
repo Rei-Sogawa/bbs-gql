@@ -4,6 +4,7 @@ import { Field, Form } from "react-final-form";
 import { Link, useNavigate } from "react-router-dom";
 
 import { AppHeading } from "../components/AppHeading";
+import { AppSignUpLayout } from "../components/AppSignUpLayout";
 import { routes } from "../routes";
 
 type FormValues = {
@@ -81,23 +82,19 @@ const LogInForm: VFC = () => {
 
 export const LogIn: VFC = () => {
   return (
-    <div className="bg-gray-100 h-screen">
-      <div className="pt-20 bg-gray-100">
-        <div className="w-screen-xs py-4 px-8 mx-auto rounded-md bg-white">
-          <div className="text-center">
-            <AppHeading>Log In</AppHeading>
-          </div>
-          <LogInForm />
-          <div className="mt-4 ml-1 flex flex-col space-y-1">
-            <Link className="link link-primary" to={routes["/sign-up"].path()}>
-              Sign Up
-            </Link>
-            <Link className="link link-primary" to={routes["/"].path()}>
-              Back
-            </Link>
-          </div>
-        </div>
+    <AppSignUpLayout>
+      <div className="text-center">
+        <AppHeading>Log In</AppHeading>
       </div>
-    </div>
+      <LogInForm />
+      <div className="mt-4 ml-1 flex flex-col space-y-1">
+        <Link className="link link-primary" to={routes["/sign-up"].path()}>
+          Sign Up
+        </Link>
+        <Link className="link link-primary" to={routes["/"].path()}>
+          Back
+        </Link>
+      </div>
+    </AppSignUpLayout>
   );
 };

@@ -13,7 +13,7 @@ const AppHeader: VFC = () => {
 
   return (
     <div className="border-b-2 border-gray-100 py-2">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-2">
         <div className="flex justify-between items-center">
           <button
             className="btn btn-link text-lg"
@@ -25,7 +25,7 @@ const AppHeader: VFC = () => {
           </button>
 
           {uid ? (
-            <div className="flex space-x-6">
+            <div className="flex space-x-4">
               <button
                 className="btn btn-primary flex items-center space-x-2"
                 onClick={() => {

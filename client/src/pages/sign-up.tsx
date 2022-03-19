@@ -5,6 +5,7 @@ import { Field, Form } from "react-final-form";
 import { Link, useNavigate } from "react-router-dom";
 
 import { AppHeading } from "../components/AppHeading";
+import { AppSignUpLayout } from "../components/AppSignUpLayout";
 import { useSignUpMutation } from "../graphql/generated";
 import { routes } from "../routes";
 import { useLogIn } from "./log-in";
@@ -143,23 +144,19 @@ const SignUpForm: VFC = () => {
 
 export const SignUp: VFC = () => {
   return (
-    <div className="bg-gray-100 h-screen">
-      <div className="pt-20 bg-gray-100">
-        <div className="w-screen-xs py-4 px-8 mx-auto rounded-md bg-white">
-          <div className="text-center">
-            <AppHeading>Sign Up</AppHeading>
-          </div>
-          <SignUpForm />
-          <div className="mt-4 ml-1 flex flex-col space-y-1">
-            <Link className="link link-primary" to={routes["/log-in"].path()}>
-              Log In
-            </Link>
-            <Link className="link link-primary" to={routes["/"].path()}>
-              Back
-            </Link>
-          </div>
-        </div>
+    <AppSignUpLayout>
+      <div className="text-center">
+        <AppHeading>Sign Up</AppHeading>
       </div>
-    </div>
+      <SignUpForm />
+      <div className="mt-4 ml-1 flex flex-col space-y-1">
+        <Link className="link link-primary" to={routes["/log-in"].path()}>
+          Log In
+        </Link>
+        <Link className="link link-primary" to={routes["/"].path()}>
+          Back
+        </Link>
+      </div>
+    </AppSignUpLayout>
   );
 };

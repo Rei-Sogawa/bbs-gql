@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { FaEllipsisV } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+import { AppContainer } from "../../../components/AppContainer";
 import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
 import { useAuth } from "../../../contexts/Auth";
@@ -91,7 +92,7 @@ export const Topic = () => {
 
   return (
     <AppLayout>
-      <div className="w-screen-md mx-auto my-6">
+      <AppContainer size="md">
         {topic && (
           <div className="flex flex-col">
             <div className="text-center">
@@ -108,7 +109,7 @@ export const Topic = () => {
             <TopicDetail topic={topic} />
           </div>
         )}
-      </div>
+      </AppContainer>
     </AppLayout>
   );
 };
