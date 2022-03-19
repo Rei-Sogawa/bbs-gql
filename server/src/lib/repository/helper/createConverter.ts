@@ -2,15 +2,6 @@ import is from "@sindresorhus/is";
 import * as admin from "firebase-admin";
 import { map, mapObjIndexed } from "ramda";
 
-export const createTypedConverter = <TData>(): admin.firestore.FirestoreDataConverter<TData> => ({
-  fromFirestore: (snap) => {
-    return snap.data() as TData;
-  },
-  toFirestore: (data) => {
-    return data;
-  },
-});
-
 const decodeTimestampToDate = (input: unknown): any => {
   if (input instanceof admin.firestore.Timestamp) return input.toDate();
 
@@ -31,12 +22,15 @@ const encodeDateToTimestamp = (input: unknown): any => {
   throw new Error("could not encodeDateToTimestamp");
 };
 
-export const createTimestampConverter = <TData>(): admin.firestore.FirestoreDataConverter<TData> => ({
+export const createTimestampConverter = <
+  TEntity extends { id: string }
+>(): admin.firestore.FirestoreDataConverter<TEntity> => ({
   fromFirestore: (snap) => {
     const data = snap.data();
-    return decodeTimestampToDate(data) as TData;
+    return decodeTimestampToDate({ id: snap.id, ...data }) as TEntity;
   },
-  toFirestore: (data) => {
+  toFirestore: (entity) => {
+    const { id, ...data } = entity;
     return encodeDateToTimestamp(data);
   },
 });

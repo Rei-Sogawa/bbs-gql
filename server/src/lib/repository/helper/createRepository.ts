@@ -1,28 +1,26 @@
 import * as admin from "firebase-admin";
-import { omit } from "ramda";
 
 import { createRootCollectionLoader } from "./createLoader";
 
 export const createRootCollectionRepository = <Entity extends { id: string }>(
-  ref: admin.firestore.CollectionReference<Omit<Entity, "id">>
+  ref: admin.firestore.CollectionReference<Entity>
 ) => {
-  const loader = createRootCollectionLoader<Omit<Entity, "id">>(ref);
+  const loader = createRootCollectionLoader<Entity>(ref);
 
   const _get = (id: string) => loader.load(id);
 
   const _set = (entity: Entity) =>
     ref
       .doc(entity.id)
-      .set(omit(["id"], entity))
+      .set(entity)
       .then(() => entity);
 
-  const _add = (entity: Entity) =>
-    ref.add(omit(["id"], entity)).then(() => entity);
+  const _add = (entity: Entity) => ref.add(entity).then(({ id }) => ({ ...entity, id }));
 
   const _update = (entity: Entity) =>
     ref
       .doc(entity.id)
-      .update(omit(["id"], entity))
+      .update(entity)
       .then(() => entity);
 
   const _delete = (entity: Entity) =>
