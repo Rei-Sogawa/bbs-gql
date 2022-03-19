@@ -1,19 +1,10 @@
 import { Resolvers } from "../../graphql/generated";
 import { authorize } from "../../lib/authorization/authorize";
 import { TopicEntity } from "../../lib/entity/topic";
-import { UserEntity } from "../../lib/entity/user";
+import { signUp } from "../../lib/usecase/mutation/signUp";
 
 export const Mutation: Resolvers["Mutation"] = {
-  signUp: async (_parent, args, context) => {
-    const { displayName, email, password } = args.input;
-    const { AuthService } = context.services;
-    const { UserRepository } = context.repositories;
-
-    const { uid } = await AuthService.createUser({ email, password });
-    const user = UserEntity.create({ id: uid, displayName });
-    return UserRepository.set(user);
-  },
-
+  signUp,
   createTopic: (_parent, args, context) => {
     authorize(context);
 

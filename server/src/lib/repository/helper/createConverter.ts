@@ -2,7 +2,7 @@ import is from "@sindresorhus/is";
 import * as admin from "firebase-admin";
 import { map, mapObjIndexed } from "ramda";
 
-const decodeTimestampToDate = (input: unknown): any => {
+export const decodeTimestampToDate = (input: unknown): any => {
   if (input instanceof admin.firestore.Timestamp) return input.toDate();
 
   if (input instanceof admin.firestore.FieldValue) return input;
@@ -12,7 +12,7 @@ const decodeTimestampToDate = (input: unknown): any => {
   throw new Error("could not decodeTimestampToDate");
 };
 
-const encodeDateToTimestamp = (input: unknown): any => {
+export const encodeDateToTimestamp = (input: unknown): any => {
   if (input instanceof Date) return admin.firestore.Timestamp.fromDate(input);
 
   if (input instanceof admin.firestore.FieldValue) return input;
