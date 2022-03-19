@@ -1,6 +1,8 @@
 import { pick, pipe } from "ramda";
 import { z } from "zod";
 
+import { now } from "../util/now";
+
 const Comment = z
   .object({
     id: z.string(),
@@ -15,16 +17,19 @@ const Comment = z
 
 export type IComment = z.infer<typeof Comment>;
 
-const of = (value: Partial<IComment>): IComment => ({
-  id: "",
-  content: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  rootId: "",
-  parentId: "",
-  userId: "",
-  ...value,
-});
+const of = (value: Partial<IComment>): IComment => {
+  const _now = now();
+  return {
+    id: "",
+    content: "",
+    createdAt: _now,
+    updatedAt: _now,
+    rootId: "",
+    parentId: "",
+    userId: "",
+    ...value,
+  };
+};
 
 type ICreateInput = Pick<IComment, "content" | "rootId" | "parentId" | "userId">;
 const create: (input: ICreateInput) => IComment = pipe(

@@ -1,6 +1,8 @@
 import { mergeLeft, mergeRight, pick, pipe } from "ramda";
 import { z } from "zod";
 
+import { now } from "../util/now";
+
 const Topic = z
   .object({
     id: z.string(),
@@ -14,15 +16,18 @@ const Topic = z
 
 export type ITopic = z.infer<typeof Topic>;
 
-const of = (value: Partial<ITopic>): ITopic => ({
-  id: "",
-  title: "",
-  content: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: "",
-  ...value,
-});
+const of = (value: Partial<ITopic>): ITopic => {
+  const _now = now();
+  return {
+    id: "",
+    title: "",
+    content: "",
+    createdAt: _now,
+    updatedAt: _now,
+    userId: "",
+    ...value,
+  };
+};
 
 type ICreateInput = Pick<ITopic, "title" | "content" | "userId">;
 const create: (value: ICreateInput) => ITopic = pipe(pick(["title", "content", "userId"]), of, Topic.parse);
@@ -30,7 +35,7 @@ const create: (value: ICreateInput) => ITopic = pipe(pick(["title", "content", "
 type IEditInput = Pick<ITopic, "title" | "content">;
 const edit: (topic: ITopic, value: IEditInput) => ITopic = pipe(
   (topic, value) => mergeRight(topic, pick(["title", "content"], value)),
-  mergeLeft({ updatedAt: new Date() }),
+  mergeLeft({ updatedAt: now() }),
   Topic.parse
 );
 
