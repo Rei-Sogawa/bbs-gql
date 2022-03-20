@@ -1,4 +1,4 @@
-import { pick, pipe } from "ramda";
+import { pipe } from "ramda";
 import { z } from "zod";
 
 import { now } from "../util/now";
@@ -31,12 +31,11 @@ const of = (value: Partial<IComment>): IComment => {
   };
 };
 
+const CreateInput = Comment.pick({ content: true, rootId: true, parentId: true, userId: true })
+  .strict()
+  .refine((v) => v.rootId === v.parentId, { message: "rootId and parentId do not match" });
 type ICreateInput = Pick<IComment, "content" | "rootId" | "parentId" | "userId">;
-const create: (input: ICreateInput) => IComment = pipe(
-  pick(["content", "rootId", "parentId", "userId"]),
-  of,
-  Comment.parse
-);
+const create: (input: ICreateInput) => IComment = pipe(CreateInput.parse, of, Comment.parse);
 
 export const CommentEntity = {
   create,

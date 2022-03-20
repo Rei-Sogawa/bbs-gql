@@ -2,6 +2,7 @@ import { Resolvers } from "../../graphql/generated";
 import { authorize } from "../../lib/authorization/authorize";
 import { TopicEntity } from "../../lib/entity/topic";
 import { signUp } from "../../lib/usecase/mutation/signUp";
+import { CommentEntity } from "./../../lib/entity/comment";
 
 export const Mutation: Resolvers["Mutation"] = {
   signUp,
@@ -40,5 +41,16 @@ export const Mutation: Resolvers["Mutation"] = {
     const topic = await TopicRepository.get(id);
     if (!TopicEntity.isCreatedBy(topic, { userId: uid })) throw new Error("Cannot write topic");
     return TopicRepository.delete(topic);
+  },
+
+  createComment: (_parent, args, context) => {
+    authorize(context);
+
+    const { content, rootId, parentId } = args.input;
+    const { uid } = context;
+    const { CommentRepository } = context.repositories;
+
+    const comment = CommentEntity.create({ content, rootId, parentId, userId: uid });
+    return CommentRepository.add({ topicId: rootId }, comment);
   },
 };
