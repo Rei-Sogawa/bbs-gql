@@ -39,7 +39,7 @@ export const TopicEditView = ({ topic }: TopicEditViewProps) => {
     <AppLayout>
       <AppContainer size="md">
         <div className="text-center">
-          <AppHeading>Topic New Page!</AppHeading>
+          <AppHeading>Topic Edit Page!</AppHeading>
         </div>
         <TopicForm initialValues={initialValues} onSubmit={onSubmit} />
         <div className="mt-2 ml-2">

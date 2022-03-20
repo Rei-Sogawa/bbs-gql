@@ -107,7 +107,9 @@ export const Topic = () => {
       <AppContainer size="md">
         {topic && (
           <div className="flex flex-col space-y-4">
-            <BreadCrumbs topic={topic} />
+            <div className="ml-2">
+              <BreadCrumbs topic={topic} />
+            </div>
             <TopicDetail topic={topic} />
             {uid ? <CommentCreateForm rootId={topic.id} parentId={topic.id} /> : <CommentCreateFormBeforeLogIn />}
             <div className="flex flex-col space-y-2">
