@@ -31,7 +31,6 @@ export const createTimestampConverter = <
   },
   toFirestore: (entity) => {
     const { id, ...data } = entity;
-    console.log(data);
     return encodeDateToTimestamp(data);
   },
 });

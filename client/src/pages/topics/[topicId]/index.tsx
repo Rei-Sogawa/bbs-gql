@@ -107,11 +107,15 @@ export const Topic = () => {
       <AppContainer size="md">
         {topic && (
           <div className="flex flex-col space-y-4">
-            <div className="ml-2">
-              <BreadCrumbs topic={topic} />
+            <div>
+              <div className="ml-2">
+                <BreadCrumbs topic={topic} />
+              </div>
+              <TopicDetail topic={topic} />
             </div>
-            <TopicDetail topic={topic} />
+
             {uid ? <CommentCreateForm rootId={topic.id} parentId={topic.id} /> : <CommentCreateFormBeforeLogIn />}
+
             <div className="flex flex-col space-y-2">
               {topic.comments.map((comment) => (
                 <CommentItem key={comment.id} comment={comment} />
