@@ -56,7 +56,7 @@ export const Mutation: Resolvers["Mutation"] = {
       await CommentRepository.set({ topicId: topic.id }, comment);
       return topic;
     }
-    throw new Error("Cannot match rootId and parentId");
+    throw new Error("rootId and parentId do not match");
   },
 
   updateComment: async (_parent, args, context) => {
@@ -67,17 +67,12 @@ export const Mutation: Resolvers["Mutation"] = {
       input: { content },
     } = args;
     const { uid } = context;
-    const { TopicRepository, CommentGroupRepository } = context.repositories;
+    const { CommentGroupRepository } = context.repositories;
 
     const comment = await CommentGroupRepository.get(id);
     if (!CommentEntity.isCreatedBy(comment, { userId: uid })) throw new Error("Cannot write comment");
     const editedComment = CommentEntity.edit(comment, { content });
-    await CommentGroupRepository.update(editedComment);
-
-    if (comment.rootId === comment.parentId) {
-      return TopicRepository.get(comment.parentId);
-    }
-    throw new Error("rootId and parentId do not match");
+    return CommentGroupRepository.update(editedComment);
   },
 
   deleteComment: async (_parent, args, context) => {

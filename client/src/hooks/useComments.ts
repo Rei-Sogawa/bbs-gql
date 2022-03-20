@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { useCreateCommentMutation, useDeleteCommentMutation } from "../graphql/generated";
+import { useCreateCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from "../graphql/generated";
 
 gql`
   mutation CreateComment($input: CreateCommentInput!) {
@@ -20,6 +20,20 @@ gql`
 export const useCreateComment = () => {
   const [createComment] = useCreateCommentMutation();
   return createComment;
+};
+
+gql`
+  mutation UpdateComment($id: ID!, $input: UpdateCommentInput!) {
+    updateComment(id: $id, input: $input) {
+      id
+      ...CommentItem
+    }
+  }
+`;
+
+export const useUpdateComment = () => {
+  const [updateComment] = useUpdateCommentMutation();
+  return updateComment;
 };
 
 gql`

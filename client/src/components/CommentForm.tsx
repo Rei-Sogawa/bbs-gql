@@ -8,9 +8,16 @@ export type FormValues = {
 type CommentFormProps = {
   initialValues: FormValues;
   onSubmit: (values: FormValues) => Promise<void>;
+  onCancel?: () => void;
 };
 
-export const CommentForm = ({ initialValues, onSubmit }: CommentFormProps) => {
+export const CommentForm = ({
+  initialValues,
+  onSubmit,
+  onCancel = () => {
+    return;
+  },
+}: CommentFormProps) => {
   return (
     <Form
       initialValues={initialValues}
@@ -24,16 +31,23 @@ export const CommentForm = ({ initialValues, onSubmit }: CommentFormProps) => {
                   className="textarea textarea-bordered"
                   placeholder="Add a comment..."
                   required
-                  rows={1}
+                  minRows={2}
                   {...input}
                 />
               </div>
             )}
           </Field>
 
-          <button type="submit" className="mt-2 btn btn-sm">
-            Reply
-          </button>
+          <div className="flex space-x-2 mt-2">
+            <button type="submit" className="btn btn-sm">
+              Reply
+            </button>
+            {initialValues.content && (
+              <button type="button" className="btn btn-sm btn-ghost" onClick={onCancel}>
+                Cancel
+              </button>
+            )}
+          </div>
         </form>
       )}
     />

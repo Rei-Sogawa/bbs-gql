@@ -1,17 +1,17 @@
 import { gql } from "@apollo/client";
+import { useState } from "react";
 
 import { useAuth } from "../contexts/Auth";
 import { Comment, CommentItemFragment } from "../graphql/generated";
-import { useDeleteComment } from "../hooks/useComments";
+import { useDeleteComment, useUpdateComment } from "../hooks/useComments";
 import { AppEllipsisMenu } from "./AppEllipsisMenu";
+import { CommentForm, FormValues } from "./CommentForm";
 import { Content } from "./Content";
 import { Time } from "./Time";
 import { UserName } from "./UserName";
 
-const CommentItemMenu = ({ comment }: { comment: Pick<Comment, "id"> }) => {
+const CommentItemMenu = ({ comment, onEdit }: { comment: Pick<Comment, "id">; onEdit: () => void }) => {
   const deleteComment = useDeleteComment();
-
-  const onEdit = () => {};
 
   const onDelete = async () => {
     await deleteComment({ variables: { id: comment.id } });
@@ -52,17 +52,32 @@ type CommentItemProps = {
 export const CommentItem = ({ comment }: CommentItemProps) => {
   const { uid } = useAuth();
 
-  return (
-    <div>
-      <div className="flex items-start justify-between">
-        <div className="flex items-baseline space-x-4">
-          <UserName userName={comment.user.displayName} />
-          <Time time={comment.createdAt} />
-        </div>
-        {comment.user.id === uid && <CommentItemMenu comment={comment} />}
-      </div>
+  const updateComment = useUpdateComment();
 
-      <Content content={comment.content} />
+  const [isEditing, setIsEditing] = useState(false);
+
+  const onSubmit = async ({ content }: FormValues) => {
+    await updateComment({ variables: { id: comment.id, input: { content } } });
+    setIsEditing(false);
+  };
+
+  return (
+    <div className="px-3 py-4 border rounded">
+      {isEditing ? (
+        <CommentForm initialValues={comment} onSubmit={onSubmit} onCancel={() => setIsEditing(false)} />
+      ) : (
+        <div>
+          <div className="flex items-start justify-between">
+            <div className="flex items-baseline space-x-4">
+              <UserName userName={comment.user.displayName} />
+              <Time time={comment.createdAt} />
+            </div>
+            {comment.user.id === uid && <CommentItemMenu comment={comment} onEdit={() => setIsEditing(true)} />}
+          </div>
+
+          <Content content={comment.content} />
+        </div>
+      )}
     </div>
   );
 };

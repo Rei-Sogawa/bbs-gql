@@ -48,7 +48,7 @@ export type Mutation = {
   deleteComment: TopicOrComment;
   deleteTopic: Topic;
   signUp: User;
-  updateComment: TopicOrComment;
+  updateComment: Comment;
   updateTopic: Topic;
 };
 
@@ -263,7 +263,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteComment?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'id'>>;
   deleteTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationDeleteTopicArgs, 'id'>>;
   signUp?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'input'>>;
-  updateComment?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType, RequireFields<MutationUpdateCommentArgs, 'id' | 'input'>>;
+  updateComment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType, RequireFields<MutationUpdateCommentArgs, 'id' | 'input'>>;
   updateTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationUpdateTopicArgs, 'id' | 'input'>>;
 }>;
 

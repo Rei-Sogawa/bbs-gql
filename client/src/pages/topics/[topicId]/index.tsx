@@ -78,7 +78,7 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
   const { uid } = useAuth();
 
   return (
-    <div className="p-4 border rounded-md">
+    <div className="p-4 border rounded">
       <div className="flex flex-col space-y-2">
         <div className="flex justify-between items-center">
           <AppHeading>{topic.title}</AppHeading>

@@ -35,9 +35,9 @@ export const CommentCreateFormBeforeLogIn = () => {
 
   return (
     <div>
-      <div className="textarea textarea-bordered">
+      <div className="textarea textarea-bordered h-16">
         <button onClick={onClick} className="btn-link">
-          Log in to comment
+          Log in to comment...
         </button>
       </div>
       <button className="mt-2 btn btn-sm">Reply</button>

@@ -1,4 +1,5 @@
 import { Field, Form } from "react-final-form";
+import TextareaAutosize from "react-textarea-autosize";
 
 export type FormValues = {
   title: string;
@@ -40,11 +41,11 @@ export const TopicForm = ({ initialValues, onSubmit }: TopicFormProps) => {
                 <label className="label">
                   <span className="label-text">content</span>
                 </label>
-                <textarea
+                <TextareaAutosize
                   className="textarea textarea-bordered textarea-primary"
-                  placeholder="content"
+                  placeholder="Content"
                   required
-                  rows={10}
+                  minRows={10}
                   {...input}
                 />
               </div>

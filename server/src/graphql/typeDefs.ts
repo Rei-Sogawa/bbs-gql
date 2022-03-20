@@ -30,7 +30,7 @@ type Mutation {
   deleteComment(id: ID!): TopicOrComment!
   deleteTopic(id: ID!): Topic!
   signUp(input: SignUpInput!): User!
-  updateComment(id: ID!, input: UpdateCommentInput!): TopicOrComment!
+  updateComment(id: ID!, input: UpdateCommentInput!): Comment!
   updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
 }
 
