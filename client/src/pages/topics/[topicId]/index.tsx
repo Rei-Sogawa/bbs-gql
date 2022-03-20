@@ -6,22 +6,36 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { AppContainer } from "../../../components/AppContainer";
 import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
+import { CommentForm, CommentFormBeforeLogIn } from "../../../components/CommentForm";
 import { useAuth } from "../../../contexts/Auth";
 import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/generated";
 import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
 import { routes } from "../../../routes";
 
-const TopicMenu = (props: { topic: Pick<ITopic, "id"> }) => {
+const BreadCrumbs = ({ topic }: { topic: Pick<ITopic, "title"> }) => {
+  return (
+    <div className="text-sm breadcrumbs">
+      <ul>
+        <li>
+          <Link to={routes["/"].path()}>Home</Link>
+        </li>
+        <li>{topic.title}</li>
+      </ul>
+    </div>
+  );
+};
+
+const TopicMenu = ({ topic }: { topic: Pick<ITopic, "id"> }) => {
   const navigate = useNavigate();
 
   const deleteTopic = useDeleteTopic();
   const onDelete = async () => {
-    await deleteTopic({ variables: { id: props.topic.id } });
+    await deleteTopic({ variables: { id: topic.id } });
     navigate(routes["/"].path());
   };
 
   const onEdit = () => {
-    navigate(routes["/topics/:topicId/edit"].path({ topicId: props.topic.id }));
+    navigate(routes["/topics/:topicId/edit"].path({ topicId: topic.id }));
   };
 
   return (
@@ -88,6 +102,8 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
 
 export const Topic = () => {
   const { topicId } = useParams();
+
+  const { uid } = useAuth();
   const topic = useTopic(topicId!);
 
   return (
@@ -98,15 +114,11 @@ export const Topic = () => {
             <div className="text-center">
               <AppHeading>{topic.title}</AppHeading>
             </div>
-            <div className="text-sm breadcrumbs">
-              <ul>
-                <li>
-                  <Link to={routes["/"].path()}>Home</Link>
-                </li>
-                <li>{topic.title}</li>
-              </ul>
+            <BreadCrumbs topic={topic} />
+            <div className="flex flex-col space-y-2">
+              <TopicDetail topic={topic} />
+              {uid ? <CommentForm rootId={topic.id} parentId={topic.id} /> : <CommentFormBeforeLogIn />}
             </div>
-            <TopicDetail topic={topic} />
           </div>
         )}
       </AppContainer>

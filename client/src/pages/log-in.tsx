@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { AppHeading } from "../components/AppHeading";
 import { AppSignUpLayout } from "../components/AppSignUpLayout";
+import { useGlobal } from "../contexts/Global";
 import { routes } from "../routes";
 
 type FormValues = {
@@ -20,14 +21,21 @@ export const useLogIn = () => {
 };
 
 const LogInForm: VFC = () => {
+  const {
+    state: { redirect },
+    setRedirect,
+  } = useGlobal();
+
   const navigate = useNavigate();
+
+  const login = useLogIn();
 
   const initialValues: FormValues = { email: "", password: "" };
 
-  const login = useLogIn();
   const onSubmit = async (values: FormValues) => {
     await login(values);
-    navigate(routes["/"].path());
+    navigate(redirect || routes["/"].path());
+    setRedirect(null);
   };
 
   return (

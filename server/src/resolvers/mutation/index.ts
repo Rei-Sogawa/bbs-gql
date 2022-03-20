@@ -43,14 +43,18 @@ export const Mutation: Resolvers["Mutation"] = {
     return TopicRepository.delete(topic);
   },
 
-  createComment: (_parent, args, context) => {
+  createComment: async (_parent, args, context) => {
     authorize(context);
 
     const { content, rootId, parentId } = args.input;
     const { uid } = context;
-    const { CommentRepository } = context.repositories;
+    const { TopicRepository, CommentRepository } = context.repositories;
 
-    const comment = CommentEntity.create({ content, rootId, parentId, userId: uid });
-    return CommentRepository.add({ topicId: rootId }, comment);
+    if (rootId === parentId) {
+      const topic = await TopicRepository.get(rootId);
+      const comment = CommentEntity.create({ content, rootId, parentId, userId: uid });
+      return CommentRepository.add({ topicId: topic.id }, comment);
+    }
+    throw new Error("Cannot match rootId and parentId");
   },
 };

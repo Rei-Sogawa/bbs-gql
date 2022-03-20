@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { AppHeading } from "../components/AppHeading";
 import { AppSignUpLayout } from "../components/AppSignUpLayout";
+import { useGlobal } from "../contexts/Global";
 import { useSignUpMutation } from "../graphql/generated";
 import { routes } from "../routes";
 import { useLogIn } from "./log-in";
@@ -35,7 +36,16 @@ const useSignUp = () => {
 };
 
 const SignUpForm: VFC = () => {
+  const {
+    state: { redirect },
+    setRedirect,
+  } = useGlobal();
+
   const navigate = useNavigate();
+
+  const signUp = useSignUp();
+
+  const logIn = useLogIn();
 
   const initialValues: FormValues = { email: "", password: "", confirm: "", displayName: "" };
 
@@ -45,12 +55,11 @@ const SignUpForm: VFC = () => {
     return res;
   };
 
-  const signUp = useSignUp();
-  const logIn = useLogIn();
   const onSubmit = async (values: FormValues) => {
     await signUp(values);
     await logIn(values);
-    navigate(routes["/"].path());
+    navigate(redirect || routes["/"].path());
+    setRedirect(null);
   };
 
   return (

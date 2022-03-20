@@ -41,7 +41,6 @@ export const TopicForm = ({ initialValues, onSubmit }: TopicFormProps) => {
                   <span className="label-text">content</span>
                 </label>
                 <textarea
-                  type="text"
                   className="textarea textarea-bordered textarea-primary"
                   placeholder="content"
                   required
