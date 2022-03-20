@@ -43,7 +43,7 @@ export const TopicEditView = ({ topic }: TopicEditViewProps) => {
         </div>
         <TopicForm initialValues={initialValues} onSubmit={onSubmit} />
         <div className="mt-2 ml-2">
-          <Link className="link link-primary" to={routes["/"].path()}>
+          <Link className="link link-primary" to={routes["/topics/:topicId"].path({ topicId: topic.id })}>
             Back
           </Link>
         </div>

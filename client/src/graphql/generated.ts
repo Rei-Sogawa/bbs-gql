@@ -42,6 +42,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createComment: TopicOrComment;
   createTopic: Topic;
+  deleteComment: TopicOrComment;
   deleteTopic: Topic;
   signUp: User;
   updateTopic: Topic;
@@ -55,6 +56,11 @@ export type MutationCreateCommentArgs = {
 
 export type MutationCreateTopicArgs = {
   input: CreateTopicInput;
+};
+
+
+export type MutationDeleteCommentArgs = {
+  id: Scalars['ID'];
 };
 
 

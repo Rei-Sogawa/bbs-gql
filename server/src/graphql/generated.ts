@@ -45,6 +45,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createComment: TopicOrComment;
   createTopic: Topic;
+  deleteComment: TopicOrComment;
   deleteTopic: Topic;
   signUp: User;
   updateTopic: Topic;
@@ -58,6 +59,11 @@ export type MutationCreateCommentArgs = {
 
 export type MutationCreateTopicArgs = {
   input: CreateTopicInput;
+};
+
+
+export type MutationDeleteCommentArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -241,6 +247,7 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createComment?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'input'>>;
   createTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationCreateTopicArgs, 'input'>>;
+  deleteComment?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'id'>>;
   deleteTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationDeleteTopicArgs, 'id'>>;
   signUp?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'input'>>;
   updateTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationUpdateTopicArgs, 'id' | 'input'>>;

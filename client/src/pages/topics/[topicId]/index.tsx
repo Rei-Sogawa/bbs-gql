@@ -1,12 +1,13 @@
 import { gql } from "@apollo/client";
-import { FaEllipsisV } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { AppContainer } from "../../../components/AppContainer";
+import { AppEllipsisMenu } from "../../../components/AppEllipsisMenu";
 import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
 import { CommentCreateForm, CommentCreateFormBeforeLogIn } from "../../../components/CommentCreateForm";
 import { CommentItem } from "../../../components/CommentItem";
+import { Content } from "../../../components/Content";
 import { Time } from "../../../components/Time";
 import { UserName } from "../../../components/UserName";
 import { useAuth } from "../../../contexts/Auth";
@@ -41,25 +42,18 @@ const TopicMenu = ({ topic }: { topic: Pick<ITopic, "id"> }) => {
   };
 
   return (
-    <div>
-      <div className="dropdown dropdown-end">
-        <label tabIndex={0} className="btn btn-ghost btn-xs border-gray-200">
-          <FaEllipsisV />
-        </label>
-        <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
-          <li>
-            <button className="btn btn-ghost" onClick={onEdit}>
-              Edit
-            </button>
-          </li>
-          <li>
-            <button className="btn btn-ghost" onClick={onDelete}>
-              Delete
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <AppEllipsisMenu>
+      <li>
+        <button className="btn btn-ghost" onClick={onEdit}>
+          Edit
+        </button>
+      </li>
+      <li>
+        <button className="btn btn-ghost" onClick={onDelete}>
+          Delete
+        </button>
+      </li>
+    </AppEllipsisMenu>
   );
 };
 
@@ -96,7 +90,7 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
           <Time time={topic.createdAt} />
         </div>
 
-        <div className="whitespace-pre-line">{topic.content}</div>
+        <Content content={topic.content} />
       </div>
     </div>
   );
@@ -112,14 +106,11 @@ export const Topic = () => {
     <AppLayout>
       <AppContainer size="md">
         {topic && (
-          <div className="flex flex-col">
-            <div className="text-center">
-              <AppHeading>{topic.title}</AppHeading>
-            </div>
+          <div className="flex flex-col space-y-4">
             <BreadCrumbs topic={topic} />
+            <TopicDetail topic={topic} />
+            {uid ? <CommentCreateForm rootId={topic.id} parentId={topic.id} /> : <CommentCreateFormBeforeLogIn />}
             <div className="flex flex-col space-y-2">
-              <TopicDetail topic={topic} />
-              {uid ? <CommentCreateForm rootId={topic.id} parentId={topic.id} /> : <CommentCreateFormBeforeLogIn />}
               {topic.comments.map((comment) => (
                 <CommentItem key={comment.id} comment={comment} />
               ))}

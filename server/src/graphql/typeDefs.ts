@@ -27,6 +27,7 @@ scalar DateTime
 type Mutation {
   createComment(input: CreateCommentInput!): TopicOrComment!
   createTopic(input: CreateTopicInput!): Topic!
+  deleteComment(id: ID!): TopicOrComment!
   deleteTopic(id: ID!): Topic!
   signUp(input: SignUpInput!): User!
   updateTopic(id: ID!, input: UpdateTopicInput!): Topic!

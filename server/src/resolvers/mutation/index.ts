@@ -58,4 +58,14 @@ export const Mutation: Resolvers["Mutation"] = {
     }
     throw new Error("Cannot match rootId and parentId");
   },
+
+  // deleteComment: async (_parent, args, context) => {
+  //   authorize(context)
+
+  //   const {id} =args
+  //   const {uid} = context
+  //   const {CommentRepository} = context.repositories
+
+  //   const comment = await CommentRepository.get()
+  // }
 };
