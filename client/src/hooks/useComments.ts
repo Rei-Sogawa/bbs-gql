@@ -5,7 +5,14 @@ import { useCreateCommentMutation } from "../graphql/generated";
 gql`
   mutation CreateComment($input: CreateCommentInput!) {
     createComment(input: $input) {
-      id
+      __typename
+      ... on Topic {
+        id
+        comments {
+          id
+          ...CommentItem
+        }
+      }
     }
   }
 `;

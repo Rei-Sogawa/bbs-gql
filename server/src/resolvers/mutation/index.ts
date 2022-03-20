@@ -53,7 +53,8 @@ export const Mutation: Resolvers["Mutation"] = {
     if (rootId === parentId) {
       const topic = await TopicRepository.get(rootId);
       const comment = CommentEntity.create({ content, rootId, parentId, userId: uid });
-      return CommentRepository.add({ topicId: topic.id }, comment);
+      await CommentRepository.add({ topicId: topic.id }, comment);
+      return topic;
     }
     throw new Error("Cannot match rootId and parentId");
   },

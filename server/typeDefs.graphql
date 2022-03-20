@@ -61,5 +61,5 @@ type Mutation {
   createTopic(input: CreateTopicInput!): Topic!
   updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
   deleteTopic(id: ID!): Topic!
-  createComment(input: CreateCommentInput!): Comment!
+  createComment(input: CreateCommentInput!): TopicOrComment!
 }

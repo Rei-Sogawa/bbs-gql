@@ -1,3 +1,5 @@
+import { hasPath } from "ramda";
+
 import { Resolvers } from "./../../graphql/generated";
 
 export const Topic: Resolvers["Topic"] = {
@@ -21,5 +23,14 @@ export const Comment: Resolvers["Comment"] = {
     const { UserRepository } = context.repositories;
 
     return UserRepository.get(userId);
+  },
+};
+
+export const TopicOrComment: Resolvers["TopicOrComment"] = {
+  __resolveType(obj) {
+    if (hasPath(["rootId", "parentId"], obj)) {
+      return "Comment";
+    }
+    return "Topic";
   },
 };

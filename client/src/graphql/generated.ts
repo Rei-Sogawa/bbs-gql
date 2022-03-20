@@ -40,7 +40,7 @@ export type CreateTopicInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createComment: Comment;
+  createComment: TopicOrComment;
   createTopic: Topic;
   deleteTopic: Topic;
   signUp: User;
@@ -132,7 +132,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'Comment', id: string } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename: 'Comment' } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }> } };
 
 export type TopicsForIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -270,10 +270,17 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const CreateCommentDocument = gql`
     mutation CreateComment($input: CreateCommentInput!) {
   createComment(input: $input) {
-    id
+    __typename
+    ... on Topic {
+      id
+      comments {
+        id
+        ...CommentItem
+      }
+    }
   }
 }
-    `;
+    ${CommentItemFragmentDoc}`;
 export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
 
 /**
