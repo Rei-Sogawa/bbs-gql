@@ -29,6 +29,10 @@ gql`
     topic(id: $id) {
       id
       ...TopicForTopicDetail
+      comment {
+        id
+        ...CommentItem
+      }
     }
   }
 `;

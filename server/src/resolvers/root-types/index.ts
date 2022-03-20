@@ -7,4 +7,10 @@ export const Topic: Resolvers["Topic"] = {
 
     return UserRepository.get(userId);
   },
+
+  comment: (parent, _args, context) => {
+    const { CommentRepository } = context.repositories;
+
+    return CommentRepository.findAll({ topicId: parent.id });
+  },
 };

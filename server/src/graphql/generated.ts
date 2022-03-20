@@ -96,6 +96,7 @@ export type SignUpInput = {
 
 export type Topic = {
   __typename?: 'Topic';
+  comment: Array<Comment>;
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -252,6 +253,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
 }>;
 
 export type TopicResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Topic'] = ResolversParentTypes['Topic']> = ResolversObject<{
+  comment?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

@@ -15,6 +15,7 @@ type Topic {
   createdAt: DateTime!
   updatedAt: DateTime!
   user: User!
+  comment: [Comment!]!
 }
 
 type Comment {

@@ -93,6 +93,7 @@ export type SignUpInput = {
 
 export type Topic = {
   __typename?: 'Topic';
+  comment: Array<Comment>;
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -115,12 +116,7 @@ export type User = {
   topics: Array<Topic>;
 };
 
-export type CreateCommentMutationVariables = Exact<{
-  input: CreateCommentInput;
-}>;
-
-
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'Comment', id: string } };
+export type CommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
 
 export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, createdAt: string };
 
@@ -130,6 +126,13 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, displayName: string } };
+
+export type CreateCommentMutationVariables = Exact<{
+  input: CreateCommentInput;
+}>;
+
+
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'Comment', id: string } };
 
 export type TopicsForIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -183,6 +186,17 @@ export type TopicForTopicEditFragment = { __typename?: 'Topic', id: string, titl
 
 export type TopicForTopicDetailFragment = { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
 
+export const CommentItemFragmentDoc = gql`
+    fragment CommentItem on Comment {
+  id
+  content
+  createdAt
+  user {
+    id
+    displayName
+  }
+}
+    `;
 export const TopicItemFragmentDoc = gql`
     fragment TopicItem on Topic {
   id
@@ -218,39 +232,6 @@ export const TopicForTopicDetailFragmentDoc = gql`
   }
 }
     `;
-export const CreateCommentDocument = gql`
-    mutation CreateComment($input: CreateCommentInput!) {
-  createComment(input: $input) {
-    id
-  }
-}
-    `;
-export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
-
-/**
- * __useCreateCommentMutation__
- *
- * To run a mutation, you first call `useCreateCommentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCommentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentMutation, CreateCommentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument, options);
-      }
-export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
-export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
-export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
 export const MeDocument = gql`
     query me {
   me {
@@ -286,6 +267,39 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const CreateCommentDocument = gql`
+    mutation CreateComment($input: CreateCommentInput!) {
+  createComment(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
+
+/**
+ * __useCreateCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentMutation, CreateCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument, options);
+      }
+export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
+export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
+export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
 export const TopicsForIndexDocument = gql`
     query TopicsForIndex {
   topics {

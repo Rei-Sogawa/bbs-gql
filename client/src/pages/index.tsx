@@ -8,7 +8,7 @@ import { useTopics } from "../hooks/useTopics";
 
 export const Index: VFC = () => {
   const topics = useTopics();
-  console.log(topics);
+
   return (
     <AppLayout>
       <AppContainer size="md">
