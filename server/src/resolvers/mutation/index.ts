@@ -64,10 +64,15 @@ export const Mutation: Resolvers["Mutation"] = {
 
     const { id } = args;
     const { uid } = context;
-    const { CommentGroupRepository } = context.repositories;
+    const { TopicRepository, CommentGroupRepository } = context.repositories;
 
     const comment = await CommentGroupRepository.get(id);
     if (!CommentEntity.isCreatedBy(comment, { userId: uid })) throw new Error("Cannot write comment");
-    return CommentGroupRepository.delete(comment);
+    await CommentGroupRepository.delete(comment);
+
+    if (comment.rootId === comment.parentId) {
+      return TopicRepository.get(comment.parentId);
+    }
+    throw new Error("Cannot match rootId and ParentId");
   },
 };

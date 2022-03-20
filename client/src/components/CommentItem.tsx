@@ -1,17 +1,33 @@
 import { gql } from "@apollo/client";
 
 import { useAuth } from "../contexts/Auth";
-import { CommentItemFragment } from "../graphql/generated";
+import { Comment, CommentItemFragment } from "../graphql/generated";
+import { useDeleteComment } from "../hooks/useComments";
 import { AppEllipsisMenu } from "./AppEllipsisMenu";
 import { Content } from "./Content";
 import { Time } from "./Time";
 import { UserName } from "./UserName";
 
-const CommentItemMenu = () => {
+const CommentItemMenu = ({ comment }: { comment: Pick<Comment, "id"> }) => {
+  const deleteComment = useDeleteComment();
+
+  const onEdit = () => {};
+
+  const onDelete = async () => {
+    await deleteComment({ variables: { id: comment.id } });
+  };
+
   return (
     <AppEllipsisMenu>
       <li>
-        <button className="btn btn-ghost">Delete</button>
+        <button className="btn btn-ghost" onClick={onEdit}>
+          Edit
+        </button>
+      </li>
+      <li>
+        <button className="btn btn-ghost" onClick={onDelete}>
+          Delete
+        </button>
       </li>
     </AppEllipsisMenu>
   );
@@ -35,6 +51,7 @@ type CommentItemProps = {
 
 export const CommentItem = ({ comment }: CommentItemProps) => {
   const { uid } = useAuth();
+
   return (
     <div>
       <div className="flex items-start justify-between">
@@ -42,7 +59,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
           <UserName userName={comment.user.displayName} />
           <Time time={comment.createdAt} />
         </div>
-        {comment.user.id === uid && <CommentItemMenu />}
+        {comment.user.id === uid && <CommentItemMenu comment={comment} />}
       </div>
 
       <Content content={comment.content} />
