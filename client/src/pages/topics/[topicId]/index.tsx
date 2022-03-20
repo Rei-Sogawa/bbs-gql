@@ -6,7 +6,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { AppContainer } from "../../../components/AppContainer";
 import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
-import { CommentForm, CommentFormBeforeLogIn } from "../../../components/CommentForm";
+import { CommentCreateForm, CommentCreateFormBeforeLogIn } from "../../../components/CommentCreateForm";
 import { useAuth } from "../../../contexts/Auth";
 import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/generated";
 import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
@@ -117,7 +117,7 @@ export const Topic = () => {
             <BreadCrumbs topic={topic} />
             <div className="flex flex-col space-y-2">
               <TopicDetail topic={topic} />
-              {uid ? <CommentForm rootId={topic.id} parentId={topic.id} /> : <CommentFormBeforeLogIn />}
+              {uid ? <CommentCreateForm rootId={topic.id} parentId={topic.id} /> : <CommentCreateFormBeforeLogIn />}
             </div>
           </div>
         )}

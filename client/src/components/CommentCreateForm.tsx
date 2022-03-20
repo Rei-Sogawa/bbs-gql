@@ -10,18 +10,18 @@ type FormValues = {
   content: string;
 };
 
-type CommentFormViewProps = {
+type CommentCreateFormViewProps = {
   initialValues: FormValues;
   onSubmit: (values: FormValues) => Promise<void>;
 };
 
-const CommentFormView = ({ initialValues, onSubmit }: CommentFormViewProps) => {
+const CommentCreateFormView = ({ initialValues, onSubmit }: CommentCreateFormViewProps) => {
   return (
     <Form
       initialValues={initialValues}
       onSubmit={onSubmit}
-      render={({ handleSubmit }) => (
-        <form onSubmit={handleSubmit}>
+      render={({ handleSubmit, form }) => (
+        <form onSubmit={(e) => handleSubmit(e)?.then(form.reset)}>
           <Field name="content">
             {({ input }) => (
               <div className="form-control">
@@ -45,12 +45,12 @@ const CommentFormView = ({ initialValues, onSubmit }: CommentFormViewProps) => {
   );
 };
 
-type CommentFormProps = {
+type CommentCreateFormProps = {
   rootId: string;
   parentId: string;
 };
 
-export const CommentForm = ({ rootId, parentId }: CommentFormProps) => {
+export const CommentCreateForm = ({ rootId, parentId }: CommentCreateFormProps) => {
   const createComment = useCreateComment();
 
   const initialValues: FormValues = { content: "" };
@@ -59,10 +59,10 @@ export const CommentForm = ({ rootId, parentId }: CommentFormProps) => {
     await createComment({ variables: { input: { content, rootId, parentId } } });
   };
 
-  return <CommentFormView {...{ initialValues, onSubmit }} />;
+  return <CommentCreateFormView {...{ initialValues, onSubmit }} />;
 };
 
-export const CommentFormBeforeLogIn = () => {
+export const CommentCreateFormBeforeLogIn = () => {
   const { setRedirect } = useGlobal();
 
   const location = useLocation();
