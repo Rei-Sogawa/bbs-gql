@@ -1,8 +1,9 @@
 import { Field, Form } from "react-final-form";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 
 import { useGlobal } from "../contexts/Global";
+import { useCreateComment } from "../hooks/useComments";
 import { routes } from "../routes";
 
 type FormValues = {
@@ -50,8 +51,14 @@ type CommentFormProps = {
 };
 
 export const CommentForm = ({ rootId, parentId }: CommentFormProps) => {
+  const createComment = useCreateComment();
+
   const initialValues: FormValues = { content: "" };
-  const onSubmit = (v: FormValues) => Promise.resolve();
+
+  const onSubmit = async ({ content }: FormValues) => {
+    await createComment({ variables: { input: { content, rootId, parentId } } });
+  };
+
   return <CommentFormView {...{ initialValues, onSubmit }} />;
 };
 
