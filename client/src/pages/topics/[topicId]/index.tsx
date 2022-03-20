@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client";
-import { format } from "date-fns";
 import { FaEllipsisV } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -7,6 +6,9 @@ import { AppContainer } from "../../../components/AppContainer";
 import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
 import { CommentCreateForm, CommentCreateFormBeforeLogIn } from "../../../components/CommentCreateForm";
+import { CommentItem } from "../../../components/CommentItem";
+import { Time } from "../../../components/Time";
+import { UserName } from "../../../components/UserName";
 import { useAuth } from "../../../contexts/Auth";
 import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/generated";
 import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
@@ -89,9 +91,9 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
           {topic.user.id === uid && <TopicMenu topic={topic} />}
         </div>
 
-        <div className="flex space-x-4 items-center">
-          <div className="font-bold">{topic.user.displayName}</div>
-          <div className="text-gray-500 text-sm">{format(new Date(topic.createdAt), "yyyy/MM/dd HH:mm")}</div>
+        <div className="flex items-baseline space-x-4">
+          <UserName userName={topic.user.displayName} />
+          <Time time={topic.createdAt} />
         </div>
 
         <div className="whitespace-pre-line">{topic.content}</div>
@@ -118,6 +120,9 @@ export const Topic = () => {
             <div className="flex flex-col space-y-2">
               <TopicDetail topic={topic} />
               {uid ? <CommentCreateForm rootId={topic.id} parentId={topic.id} /> : <CommentCreateFormBeforeLogIn />}
+              {topic.comments.map((comment) => (
+                <CommentItem key={comment.id} comment={comment} />
+              ))}
             </div>
           </div>
         )}

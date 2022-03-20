@@ -93,7 +93,7 @@ export type SignUpInput = {
 
 export type Topic = {
   __typename?: 'Topic';
-  comment: Array<Comment>;
+  comments: Array<Comment>;
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -144,7 +144,7 @@ export type TopicForTopicQueryVariables = Exact<{
 }>;
 
 
-export type TopicForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+export type TopicForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } } };
 
 export type TopicForTopicEditQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -340,9 +340,14 @@ export const TopicForTopicDocument = gql`
   topic(id: $id) {
     id
     ...TopicForTopicDetail
+    comments {
+      id
+      ...CommentItem
+    }
   }
 }
-    ${TopicForTopicDetailFragmentDoc}`;
+    ${TopicForTopicDetailFragmentDoc}
+${CommentItemFragmentDoc}`;
 
 /**
  * __useTopicForTopicQuery__

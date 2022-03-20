@@ -45,7 +45,7 @@ input SignUpInput {
 }
 
 type Topic {
-  comment: [Comment!]!
+  comments: [Comment!]!
   content: String!
   createdAt: DateTime!
   id: ID!

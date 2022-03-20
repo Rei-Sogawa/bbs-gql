@@ -26,7 +26,7 @@ const createCommentRepository = (ref: ({ topicId }: { topicId: string }) => Coll
     ...repository,
     findAll: ({ topicId }: { topicId: string }) =>
       ref({ topicId })
-        .orderBy("createdAt", "desc")
+        .orderBy("createdAt", "asc")
         .get()
         .then((snap) => snap.docs.map((doc) => doc.data())),
   };

@@ -29,7 +29,7 @@ gql`
     topic(id: $id) {
       id
       ...TopicForTopicDetail
-      comment {
+      comments {
         id
         ...CommentItem
       }
