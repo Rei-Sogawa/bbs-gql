@@ -43,6 +43,9 @@ const create: (input: ICreateInput) => IComment = pipe(
   Comment.parse
 );
 
+const isCreatedBy = (comment: IComment, { userId }: { userId: string }) => comment.userId === userId;
+
 export const CommentEntity = {
   create,
+  isCreatedBy,
 };

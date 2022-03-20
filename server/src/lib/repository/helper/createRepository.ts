@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import { omit } from "ramda";
 
 import { createCollectionGroupLoader, createRootCollectionLoader, createSubCollectionLoader } from "./createLoader";
 
@@ -80,11 +81,25 @@ export const createCollectionGroupRepository = <TEntity extends { id: string; _i
 ) => {
   const loader = createCollectionGroupLoader(ref);
 
-  const _get = (id: string) => loader.load(id);
+  const _get = (id: string) => loader.load(id).then(omit(["ref"])) as Promise<TEntity>;
+
+  const _update = async (entity: TEntity) =>
+    loader
+      .load(entity.id)
+      .then((doc) => doc.ref.update(entity))
+      .then(() => entity);
+
+  const _delete = (entity: TEntity) =>
+    loader
+      .load(entity.id)
+      .then((doc) => doc.ref.delete())
+      .then(() => entity);
 
   return {
     ref,
     loader,
     get: _get,
+    update: _update,
+    delete: _delete,
   };
 };

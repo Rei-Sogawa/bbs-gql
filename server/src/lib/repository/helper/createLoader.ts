@@ -36,13 +36,13 @@ export const createSubCollectionLoader = <TEntity extends { id: string; _id: str
 export const createCollectionGroupLoader = <TEntity extends { id: string; _id: string }>(
   ref: admin.firestore.CollectionGroup<TEntity>
 ) => {
-  return new DataLoader<string, TEntity>((keys) =>
+  return new DataLoader<string, TEntity & { ref: admin.firestore.DocumentReference<TEntity> }>((keys) =>
     Promise.all(
       keys.map(async (id) => {
         const dSnap = await ref.where("_id", "==", id).get();
-        const entity = head(dSnap.docs)?.data();
-        if (!entity) throw new Error(`data not found at ${dSnap.query}`);
-        return entity;
+        const doc = head(dSnap.docs);
+        if (!doc) throw new Error(`data not found at ${dSnap.query}`);
+        return { ...doc.data(), ref: doc.ref };
       })
     )
   );

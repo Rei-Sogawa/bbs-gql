@@ -64,8 +64,10 @@ export const Mutation: Resolvers["Mutation"] = {
 
     const { id } = args;
     const { uid } = context;
-    const { CommentRepository, CommentGroupRepository } = context.repositories;
+    const { CommentGroupRepository } = context.repositories;
 
     const comment = await CommentGroupRepository.get(id);
+    if (!CommentEntity.isCreatedBy(comment, { userId: uid })) throw new Error("Cannot write comment");
+    return CommentGroupRepository.delete(comment);
   },
 };
