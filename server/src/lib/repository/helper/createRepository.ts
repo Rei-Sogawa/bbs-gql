@@ -3,6 +3,8 @@ import { omit } from "ramda";
 
 import { createCollectionGroupLoader, createRootCollectionLoader, createSubCollectionLoader } from "./createLoader";
 
+// NOTE: update は converter を通らない。converter で id の追加と削除をしているので、update は使わない
+
 export const createRootCollectionRepository = <TEntity extends { id: string }>(
   ref: admin.firestore.CollectionReference<TEntity>
 ) => {
@@ -18,12 +20,6 @@ export const createRootCollectionRepository = <TEntity extends { id: string }>(
 
   const _add = (entity: TEntity) => ref.add(entity).then(({ id }) => ({ ...entity, id }));
 
-  const _update = (entity: TEntity) =>
-    ref
-      .doc(entity.id)
-      .update(entity)
-      .then(() => entity);
-
   const _delete = (entity: TEntity) =>
     ref
       .doc(entity.id)
@@ -36,7 +32,7 @@ export const createRootCollectionRepository = <TEntity extends { id: string }>(
     get: _get,
     set: _set,
     add: _add,
-    update: _update,
+    update: _set,
     delete: _delete,
   };
 };
@@ -54,12 +50,6 @@ export const createSubCollectionRepository = <TEntity extends { id: string; _id:
       .set(entity)
       .then(() => entity);
 
-  const _update = (params: Omit<Key, "id">, entity: TEntity) =>
-    ref(params)
-      .doc(entity.id)
-      .update(entity)
-      .then(() => entity);
-
   const _delete = (params: Omit<Key, "id">, entity: TEntity) =>
     ref(params)
       .doc(entity.id)
@@ -69,9 +59,9 @@ export const createSubCollectionRepository = <TEntity extends { id: string; _id:
   return {
     ref,
     loader,
-    set: _set,
     get: _get,
-    update: _update,
+    set: _set,
+    update: _set,
     delete: _delete,
   };
 };
@@ -83,10 +73,10 @@ export const createCollectionGroupRepository = <TEntity extends { id: string; _i
 
   const _get = (id: string) => loader.load(id).then(omit(["ref"])) as Promise<TEntity>;
 
-  const _update = async (entity: TEntity) =>
+  const _set = async (entity: TEntity) =>
     loader
       .load(entity.id)
-      .then((doc) => doc.ref.update(entity))
+      .then((doc) => doc.ref.set(entity))
       .then(() => entity);
 
   const _delete = (entity: TEntity) =>
@@ -99,7 +89,8 @@ export const createCollectionGroupRepository = <TEntity extends { id: string; _i
     ref,
     loader,
     get: _get,
-    update: _update,
+    set: _set,
+    update: _set,
     delete: _delete,
   };
 };
