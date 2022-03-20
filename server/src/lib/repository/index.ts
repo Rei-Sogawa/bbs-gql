@@ -3,8 +3,12 @@ import * as admin from "firebase-admin";
 import { IComment } from "../entity/comment";
 import { ITopic } from "../entity/topic";
 import { IUser } from "../entity/user";
-import { createRootCollectionRepository, createSubCollectionRepository } from "./../repository/helper/createRepository";
 import { createTimestampConverter } from "./helper/createConverter";
+import {
+  createCollectionGroupRepository,
+  createRootCollectionRepository,
+  createSubCollectionRepository,
+} from "./helper/createRepository";
 
 type CollectionRef<T> = admin.firestore.CollectionReference<T>;
 
@@ -44,12 +48,16 @@ export const createRepositories = (db: admin.firestore.Firestore) => {
       .withConverter(createTimestampConverter<IComment>());
   };
 
+  const commentsGroupRef = db.collectionGroup("comments").withConverter(createTimestampConverter<IComment>());
+
   const UserRepository = createRootCollectionRepository(usersRef);
   const TopicRepository = createTopicRepository(topicsRef);
 
   const CommentRepository = createCommentRepository(commentsRef);
 
-  return { UserRepository, TopicRepository, CommentRepository };
+  const CommentGroupRepository = createCollectionGroupRepository(commentsGroupRef);
+
+  return { UserRepository, TopicRepository, CommentRepository, CommentGroupRepository };
 };
 
 export type Repositories = ReturnType<typeof createRepositories>;

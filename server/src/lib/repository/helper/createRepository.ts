@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 
-import { createRootCollectionLoader, createSubCollectionLoader } from "./createLoader";
+import { createCollectionGroupLoader, createRootCollectionLoader, createSubCollectionLoader } from "./createLoader";
 
 export const createRootCollectionRepository = <TEntity extends { id: string }>(
   ref: admin.firestore.CollectionReference<TEntity>
@@ -40,7 +40,7 @@ export const createRootCollectionRepository = <TEntity extends { id: string }>(
   };
 };
 
-export const createSubCollectionRepository = <TEntity extends { id: string }, Key extends { id: string }>(
+export const createSubCollectionRepository = <TEntity extends { id: string; _id: string }, Key extends { id: string }>(
   ref: (params: Omit<Key, "id">) => admin.firestore.CollectionReference<TEntity>
 ) => {
   const loader = createSubCollectionLoader(ref);
@@ -52,11 +52,6 @@ export const createSubCollectionRepository = <TEntity extends { id: string }, Ke
       .doc(entity.id)
       .set(entity)
       .then(() => entity);
-
-  const _add = (params: Omit<Key, "id">, entity: TEntity) =>
-    ref(params)
-      .add(entity)
-      .then(({ id }) => ({ ...entity, id }));
 
   const _update = (params: Omit<Key, "id">, entity: TEntity) =>
     ref(params)
@@ -75,8 +70,21 @@ export const createSubCollectionRepository = <TEntity extends { id: string }, Ke
     loader,
     set: _set,
     get: _get,
-    add: _add,
     update: _update,
     delete: _delete,
+  };
+};
+
+export const createCollectionGroupRepository = <TEntity extends { id: string; _id: string }>(
+  ref: admin.firestore.CollectionGroup<TEntity>
+) => {
+  const loader = createCollectionGroupLoader(ref);
+
+  const _get = (id: string) => loader.load(id);
+
+  return {
+    ref,
+    loader,
+    get: _get,
   };
 };

@@ -1,11 +1,13 @@
 import { pick, pipe } from "ramda";
+import { v4 } from "uuid";
 import { z } from "zod";
 
 import { now } from "../util/now";
 
 const Comment = z
   .object({
-    id: z.string(),
+    id: z.string().uuid(),
+    _id: z.string().uuid(),
     content: z.string().min(1),
     createdAt: z.date(),
     updatedAt: z.date(),
@@ -13,14 +15,17 @@ const Comment = z
     parentId: z.string().min(1),
     userId: z.string().min(1),
   })
-  .strict();
+  .strict()
+  .refine((v) => v.id === v._id, { message: "id and _id don not match" });
 
 export type IComment = z.infer<typeof Comment>;
 
 const of = (value: Partial<IComment>): IComment => {
+  const _id = v4();
   const _now = now();
   return {
-    id: "",
+    id: _id,
+    _id: _id,
     content: "",
     createdAt: _now,
     updatedAt: _now,
