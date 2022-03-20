@@ -30,11 +30,11 @@ const of = (value: Partial<ITopic>): ITopic => {
 };
 
 type ICreateInput = Pick<ITopic, "title" | "content" | "userId">;
-const create: (value: ICreateInput) => ITopic = pipe(pick(["title", "content", "userId"]), of, Topic.parse);
+const create: (input: ICreateInput) => ITopic = pipe(pick(["title", "content", "userId"]), of, Topic.parse);
 
 type IEditInput = Pick<ITopic, "title" | "content">;
-const edit: (topic: ITopic, value: IEditInput) => ITopic = pipe(
-  (topic, value) => mergeRight(topic, pick(["title", "content"], value)),
+const edit: (topic: ITopic, input: IEditInput) => ITopic = pipe(
+  (topic, input) => mergeRight(topic, pick(["title", "content"], input)),
   mergeLeft({ updatedAt: now() }),
   Topic.parse
 );

@@ -45,6 +45,7 @@ export type Mutation = {
   deleteComment: TopicOrComment;
   deleteTopic: Topic;
   signUp: User;
+  updateComment: TopicOrComment;
   updateTopic: Topic;
 };
 
@@ -71,6 +72,12 @@ export type MutationDeleteTopicArgs = {
 
 export type MutationSignUpArgs = {
   input: SignUpInput;
+};
+
+
+export type MutationUpdateCommentArgs = {
+  id: Scalars['ID'];
+  input: UpdateCommentInput;
 };
 
 
@@ -109,6 +116,10 @@ export type Topic = {
 };
 
 export type TopicOrComment = Comment | Topic;
+
+export type UpdateCommentInput = {
+  content: Scalars['String'];
+};
 
 export type UpdateTopicInput = {
   content: Scalars['String'];

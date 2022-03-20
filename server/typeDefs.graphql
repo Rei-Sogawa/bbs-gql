@@ -56,11 +56,16 @@ input CreateCommentInput {
   parentId: String!
 }
 
+input UpdateCommentInput {
+  content: String!
+}
+
 type Mutation {
   signUp(input: SignUpInput!): User!
   createTopic(input: CreateTopicInput!): Topic!
   updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
   deleteTopic(id: ID!): Topic!
   createComment(input: CreateCommentInput!): TopicOrComment!
+  updateComment(id: ID!, input: UpdateCommentInput!): TopicOrComment!
   deleteComment(id: ID!): TopicOrComment!
 }

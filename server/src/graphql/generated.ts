@@ -48,6 +48,7 @@ export type Mutation = {
   deleteComment: TopicOrComment;
   deleteTopic: Topic;
   signUp: User;
+  updateComment: TopicOrComment;
   updateTopic: Topic;
 };
 
@@ -74,6 +75,12 @@ export type MutationDeleteTopicArgs = {
 
 export type MutationSignUpArgs = {
   input: SignUpInput;
+};
+
+
+export type MutationUpdateCommentArgs = {
+  id: Scalars['ID'];
+  input: UpdateCommentInput;
 };
 
 
@@ -112,6 +119,10 @@ export type Topic = {
 };
 
 export type TopicOrComment = Comment | Topic;
+
+export type UpdateCommentInput = {
+  content: Scalars['String'];
+};
 
 export type UpdateTopicInput = {
   content: Scalars['String'];
@@ -207,6 +218,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Topic: ResolverTypeWrapper<ITopic>;
   TopicOrComment: ResolversTypes['Comment'] | ResolversTypes['Topic'];
+  UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
   User: ResolverTypeWrapper<IUser>;
 }>;
@@ -225,6 +237,7 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Topic: ITopic;
   TopicOrComment: ResolversParentTypes['Comment'] | ResolversParentTypes['Topic'];
+  UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
   User: IUser;
 }>;
@@ -250,6 +263,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteComment?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'id'>>;
   deleteTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationDeleteTopicArgs, 'id'>>;
   signUp?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'input'>>;
+  updateComment?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType, RequireFields<MutationUpdateCommentArgs, 'id' | 'input'>>;
   updateTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationUpdateTopicArgs, 'id' | 'input'>>;
 }>;
 

@@ -30,6 +30,7 @@ type Mutation {
   deleteComment(id: ID!): TopicOrComment!
   deleteTopic(id: ID!): Topic!
   signUp(input: SignUpInput!): User!
+  updateComment(id: ID!, input: UpdateCommentInput!): TopicOrComment!
   updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
 }
 
@@ -56,6 +57,10 @@ type Topic {
 }
 
 union TopicOrComment = Comment | Topic
+
+input UpdateCommentInput {
+  content: String!
+}
 
 input UpdateTopicInput {
   content: String!

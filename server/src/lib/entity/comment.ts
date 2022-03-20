@@ -1,4 +1,4 @@
-import { pick, pipe } from "ramda";
+import { mergeLeft, mergeRight, pick, pipe } from "ramda";
 import { v4 } from "uuid";
 import { z } from "zod";
 
@@ -43,9 +43,17 @@ const create: (input: ICreateInput) => IComment = pipe(
   Comment.parse
 );
 
+type IEditInput = Pick<IComment, "content">;
+const edit: (comment: IComment, input: IEditInput) => IComment = pipe(
+  (comment, input) => mergeRight(comment, pick(["content"], input)),
+  mergeLeft({ updatedAt: now() }),
+  Comment.parse
+);
+
 const isCreatedBy = (comment: IComment, { userId }: { userId: string }) => comment.userId === userId;
 
 export const CommentEntity = {
   create,
+  edit,
   isCreatedBy,
 };
