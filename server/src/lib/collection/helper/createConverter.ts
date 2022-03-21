@@ -51,7 +51,7 @@ export const createEntityConverter = <
 
 export const createConverter = <TData extends Record<string, any>, TDecodedData extends TData>(
   decode: (snap: admin.firestore.DocumentSnapshot<TData>) => TDecodedData,
-  encode: (decodedData: TDecodedData | Partial<TDecodedData>) => TData
+  encode: (decodedData: TDecodedData | Partial<TDecodedData>) => TData | Partial<TData>
 ): admin.firestore.FirestoreDataConverter<TDecodedData> => ({
   fromFirestore: (snap) => {
     return decode(snap as admin.firestore.DocumentSnapshot<TData>);
@@ -61,6 +61,8 @@ export const createConverter = <TData extends Record<string, any>, TDecodedData 
   },
 });
 
-// TODO
-// decodeTimestamp
-// encodeDate
+export const decodeTimestamp = <T>(obj: T) =>
+  mapObjIndexed((v) => (v instanceof admin.firestore.Timestamp ? v.toDate() : v), obj);
+
+export const encodeDate = <T>(obj: T) =>
+  mapObjIndexed((v) => (v instanceof Date ? admin.firestore.Timestamp.fromDate(v) : v), obj);
