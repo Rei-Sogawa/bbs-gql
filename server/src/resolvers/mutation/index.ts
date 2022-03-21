@@ -56,7 +56,7 @@ export const Mutation: Resolvers["Mutation"] = {
     if (parentType === "Topic") {
       const topic = await topicsCollection.loader.load(parentId);
       const commentData = CommentEntity.create({ content, parentType, parentId, userId: uid });
-      await commentsCollection.dataRef({ topicId: topic.id }).add(commentData);
+      await commentsCollection.dataRef({ topicId: topic.id }).doc(commentData._id).set(commentData);
       return topic;
     }
 
