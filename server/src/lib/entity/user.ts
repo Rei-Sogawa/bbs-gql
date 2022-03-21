@@ -21,7 +21,7 @@ const of = (value: Partial<IUserData>): IUserData => {
   };
 };
 
-const create: (input: Pick<IUserData, "displayName">) => IUserData = ({ displayName }) => of({ displayName });
+const create: (input: Pick<IUserData, "displayName">) => IUserData = of;
 
 export const UserEntity = {
   create,

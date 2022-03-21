@@ -1,53 +1,43 @@
-import { mergeLeft, mergeRight, pick, pipe } from "ramda";
+import { mergeLeft, mergeRight, pipe } from "ramda";
 import { v4 } from "uuid";
-import { z } from "zod";
 
 import { now } from "../util/now";
+import { DocRef } from "./hepler/types";
 
-const Comment = z
-  .object({
-    id: z.string().uuid(),
-    _id: z.string().uuid(),
-    content: z.string().min(1),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-    rootId: z.string().min(1),
-    parentId: z.string().min(1),
-    userId: z.string().min(1),
-  })
-  .strict()
-  .refine((v) => v.id === v._id, { message: "id and _id don not match" });
+export type IComment = {
+  id: string;
+  ref: DocRef<IComment>;
+  _id: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  parentType: string;
+  parentId: string;
+};
 
-export type IComment = z.infer<typeof Comment>;
+export type ICommentData = Omit<IComment, "id" | "ref">;
 
-const of = (value: Partial<IComment>): IComment => {
+const of = (value: Partial<ICommentData>): ICommentData => {
   const _id = v4();
   const _now = now();
   return {
-    id: _id,
     _id: _id,
     content: "",
     createdAt: _now,
     updatedAt: _now,
-    rootId: "",
-    parentId: "",
     userId: "",
+    parentType: "",
+    parentId: "",
     ...value,
   };
 };
 
-type ICreateInput = Pick<IComment, "content" | "rootId" | "parentId" | "userId">;
-const create: (input: ICreateInput) => IComment = pipe(
-  pick(["content", "rootId", "parentId", "userId"]),
-  of,
-  Comment.parse
-);
+const create: (input: Pick<ICommentData, "content" | "parentType" | "parentId" | "userId">) => ICommentData = of;
 
-type IEditInput = Pick<IComment, "content">;
-const edit: (comment: IComment, input: IEditInput) => IComment = pipe(
-  (comment, input) => mergeRight(comment, pick(["content"], input)),
-  mergeLeft({ updatedAt: now() }),
-  Comment.parse
+const edit: (comment: IComment, input: Pick<IComment, "content">) => IComment = pipe(
+  (comment, input) => mergeRight(comment, input),
+  mergeLeft({ updatedAt: now() })
 );
 
 const isCreatedBy = (comment: IComment, { userId }: { userId: string }) => comment.userId === userId;

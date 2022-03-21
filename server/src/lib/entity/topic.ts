@@ -1,25 +1,23 @@
 import { mergeLeft, mergeRight, pick, pipe } from "ramda";
-import { z } from "zod";
 
 import { now } from "../util/now";
+import { DocRef } from "./hepler/types";
 
-const Topic = z
-  .object({
-    id: z.string(),
-    title: z.string().min(1),
-    content: z.string().min(1),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-    userId: z.string().min(1),
-  })
-  .strict();
+export type ITopic = {
+  id: string;
+  ref: DocRef<ITopic>;
+  title: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+};
 
-export type ITopic = z.infer<typeof Topic>;
+export type ITopicData = Omit<ITopic, "id" | "ref">;
 
-const of = (value: Partial<ITopic>): ITopic => {
+const of = (value: Partial<ITopicData>): ITopicData => {
   const _now = now();
   return {
-    id: "",
     title: "",
     content: "",
     createdAt: _now,
@@ -29,14 +27,11 @@ const of = (value: Partial<ITopic>): ITopic => {
   };
 };
 
-type ICreateInput = Pick<ITopic, "title" | "content" | "userId">;
-const create: (input: ICreateInput) => ITopic = pipe(pick(["title", "content", "userId"]), of, Topic.parse);
+const create: (input: Pick<ITopicData, "title" | "content" | "userId">) => ITopicData = of;
 
-type IEditInput = Pick<ITopic, "title" | "content">;
-const edit: (topic: ITopic, input: IEditInput) => ITopic = pipe(
-  (topic, input) => mergeRight(topic, pick(["title", "content"], input)),
-  mergeLeft({ updatedAt: now() }),
-  Topic.parse
+const edit: (topic: ITopic, input: Pick<ITopic, "title" | "content">) => ITopic = pipe(
+  (topic, input) => mergeRight(topic, input),
+  mergeLeft({ updatedAt: now() })
 );
 
 const isCreatedBy = (topic: ITopic, { userId }: { userId: string }) => topic.userId === userId;
