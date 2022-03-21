@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 
-import { IUser, IUserData } from "./../entity/user";
+import { IUser, IUserData } from "../entity/user";
 import { createDataConverter, createEntityConverter } from "./helper/createConverter";
 import {
   createGroupCollectionLoader,
