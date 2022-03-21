@@ -1,23 +1,19 @@
-import { pick, pipe } from "ramda";
-import { z } from "zod";
-
 import { now } from "../util/now";
+import { DocRef } from "./hepler/types";
 
-const User = z
-  .object({
-    id: z.string(),
-    displayName: z.string().min(1),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-  })
-  .strict();
+export type IUser = {
+  id: string;
+  ref: DocRef<IUser>;
+  displayName: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-export type IUser = z.infer<typeof User>;
+export type IUserData = Omit<IUser, "id" | "ref">;
 
-const of = (value: Partial<IUser>): IUser => {
+const of = (value: Partial<IUserData>): IUserData => {
   const _now = now();
   return {
-    id: "",
     displayName: "",
     createdAt: _now,
     updatedAt: _now,
@@ -25,8 +21,7 @@ const of = (value: Partial<IUser>): IUser => {
   };
 };
 
-type ICreateInput = Pick<IUser, "id" | "displayName">;
-const create: (value: ICreateInput) => IUser = pipe(pick(["id", "displayName"]), of, User.parse);
+const create: (input: Pick<IUserData, "displayName">) => IUserData = ({ displayName }) => of({ displayName });
 
 export const UserEntity = {
   create,

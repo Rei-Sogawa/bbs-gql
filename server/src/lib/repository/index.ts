@@ -1,63 +1,76 @@
 import * as admin from "firebase-admin";
 
-import { IComment } from "../entity/comment";
-import { ITopic } from "../entity/topic";
-import { IUser } from "../entity/user";
-import { createTimestampConverter } from "./helper/createConverter";
+import { IUser, IUserData } from "./../entity/user";
+import { createDataConverter, createEntityConverter } from "./helper/createConverter";
 import {
-  createCollectionGroupRepository,
-  createRootCollectionRepository,
-  createSubCollectionRepository,
-} from "./helper/createRepository";
+  createGroupCollectionLoader,
+  createRootCollectionLoader,
+  createSubCollectionLoader,
+} from "./helper/createLoader";
 
-type CollectionRef<T> = admin.firestore.CollectionReference<T>;
+type Db = admin.firestore.Firestore;
+type DocRef<T> = admin.firestore.DocumentReference<T>;
+type CollectionRef = admin.firestore.CollectionReference;
+type CollectionGroup = admin.firestore.CollectionGroup;
 
-const createTopicRepository = (ref: CollectionRef<ITopic>) => {
-  const repository = createRootCollectionRepository(ref);
+const createRootCollection = <TData extends Record<string, any>, TEntity extends { id: string; ref: DocRef<TEntity> }>(
+  collectionRef: CollectionRef
+) => {
+  const _dataConv = createDataConverter<TData>();
+  const _entityConv = createEntityConverter<TEntity>();
+
+  const ref = collectionRef.withConverter(_dataConv);
+  const loader = createRootCollectionLoader(collectionRef.withConverter(_entityConv));
+
   return {
-    ...repository,
-    findAll: () =>
-      ref
-        .orderBy("createdAt", "desc")
-        .get()
-        .then((snap) => snap.docs.map((doc) => doc.data())),
+    ref,
+    loader,
   };
 };
 
-const createCommentRepository = (ref: ({ topicId }: { topicId: string }) => CollectionRef<IComment>) => {
-  const repository = createSubCollectionRepository<IComment, { topicId: string; id: string }>(ref);
+const createSubCollection = <
+  TData extends Record<string, any>,
+  TEntity extends { id: string; ref: DocRef<TEntity>; _id: string },
+  Key extends { id: string }
+>(
+  collectionRef: (params: Omit<Key, "id">) => CollectionRef
+) => {
+  const _dataConv = createDataConverter<TData>();
+  const _entityConv = createEntityConverter<TEntity>();
+
+  const ref = (params: Omit<Key, "id">) => collectionRef(params).withConverter(_dataConv);
+  const loader = createSubCollectionLoader((params: Omit<Key, "id">) =>
+    collectionRef(params).withConverter(_entityConv)
+  );
+
   return {
-    ...repository,
-    findAll: ({ topicId }: { topicId: string }) =>
-      ref({ topicId })
-        .orderBy("createdAt", "asc")
-        .get()
-        .then((snap) => snap.docs.map((doc) => doc.data())),
+    ref,
+    loader,
   };
 };
 
-export const createRepositories = (db: admin.firestore.Firestore) => {
-  const usersRef = db.collection("users").withConverter(createTimestampConverter<IUser>());
-  const topicsRef = db.collection("topics").withConverter(createTimestampConverter<ITopic>());
+const createGroupCollection = <
+  TData extends Record<string, any>,
+  TEntity extends { id: string; ref: DocRef<TEntity>; _id: string }
+>(
+  collectionRef: CollectionGroup
+) => {
+  const _dataConv = createDataConverter<TData>();
+  const _entityConv = createEntityConverter<TEntity>();
 
-  const commentsRef = ({ topicId }: { topicId: string }) => {
-    return db
-      .collection("topics")
-      .doc(topicId)
-      .collection("comments")
-      .withConverter(createTimestampConverter<IComment>());
+  const ref = collectionRef.withConverter(_dataConv);
+  const loader = createGroupCollectionLoader(collectionRef.withConverter(_entityConv));
+
+  return {
+    ref,
+    loader,
   };
-
-  const commentsGroupRef = db.collectionGroup("comments").withConverter(createTimestampConverter<IComment>());
-
-  const UserRepository = createRootCollectionRepository(usersRef);
-  const TopicRepository = createTopicRepository(topicsRef);
-
-  const CommentRepository = createCommentRepository(commentsRef);
-
-  const CommentGroupRepository = createCollectionGroupRepository(commentsGroupRef);
-
-  return { UserRepository, TopicRepository, CommentRepository, CommentGroupRepository };
 };
 
-export type Repositories = ReturnType<typeof createRepositories>;
+export const createCollections = (db: Db) => {
+  const usersCollection = createRootCollection<IUserData, IUser>(db.collection("users"));
+
+  return { usersCollection };
+};
+
+export type Collections = ReturnType<typeof createCollections>;

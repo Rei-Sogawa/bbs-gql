@@ -22,15 +22,25 @@ export const encodeDateToTimestamp = (input: unknown): any => {
   throw new Error("could not encodeDateToTimestamp");
 };
 
-export const createTimestampConverter = <
-  TEntity extends { id: string }
+export const createDataConverter = <
+  TData extends Record<string, any>
+>(): admin.firestore.FirestoreDataConverter<TData> => ({
+  fromFirestore: (snap) => {
+    return decodeTimestampToDate(snap.data()) as TData;
+  },
+  toFirestore: (data) => {
+    return encodeDateToTimestamp(data);
+  },
+});
+
+export const createEntityConverter = <
+  TEntity extends { id: string; ref: admin.firestore.DocumentReference<TEntity> }
 >(): admin.firestore.FirestoreDataConverter<TEntity> => ({
   fromFirestore: (snap) => {
-    const data = snap.data();
-    return decodeTimestampToDate({ id: snap.id, ...data }) as TEntity;
+    return decodeTimestampToDate({ id: snap.id, ref: snap.ref, ...snap.data() }) as TEntity;
   },
   toFirestore: (entity) => {
-    const { id, ...data } = entity;
+    const { id, ref, ...data } = entity;
     return encodeDateToTimestamp(data);
   },
 });

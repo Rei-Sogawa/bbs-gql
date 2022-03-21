@@ -2,7 +2,9 @@ import DataLoader from "dataloader";
 import * as admin from "firebase-admin";
 import { head } from "ramda";
 
-export const createRootCollectionLoader = <TEntity extends { id: string }>(
+export const createRootCollectionLoader = <
+  TEntity extends { id: string; ref: admin.firestore.DocumentReference<TEntity> }
+>(
   ref: admin.firestore.CollectionReference<TEntity>
 ) => {
   return new DataLoader<string, TEntity>((keys) =>
@@ -17,7 +19,10 @@ export const createRootCollectionLoader = <TEntity extends { id: string }>(
   );
 };
 
-export const createSubCollectionLoader = <TEntity extends { id: string; _id: string }, Key extends { id: string }>(
+export const createSubCollectionLoader = <
+  TEntity extends { id: string; ref: admin.firestore.DocumentReference<TEntity>; _id: string },
+  Key extends { id: string }
+>(
   ref: (params: Omit<Key, "id">) => admin.firestore.CollectionReference<TEntity>
 ) => {
   return new DataLoader<Key, TEntity>((keys) =>
@@ -33,16 +38,18 @@ export const createSubCollectionLoader = <TEntity extends { id: string; _id: str
   );
 };
 
-export const createCollectionGroupLoader = <TEntity extends { id: string; _id: string }>(
+export const createGroupCollectionLoader = <
+  TEntity extends { id: string; ref: admin.firestore.DocumentReference<TEntity>; _id: string }
+>(
   ref: admin.firestore.CollectionGroup<TEntity>
 ) => {
-  return new DataLoader<string, TEntity & { ref: admin.firestore.DocumentReference<TEntity> }>((keys) =>
+  return new DataLoader<string, TEntity>((keys) =>
     Promise.all(
       keys.map(async (id) => {
         const dSnap = await ref.where("_id", "==", id).get();
         const doc = head(dSnap.docs);
         if (!doc) throw new Error(`data not found at ${dSnap.query}`);
-        return { ...doc.data(), ref: doc.ref };
+        return doc.data();
       })
     )
   );
