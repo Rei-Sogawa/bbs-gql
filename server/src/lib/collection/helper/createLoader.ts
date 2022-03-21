@@ -48,7 +48,6 @@ export const createGroupCollectionLoader = <
       keys.map(async (id) => {
         const dSnap = await ref.where("_id", "==", id).get();
         const doc = head(dSnap.docs);
-        console.log(doc);
         if (!doc) throw new Error(`data not found at ${dSnap.query}`);
         return doc.data();
       })

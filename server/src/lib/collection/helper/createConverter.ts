@@ -7,6 +7,7 @@ export const decodeTimestampToDate = (input: unknown): any => {
 
   if (input instanceof admin.firestore.FieldValue) return input;
   if (input instanceof admin.firestore.DocumentReference) return input;
+  if (input instanceof admin.firestore.CollectionReference) return input;
   if (is.primitive(input)) return input; // NOTE: primitive : null, undefined, string, number, boolean, symbol
   if (is.array(input)) return map(decodeTimestampToDate, input);
   if (is.object(input)) return mapObjIndexed(decodeTimestampToDate, input);
@@ -18,6 +19,7 @@ export const encodeDateToTimestamp = (input: unknown): any => {
 
   if (input instanceof admin.firestore.FieldValue) return input;
   if (input instanceof admin.firestore.DocumentReference) return input;
+  if (input instanceof admin.firestore.CollectionReference) return input;
   if (is.primitive(input)) return input;
   if (is.array(input)) return map(encodeDateToTimestamp, input);
   if (is.object(input)) return mapObjIndexed(encodeDateToTimestamp, input);
@@ -44,5 +46,17 @@ export const createEntityConverter = <
   toFirestore: (entity) => {
     const { id, ref, ...data } = entity;
     return encodeDateToTimestamp(data);
+  },
+});
+
+export const createConverter = <TData extends Record<string, any>, TDecodedData extends TData>(
+  decode: (snap: admin.firestore.DocumentSnapshot<TData>) => TDecodedData,
+  encode: (decodedData: TDecodedData | Partial<TDecodedData>) => TData
+): admin.firestore.FirestoreDataConverter<TDecodedData> => ({
+  fromFirestore: (snap) => {
+    return decode(snap as admin.firestore.DocumentSnapshot<TData>);
+  },
+  toFirestore: (data) => {
+    return encode(data);
   },
 });
