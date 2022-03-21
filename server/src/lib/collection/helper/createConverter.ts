@@ -60,3 +60,7 @@ export const createConverter = <TData extends Record<string, any>, TDecodedData 
     return encode(data);
   },
 });
+
+// TODO
+// decodeTimestamp
+// encodeDate
