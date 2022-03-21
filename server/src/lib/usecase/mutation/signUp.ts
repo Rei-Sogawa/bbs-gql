@@ -8,10 +8,11 @@ export const signUp = async (
   context: ServerContext
 ) => {
   const { displayName, email, password } = args.input;
-  const { AuthService } = context.services;
-  const { UserRepository } = context.repositories;
+  const { auth } = context;
+  const { usersCollection } = context.collections;
 
-  const { uid } = await AuthService.createUser({ email, password });
-  const user = UserEntity.create({ id: uid, displayName });
-  return UserRepository.set(user);
+  const { uid } = await auth.createUser({ email, password });
+  const userData = UserEntity.create({ displayName });
+  await usersCollection.dataRef.doc(uid).set(userData);
+  return usersCollection.loader.load(uid);
 };

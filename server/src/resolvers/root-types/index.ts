@@ -5,24 +5,28 @@ import { Resolvers } from "./../../graphql/generated";
 export const Topic: Resolvers["Topic"] = {
   user: (parent, _args, context) => {
     const { userId } = parent;
-    const { UserRepository } = context.repositories;
+    const { usersCollection } = context.collections;
 
-    return UserRepository.get(userId);
+    return usersCollection.loader.load(userId);
   },
 
   comments: (parent, _args, context) => {
-    const { CommentRepository } = context.repositories;
+    const { commentsCollection } = context.collections;
 
-    return CommentRepository.findAll({ topicId: parent.id });
+    return commentsCollection
+      .entityRef({ topicId: parent.id })
+      .orderBy("createdAt", "asc")
+      .get()
+      .then((q) => q.docs.map((doc) => doc.data()));
   },
 };
 
 export const Comment: Resolvers["Comment"] = {
   user: (parent, _args, context) => {
     const { userId } = parent;
-    const { UserRepository } = context.repositories;
+    const { usersCollection } = context.collections;
 
-    return UserRepository.get(userId);
+    return usersCollection.loader.load(userId);
   },
 };
 

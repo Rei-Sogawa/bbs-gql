@@ -1,76 +1,28 @@
 import * as admin from "firebase-admin";
 
 import { IUser, IUserData } from "../entity/user";
-import { createDataConverter, createEntityConverter } from "./helper/createConverter";
-import {
-  createGroupCollectionLoader,
-  createRootCollectionLoader,
-  createSubCollectionLoader,
-} from "./helper/createLoader";
+import { IComment, ICommentData } from "./../entity/comment";
+import { ITopic, ITopicData } from "./../entity/topic";
+import { createGroupCollection, createRootCollection, createSubCollection } from "./helper/createCollection";
 
 type Db = admin.firestore.Firestore;
-type DocRef<T> = admin.firestore.DocumentReference<T>;
-type CollectionRef = admin.firestore.CollectionReference;
-type CollectionGroup = admin.firestore.CollectionGroup;
-
-const createRootCollection = <TData extends Record<string, any>, TEntity extends { id: string; ref: DocRef<TEntity> }>(
-  collectionRef: CollectionRef
-) => {
-  const _dataConv = createDataConverter<TData>();
-  const _entityConv = createEntityConverter<TEntity>();
-
-  const ref = collectionRef.withConverter(_dataConv);
-  const loader = createRootCollectionLoader(collectionRef.withConverter(_entityConv));
-
-  return {
-    ref,
-    loader,
-  };
-};
-
-const createSubCollection = <
-  TData extends Record<string, any>,
-  TEntity extends { id: string; ref: DocRef<TEntity>; _id: string },
-  Key extends { id: string }
->(
-  collectionRef: (params: Omit<Key, "id">) => CollectionRef
-) => {
-  const _dataConv = createDataConverter<TData>();
-  const _entityConv = createEntityConverter<TEntity>();
-
-  const ref = (params: Omit<Key, "id">) => collectionRef(params).withConverter(_dataConv);
-  const loader = createSubCollectionLoader((params: Omit<Key, "id">) =>
-    collectionRef(params).withConverter(_entityConv)
-  );
-
-  return {
-    ref,
-    loader,
-  };
-};
-
-const createGroupCollection = <
-  TData extends Record<string, any>,
-  TEntity extends { id: string; ref: DocRef<TEntity>; _id: string }
->(
-  collectionRef: CollectionGroup
-) => {
-  const _dataConv = createDataConverter<TData>();
-  const _entityConv = createEntityConverter<TEntity>();
-
-  const ref = collectionRef.withConverter(_dataConv);
-  const loader = createGroupCollectionLoader(collectionRef.withConverter(_entityConv));
-
-  return {
-    ref,
-    loader,
-  };
-};
 
 export const createCollections = (db: Db) => {
   const usersCollection = createRootCollection<IUserData, IUser>(db.collection("users"));
+  const topicsCollection = createRootCollection<ITopicData, ITopic>(db.collection("topics"));
+  const commentsCollection = createSubCollection<ICommentData, IComment, { topicId: string; id: string }>(
+    ({ topicId }) => db.collection("topics").doc(topicId).collection("comments")
+  );
+  const nestCommentsCollection = createSubCollection<
+    ICommentData,
+    IComment,
+    { topicId: string; commentId: string; id: string }
+  >(({ topicId, commentId }) =>
+    db.collection("topics").doc(topicId).collection("comments").doc(commentId).collection("comments")
+  );
+  const commentsGroupCollection = createGroupCollection<ICommentData, IComment>(db.collectionGroup("comments"));
 
-  return { usersCollection };
+  return { usersCollection, topicsCollection, commentsCollection, nestCommentsCollection, commentsGroupCollection };
 };
 
 export type Collections = ReturnType<typeof createCollections>;

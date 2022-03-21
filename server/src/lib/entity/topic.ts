@@ -1,4 +1,4 @@
-import { mergeLeft, mergeRight, pick, pipe } from "ramda";
+import { mergeLeft, mergeRight, pipe } from "ramda";
 
 import { now } from "../util/now";
 import { DocRef } from "./hepler/types";

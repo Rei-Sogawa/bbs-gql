@@ -6,21 +6,24 @@ export const Query: Resolvers["Query"] = {
     authorize(context);
 
     const { uid } = context;
-    const { UserRepository } = context.repositories;
+    const { usersCollection } = context.collections;
 
-    return UserRepository.get(uid);
+    return usersCollection.loader.load(uid);
   },
 
   topic: (_parent, args, context) => {
     const { id } = args;
-    const { TopicRepository } = context.repositories;
+    const { topicsCollection } = context.collections;
 
-    return TopicRepository.get(id);
+    return topicsCollection.loader.load(id);
   },
 
   topics: (_parent, _args, context) => {
-    const { TopicRepository } = context.repositories;
+    const { topicsCollection } = context.collections;
 
-    return TopicRepository.findAll();
+    return topicsCollection.entityRef
+      .orderBy("createdAt", "desc")
+      .get()
+      .then((q) => q.docs.map((doc) => doc.data()));
   },
 };

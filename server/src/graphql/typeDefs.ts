@@ -14,7 +14,7 @@ type Comment {
 input CreateCommentInput {
   content: String!
   parentId: String!
-  rootId: String!
+  parentType: String!
 }
 
 input CreateTopicInput {

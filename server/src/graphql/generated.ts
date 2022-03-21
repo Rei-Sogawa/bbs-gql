@@ -33,7 +33,7 @@ export type Comment = {
 export type CreateCommentInput = {
   content: Scalars['String'];
   parentId: Scalars['String'];
-  rootId: Scalars['String'];
+  parentType: Scalars['String'];
 };
 
 export type CreateTopicInput = {

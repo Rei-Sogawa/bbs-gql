@@ -30,7 +30,7 @@ export type Comment = {
 export type CreateCommentInput = {
   content: Scalars['String'];
   parentId: Scalars['String'];
-  rootId: Scalars['String'];
+  parentType: Scalars['String'];
 };
 
 export type CreateTopicInput = {
@@ -151,13 +151,6 @@ export type CreateCommentMutationVariables = Exact<{
 
 export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename: 'Comment' } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }> } };
 
-export type DeleteCommentMutationVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename: 'Comment' } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }> } };
-
 export type UpdateCommentMutationVariables = Exact<{
   id: Scalars['ID'];
   input: UpdateCommentInput;
@@ -165,6 +158,13 @@ export type UpdateCommentMutationVariables = Exact<{
 
 
 export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+
+export type DeleteCommentMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename: 'Comment' } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }> } };
 
 export type TopicsForIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -339,6 +339,41 @@ export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
+export const UpdateCommentDocument = gql`
+    mutation UpdateComment($id: ID!, $input: UpdateCommentInput!) {
+  updateComment(id: $id, input: $input) {
+    id
+    ...CommentItem
+  }
+}
+    ${CommentItemFragmentDoc}`;
+export type UpdateCommentMutationFn = Apollo.MutationFunction<UpdateCommentMutation, UpdateCommentMutationVariables>;
+
+/**
+ * __useUpdateCommentMutation__
+ *
+ * To run a mutation, you first call `useUpdateCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCommentMutation, { data, loading, error }] = useUpdateCommentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateCommentMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCommentMutation, UpdateCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCommentMutation, UpdateCommentMutationVariables>(UpdateCommentDocument, options);
+      }
+export type UpdateCommentMutationHookResult = ReturnType<typeof useUpdateCommentMutation>;
+export type UpdateCommentMutationResult = Apollo.MutationResult<UpdateCommentMutation>;
+export type UpdateCommentMutationOptions = Apollo.BaseMutationOptions<UpdateCommentMutation, UpdateCommentMutationVariables>;
 export const DeleteCommentDocument = gql`
     mutation DeleteComment($id: ID!) {
   deleteComment(id: $id) {
@@ -379,41 +414,6 @@ export function useDeleteCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type DeleteCommentMutationHookResult = ReturnType<typeof useDeleteCommentMutation>;
 export type DeleteCommentMutationResult = Apollo.MutationResult<DeleteCommentMutation>;
 export type DeleteCommentMutationOptions = Apollo.BaseMutationOptions<DeleteCommentMutation, DeleteCommentMutationVariables>;
-export const UpdateCommentDocument = gql`
-    mutation UpdateComment($id: ID!, $input: UpdateCommentInput!) {
-  updateComment(id: $id, input: $input) {
-    id
-    ...CommentItem
-  }
-}
-    ${CommentItemFragmentDoc}`;
-export type UpdateCommentMutationFn = Apollo.MutationFunction<UpdateCommentMutation, UpdateCommentMutationVariables>;
-
-/**
- * __useUpdateCommentMutation__
- *
- * To run a mutation, you first call `useUpdateCommentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCommentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCommentMutation, { data, loading, error }] = useUpdateCommentMutation({
- *   variables: {
- *      id: // value for 'id'
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateCommentMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCommentMutation, UpdateCommentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCommentMutation, UpdateCommentMutationVariables>(UpdateCommentDocument, options);
-      }
-export type UpdateCommentMutationHookResult = ReturnType<typeof useUpdateCommentMutation>;
-export type UpdateCommentMutationResult = Apollo.MutationResult<UpdateCommentMutation>;
-export type UpdateCommentMutationOptions = Apollo.BaseMutationOptions<UpdateCommentMutation, UpdateCommentMutationVariables>;
 export const TopicsForIndexDocument = gql`
     query TopicsForIndex {
   topics {

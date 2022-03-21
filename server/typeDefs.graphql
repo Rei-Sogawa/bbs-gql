@@ -52,7 +52,7 @@ input UpdateTopicInput {
 
 input CreateCommentInput {
   content: String!
-  rootId: String!
+  parentType: String!
   parentId: String!
 }
 
