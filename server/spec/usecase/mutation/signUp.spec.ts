@@ -1,7 +1,9 @@
-import { signUp } from "../../../src/core/usecase/mutation/signUp";
-import { clearAuth, clearFirestore } from "../../test-util/clear";
-import { getAuth, getDb } from "../../test-util/setup";
-import { createCollections } from "./../../../src/fire/createCollections";
+import { clearAuth, clearFirestore } from "test-util/clear";
+import { getAuth, getDb } from "test-util/setup";
+
+import { signUp } from "@/core/usecase/mutation/signUp";
+import { createCollections } from "@/fire/createCollections";
+import { decodeTimestamp } from "@/fire/lib/helper";
 
 describe("signUp", () => {
   const context = {
@@ -24,7 +26,7 @@ describe("signUp", () => {
 
       const authUser = await getAuth().getUser(user.id);
       const userSnap = await getDb().collection("users").doc(user.id).get();
-      const userSnapData = decodeTimestampToDate(userSnap.data());
+      const userSnapData = decodeTimestamp(userSnap.data());
 
       expect(authUser.email).toBe("user-1@example.com");
       expect(authUser.uid).toBe(userSnap.id);
