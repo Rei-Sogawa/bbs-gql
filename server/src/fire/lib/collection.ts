@@ -56,13 +56,13 @@ export class CollectionGroup<TData> {
   findOneById<T>(id: string, decode: (snap: DocSnap<TData>) => T): Promise<T>;
   findOneById<T>(id: string, decode?: (snap: DocSnap<TData>) => T) {
     if (!decode)
-      return this.findManyByQuery((ref) => ref.where("_id", "==", id)).then((docs) => {
+      return this.findManyByQuery((ref) => ref.where("__id", "==", id)).then((docs) => {
         const doc = docs[0];
         if (!doc) throw new Error("Doc not found");
         return doc;
       });
 
-    return this.findManyByQuery((ref) => ref.where("_id", "==", id), decode).then((docs) => {
+    return this.findManyByQuery((ref) => ref.where("__id", "==", id), decode).then((docs) => {
       const doc = docs[0];
       if (!doc) throw new Error("Doc not found");
       return doc;

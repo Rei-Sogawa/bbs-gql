@@ -8,6 +8,7 @@ import { DocSnap, WithId } from "../lib/type";
 
 const UserDataSchema = z
   .object({
+    __name: z.literal("user"),
     displayName: z.string().min(1),
     createdAt: z.date(),
     updatedAt: z.date(),
@@ -16,7 +17,8 @@ const UserDataSchema = z
 
 export type UserData = z.infer<typeof UserDataSchema>;
 
-export class UserDoc extends Doc<UserData> {
+export class UserDoc extends Doc<UserData> implements UserData {
+  __name!: "user";
   displayName!: string;
   createdAt!: Date;
   updatedAt!: Date;
@@ -32,6 +34,7 @@ export class UserDoc extends Doc<UserData> {
   static new({ displayName }: Pick<UserData, "displayName">): UserData {
     const _now = now();
     return {
+      __name: "user",
       displayName,
       createdAt: _now,
       updatedAt: _now,
@@ -43,6 +46,7 @@ export type UserMapper = WithId<UserData>;
 
 const TopicDataSchema = z
   .object({
+    __name: z.literal("topic"),
     title: z.string().min(1),
     content: z.string().min(1),
     createdAt: z.date(),
@@ -53,7 +57,8 @@ const TopicDataSchema = z
 
 export type TopicData = z.infer<typeof TopicDataSchema>;
 
-export class TopicDoc extends Doc<TopicData> {
+export class TopicDoc extends Doc<TopicData> implements TopicData {
+  __name!: "topic";
   title!: string;
   content!: string;
   createdAt!: Date;
@@ -75,6 +80,7 @@ export class TopicDoc extends Doc<TopicData> {
   static new({ title, content, userId }: Pick<TopicData, "title" | "content" | "userId">): TopicData {
     const _now = now();
     return {
+      __name: "topic",
       title,
       content,
       createdAt: _now,
@@ -96,7 +102,8 @@ export type TopicMapper = WithId<TopicData>;
 
 const CommentDataSchema = z
   .object({
-    _id: z.string().min(1),
+    __name: z.literal("comment"),
+    __id: z.string().min(1),
     content: z.string().min(1),
     createdAt: z.date(),
     updatedAt: z.date(),
@@ -108,8 +115,9 @@ const CommentDataSchema = z
 
 export type CommentData = z.infer<typeof CommentDataSchema>;
 
-export class CommentDoc extends Doc<CommentData> {
-  _id!: string;
+export class CommentDoc extends Doc<CommentData> implements CommentData {
+  __name!: "comment";
+  __id!: string;
   content!: string;
   createdAt!: Date;
   updatedAt!: Date;
@@ -135,10 +143,11 @@ export class CommentDoc extends Doc<CommentData> {
     parentType,
     parentId,
   }: Pick<CommentData, "content" | "userId" | "parentType" | "parentId">): CommentData {
-    const _id = v4();
+    const __id = v4();
     const _now = now();
     return {
-      _id,
+      __name: "comment",
+      __id,
       content,
       createdAt: _now,
       updatedAt: _now,

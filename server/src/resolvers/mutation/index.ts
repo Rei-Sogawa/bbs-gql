@@ -22,8 +22,8 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicsCollection } = context.collections;
 
-    const topic = TopicDoc.new({ title, content, userId: uid });
-    const { id } = await topicsCollection.insert(topic);
+    const topicData = TopicDoc.new({ title, content, userId: uid });
+    const { id } = await topicsCollection.insert(topicData);
     return topicsCollection.findOneById(id);
   },
 
@@ -64,8 +64,8 @@ export const Mutation: Resolvers["Mutation"] = {
 
     if (parentType === "Topic") {
       const topic = await topicsCollection.findOneById(parentId, TopicDoc.of);
-      const newCommentData = CommentDoc.new({ content, userId: uid, parentType, parentId });
-      await topic.comments.insert({ id: newCommentData._id, ...newCommentData });
+      const commentData = CommentDoc.new({ content, userId: uid, parentType, parentId });
+      await topic.comments.insert({ id: commentData.__id, ...commentData });
       return { id: topic.id, ...topic.toData() };
     }
 
