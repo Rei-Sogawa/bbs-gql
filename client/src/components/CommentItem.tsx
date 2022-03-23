@@ -67,16 +67,15 @@ type CommentItemProps = {
 export const CommentItem = ({ comment }: CommentItemProps) => {
   const { uid } = useAuth();
 
-  const updateComment = useUpdateComment();
-
   const [isEditing, setIsEditing] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
+  const [isViewingComments, setIsViewingComments] = useState(false);
 
+  const updateComment = useUpdateComment();
   const onSubmitEditComment = async ({ content }: FormValues) => {
     await updateComment({ variables: { id: comment.id, input: { content } } });
     setIsEditing(false);
   };
-
-  const [isReplying, setIsReplying] = useState(false);
 
   return (
     <div className="flex flex-col space-y-2">
@@ -101,25 +100,41 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
               <Content content={comment.content} />
 
               {canComment(comment) && (
-                <button className="link" onClick={() => setIsReplying((prev) => !prev)}>
-                  reply
-                </button>
+                <div className="flex space-x-2">
+                  <button
+                    className="link"
+                    onClick={() => {
+                      setIsReplying((prev) => !prev);
+                    }}
+                  >
+                    reply
+                  </button>
+                  {comment.comments.length > 0 && (
+                    <button
+                      className="link"
+                      onClick={() => {
+                        setIsViewingComments((prev) => !prev);
+                      }}
+                    >
+                      {isViewingComments ? "hide" : `${comment.comments.length} comments`}
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           </div>
         )}
       </div>
 
-      {canComment(comment) && (isReplying || comment.comments.length > 0) && (
+      {canComment(comment) && (isReplying || isViewingComments) && (
         <div>
           <div className="flex">
             <div className="divider divider-horizontal" />
             <div className="flex-1 flex flex-col space-y-2">
               {isReplying && <CommentCreateForm {...{ parentName: "comment", parentId: comment.id }} />}
 
-              {comment.comments.map((comment) => (
-                <CommentItem key={comment.id} comment={comment} />
-              ))}
+              {isViewingComments &&
+                comment.comments.map((comment) => <CommentItem key={comment.id} comment={comment} />)}
             </div>
           </div>
 
