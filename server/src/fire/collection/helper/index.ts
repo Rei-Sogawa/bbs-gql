@@ -1,5 +1,5 @@
 import { createConverter } from "./createConverter";
-import { CollectionRef, Converter, DocSnap, Query } from "./type";
+import { CollectionRef, Converter, DocRef, DocSnap, Query, WriteResult } from "./type";
 
 type WithId<T> = T & { id: string };
 
@@ -37,8 +37,11 @@ export class Collection<TData> {
       .then((q) => q.docs.map(decode));
   }
 
-  insert(data: (TData & { id?: undefined }) | (TData & { id: string })) {
-    const { id, ..._data } = data;
-    return id ? this._ref.doc(id).set(_data as unknown as TData) : this._ref.add(_data as unknown as TData);
+  insert(data: TData): Promise<WriteResult>;
+  insert(data: WithId<TData>): Promise<DocRef<TData>>;
+  insert(data: TData & { id?: string }) {
+    const { id, ...__data } = data;
+    const _data = __data as unknown as TData;
+    return id ? this._ref.doc(id).set(_data) : this._ref.add(_data);
   }
 }
