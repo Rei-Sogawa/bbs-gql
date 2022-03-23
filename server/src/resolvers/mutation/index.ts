@@ -58,15 +58,20 @@ export const Mutation: Resolvers["Mutation"] = {
   createComment: async (_parent, args, context) => {
     authorize(context);
 
-    const { content, parentType, parentId } = args.input;
+    const { content, parentName, parentId } = args.input;
     const { uid } = context;
-    const { topicsCollection } = context.collections;
+    const { topicsCollection, commentsCollectionGroup } = context.collections;
 
-    if (parentType === "Topic") {
+    if (parentName === "topic") {
       const topic = await topicsCollection.findOneById(parentId, TopicDoc.of);
-      const commentData = CommentDoc.new({ content, userId: uid, parentType, parentId });
+      const commentData = CommentDoc.new({ content, userId: uid, parentName, parentId });
       await topic.comments.insert({ id: commentData.__id, ...commentData });
       return { id: topic.id, ...topic.toData() };
+    } else if (parentName === "comment") {
+      const comment = await commentsCollectionGroup.findOneById(parentId, CommentDoc.of);
+      const commentData = CommentDoc.new({ content, userId: uid, parentName, parentId });
+      await comment.comments.insert({ id: commentData.__id, ...commentData });
+      return { id: comment.id, ...comment.toData() };
     }
 
     throw new Error("rootId and parentId do not match");
@@ -100,7 +105,7 @@ export const Mutation: Resolvers["Mutation"] = {
     if (!comment.isCreatedBy({ userId: uid })) throw new Error("Cannot write comment");
     await comment.delete();
 
-    if (comment.parentType === "Topic") {
+    if (comment.parentName === "topic") {
       return topicsCollection.findOneById(comment.parentId);
     }
 

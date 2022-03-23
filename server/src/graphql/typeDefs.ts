@@ -2,6 +2,7 @@ import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
 type Comment {
+  comments: [Comment!]!
   content: String!
   createdAt: DateTime!
   id: ID!
@@ -14,7 +15,7 @@ type Comment {
 input CreateCommentInput {
   content: String!
   parentId: String!
-  parentType: String!
+  parentName: String!
 }
 
 input CreateTopicInput {

@@ -18,6 +18,7 @@ export type Scalars = {
 
 export type Comment = {
   __typename?: 'Comment';
+  comments: Array<Comment>;
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -30,7 +31,7 @@ export type Comment = {
 export type CreateCommentInput = {
   content: Scalars['String'];
   parentId: Scalars['String'];
-  parentType: Scalars['String'];
+  parentName: Scalars['String'];
 };
 
 export type CreateTopicInput = {
@@ -133,7 +134,9 @@ export type User = {
   topics: Array<Topic>;
 };
 
-export type CommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
+export type CommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } };
+
+export type _CommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
 
 export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, createdAt: string };
 
@@ -149,7 +152,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename: 'Comment' } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }> } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename: 'Comment', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }> } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }> } };
 
 export type UpdateCommentMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -157,14 +160,14 @@ export type UpdateCommentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } } };
 
 export type DeleteCommentMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename: 'Comment' } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }> } };
+export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename: 'Comment' } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }> } };
 
 export type TopicsForIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -176,7 +179,7 @@ export type TopicForTopicQueryVariables = Exact<{
 }>;
 
 
-export type TopicForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } } };
+export type TopicForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } } };
 
 export type TopicForTopicEditQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -218,8 +221,8 @@ export type TopicForTopicEditFragment = { __typename?: 'Topic', id: string, titl
 
 export type TopicForTopicDetailFragment = { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
 
-export const CommentItemFragmentDoc = gql`
-    fragment CommentItem on Comment {
+export const _CommentItemFragmentDoc = gql`
+    fragment _CommentItem on Comment {
   id
   content
   createdAt
@@ -229,6 +232,16 @@ export const CommentItemFragmentDoc = gql`
   }
 }
     `;
+export const CommentItemFragmentDoc = gql`
+    fragment CommentItem on Comment {
+  id
+  ..._CommentItem
+  comments {
+    id
+    ..._CommentItem
+  }
+}
+    ${_CommentItemFragmentDoc}`;
 export const TopicItemFragmentDoc = gql`
     fragment TopicItem on Topic {
   id
@@ -310,9 +323,17 @@ export const CreateCommentDocument = gql`
         ...CommentItem
       }
     }
+    ... on Comment {
+      id
+      comments {
+        id
+        ..._CommentItem
+      }
+    }
   }
 }
-    ${CommentItemFragmentDoc}`;
+    ${CommentItemFragmentDoc}
+${_CommentItemFragmentDoc}`;
 export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
 
 /**

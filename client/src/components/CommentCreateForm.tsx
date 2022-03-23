@@ -6,17 +6,17 @@ import { routes } from "../routes";
 import { CommentForm, FormValues } from "./CommentForm";
 
 type CommentCreateFormProps = {
-  parentType: string;
+  parentName: string;
   parentId: string;
 };
 
-export const CommentCreateForm = ({ parentType, parentId }: CommentCreateFormProps) => {
+export const CommentCreateForm = ({ parentName, parentId }: CommentCreateFormProps) => {
   const createComment = useCreateComment();
 
   const initialValues: FormValues = { content: "" };
 
   const onSubmit = async ({ content }: FormValues) => {
-    await createComment({ variables: { input: { content, parentType, parentId } } });
+    await createComment({ variables: { input: { content, parentName, parentId } } });
   };
 
   return <CommentForm {...{ initialValues, onSubmit }} />;

@@ -114,7 +114,7 @@ export const Topic = () => {
               <TopicDetail topic={topic} />
             </div>
 
-            {uid ? <CommentCreateForm parentType="Topic" parentId={topic.id} /> : <CommentCreateFormBeforeLogIn />}
+            {uid ? <CommentCreateForm parentName="topic" parentId={topic.id} /> : <CommentCreateFormBeforeLogIn />}
 
             <div className="flex flex-col space-y-2">
               {topic.comments.map((comment) => (

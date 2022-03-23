@@ -13,6 +13,13 @@ gql`
           ...CommentItem
         }
       }
+      ... on Comment {
+        id
+        comments {
+          id
+          ..._CommentItem
+        }
+      }
     }
   }
 `;

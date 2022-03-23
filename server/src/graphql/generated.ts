@@ -19,6 +19,7 @@ export type Scalars = {
 
 export type Comment = {
   __typename?: 'Comment';
+  comments: Array<Comment>;
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -31,7 +32,7 @@ export type Comment = {
 export type CreateCommentInput = {
   content: Scalars['String'];
   parentId: Scalars['String'];
-  parentType: Scalars['String'];
+  parentName: Scalars['String'];
 };
 
 export type CreateTopicInput = {
@@ -241,6 +242,7 @@ export type ResolversParentTypes = ResolversObject<{
 }>;
 
 export type CommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = ResolversObject<{
+  comments?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

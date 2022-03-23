@@ -26,6 +26,7 @@ type Comment {
   root: Topic!
   parent: TopicOrComment!
   user: User!
+  comments: [Comment!]!
 }
 
 type Query {
@@ -52,7 +53,7 @@ input UpdateTopicInput {
 
 input CreateCommentInput {
   content: String!
-  parentType: String!
+  parentName: String!
   parentId: String!
 }
 

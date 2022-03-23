@@ -108,7 +108,7 @@ const CommentDataSchema = z
     createdAt: z.date(),
     updatedAt: z.date(),
     userId: z.string().min(1),
-    parentType: z.string().min(1),
+    parentName: z.string().min(1),
     parentId: z.string().min(1),
   })
   .strict();
@@ -122,7 +122,7 @@ export class CommentDoc extends Doc<CommentData> implements CommentData {
   createdAt!: Date;
   updatedAt!: Date;
   userId!: string;
-  parentType!: string;
+  parentName!: string;
   parentId!: string;
 
   constructor(snap: DocSnap<CommentData>) {
@@ -140,9 +140,9 @@ export class CommentDoc extends Doc<CommentData> implements CommentData {
   static new({
     content,
     userId,
-    parentType,
+    parentName,
     parentId,
-  }: Pick<CommentData, "content" | "userId" | "parentType" | "parentId">): CommentData {
+  }: Pick<CommentData, "content" | "userId" | "parentName" | "parentId">): CommentData {
     const __id = v4();
     const _now = now();
     return {
@@ -152,7 +152,7 @@ export class CommentDoc extends Doc<CommentData> implements CommentData {
       createdAt: _now,
       updatedAt: _now,
       userId,
-      parentType,
+      parentName,
       parentId,
     };
   }
