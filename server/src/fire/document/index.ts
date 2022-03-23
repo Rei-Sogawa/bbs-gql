@@ -1,7 +1,8 @@
 import { z } from "zod";
 
+import { CommentsCollection } from "./../collection/index";
 import { Doc } from "./helper";
-import { DocSnap } from "./helper/type";
+import { DocSnap, WithId } from "./helper/type";
 
 const UserDataSchema = z.object({
   displayName: z.string().min(1),
@@ -11,7 +12,7 @@ const UserDataSchema = z.object({
 
 export type UserData = z.infer<typeof UserDataSchema>;
 
-export class UserDoc extends Doc<UserData> implements UserDoc {
+export class UserDoc extends Doc<UserData> {
   displayName!: string;
   createdAt!: Date;
   updatedAt!: Date;
@@ -20,6 +21,8 @@ export class UserDoc extends Doc<UserData> implements UserDoc {
     super(snap, UserDataSchema.parse);
   }
 }
+
+export type UserMapper = WithId<UserData>;
 
 const TopicDataSchema = z
   .object({
@@ -33,7 +36,7 @@ const TopicDataSchema = z
 
 export type TopicData = z.infer<typeof TopicDataSchema>;
 
-export class TopicDoc extends Doc<TopicData> implements TopicData {
+export class TopicDoc extends Doc<TopicData> {
   title!: string;
   content!: string;
   createdAt!: Date;
@@ -43,7 +46,13 @@ export class TopicDoc extends Doc<TopicData> implements TopicData {
   constructor(snap: DocSnap<TopicData>) {
     super(snap, TopicDataSchema.parse);
   }
+
+  get comments() {
+    return new CommentsCollection(this.ref.collection("comments"));
+  }
 }
+
+export type TopicMapper = WithId<TopicData>;
 
 const CommentDataSchema = z.object({
   _id: z.string().min(1),
@@ -57,7 +66,7 @@ const CommentDataSchema = z.object({
 
 export type CommentData = z.infer<typeof CommentDataSchema>;
 
-export class CommentDoc extends Doc<CommentData> implements CommentData {
+export class CommentDoc extends Doc<CommentData> {
   _id!: string;
   content!: string;
   createdAt!: Date;
@@ -69,4 +78,10 @@ export class CommentDoc extends Doc<CommentData> implements CommentData {
   constructor(snap: DocSnap<CommentData>) {
     super(snap, CommentDataSchema.parse);
   }
+
+  get comments() {
+    return new CommentsCollection(this.ref.collection("comments"));
+  }
 }
+
+export type CommentMapper = WithId<CommentData>;

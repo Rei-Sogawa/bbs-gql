@@ -18,7 +18,7 @@ export class Doc<TData> {
   }
   toData() {
     const { _snap, _validate, ...data } = this;
-    return data;
+    return data as unknown as TData;
   }
   validate() {
     this._validate(this.toData());

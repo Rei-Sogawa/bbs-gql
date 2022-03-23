@@ -6,8 +6,8 @@ export class Collection<TData> {
   constructor(_ref: CollectionRef, converter: Converter<TData> = createConverter<TData>()) {
     this._ref = _ref.withConverter(converter);
   }
-  findOneById() {
-    return this._ref.get();
+  findOneById(id: string) {
+    return this._ref.doc(id).get();
   }
   findManyByQuery(queryFn: (ref: CollectionRef<TData>) => Query<TData>) {
     return queryFn(this._ref).get();

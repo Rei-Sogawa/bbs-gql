@@ -1,5 +1,6 @@
 import { hasPath } from "ramda";
 
+import { TopicDoc } from "../../fire/document";
 import { Resolvers } from "./../../graphql/generated";
 
 export const Topic: Resolvers["Topic"] = {
@@ -7,17 +8,19 @@ export const Topic: Resolvers["Topic"] = {
     const { userId } = parent;
     const { usersCollection } = context.collections;
 
-    return usersCollection.loader.load(userId);
+    return usersCollection.findOneById(userId).then((snap) => {
+      const data = snap.data();
+      if (!data) throw new Error("Not found data");
+      return { id: snap.id, ...data };
+    });
   },
 
-  comments: (parent, _args, context) => {
-    const { commentsCollection } = context.collections;
+  comments: async (parent, _args, context) => {
+    const { topicsCollection } = context.collections;
 
-    return commentsCollection
-      .entityRef({ topicId: parent.id })
-      .orderBy("createdAt", "asc")
-      .get()
-      .then((q) => q.docs.map((doc) => doc.data()));
+    const topicSnap = await topicsCollection.findOneById(parent.id);
+    const topic = new TopicDoc(topicSnap);
+    return topic.comments.findAll();
   },
 };
 
