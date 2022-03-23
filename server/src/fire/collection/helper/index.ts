@@ -11,6 +11,7 @@ const mapper = <T>(snap: DocSnap<T>) => {
 
 export class Collection<TData> {
   private _ref: CollectionRef<TData>;
+
   constructor(_ref: CollectionRef, _converter: Converter<TData> = createConverter<TData>()) {
     this._ref = _ref.withConverter(_converter);
   }

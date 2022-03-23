@@ -6,6 +6,7 @@ export class Doc<TData> {
   private _snap: DocSnap<TData>;
   private _ref: DocRef<TData>;
   private _validate: (data: unknown) => TData;
+
   constructor(
     _snap: DocSnap<TData>,
     _validate: (data: unknown) => TData,
@@ -18,12 +19,14 @@ export class Doc<TData> {
     if (!data) throw new Error("Data not found");
     Object.assign(this, data);
   }
+
   get id() {
     return this._snap.id;
   }
   get ref() {
     return this._ref;
   }
+
   toPlainData() {
     const { _snap, _ref, _validate, ...data } = this;
     return data as unknown;
@@ -31,6 +34,7 @@ export class Doc<TData> {
   toData() {
     return this._validate(this.toPlainData());
   }
+
   update() {
     return this.ref.set(this.toData());
   }
