@@ -1,8 +1,7 @@
+import { CommentDoc, UserDoc } from "../../fire/doc";
 import { Resolvers } from "../../graphql/generated";
 import { authorize } from "../../lib/authorization/authorize";
-import { TopicEntity } from "../../lib/entity/topic";
-import { UserEntity } from "../../lib/entity/user";
-import { CommentEntity } from "./../../lib/entity/comment";
+import { TopicDoc } from "./../../fire/doc/index";
 
 export const Mutation: Resolvers["Mutation"] = {
   signUp: async (_parent, args, context) => {
@@ -11,9 +10,9 @@ export const Mutation: Resolvers["Mutation"] = {
     const { usersCollection } = context.collections;
 
     const { uid } = await auth.createUser({ email, password });
-    const userData = UserEntity.create({ displayName });
-    await usersCollection.dataRef.doc(uid).set(userData);
-    return usersCollection.loader.load(uid);
+    const userData = UserDoc.new({ displayName });
+    await usersCollection.insert({ id: uid, ...userData });
+    return usersCollection.findOneById(uid);
   },
 
   createTopic: async (_parent, args, context) => {
@@ -23,9 +22,9 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicsCollection } = context.collections;
 
-    const topic = TopicEntity.create({ title, content, userId: uid });
-    const { id } = await topicsCollection.dataRef.add(topic);
-    return topicsCollection.loader.load(id);
+    const topic = TopicDoc.new({ title, content, userId: uid });
+    const { id } = await topicsCollection.insert(topic);
+    return topicsCollection.findOneById(id);
   },
 
   updateTopic: async (_parent, args, context) => {
@@ -36,11 +35,11 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicsCollection } = context.collections;
 
-    const topic = await topicsCollection.loader.load(id);
-    if (!TopicEntity.isCreatedBy(topic, { userId: uid })) throw new Error("Cannot write topic");
-    const editedTopic = TopicEntity.edit(topic, { title, content });
-    await editedTopic.ref.set(editedTopic);
-    return editedTopic;
+    const topic = await topicsCollection.findOneById(id, TopicDoc.of);
+    if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
+    topic.edit({ title, content });
+    await topic.update();
+    return { id: topic.id, ...topic.toData() };
   },
 
   deleteTopic: async (_parent, args, context) => {
@@ -50,10 +49,10 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicsCollection } = context.collections;
 
-    const topic = await topicsCollection.loader.load(id);
-    if (!TopicEntity.isCreatedBy(topic, { userId: uid })) throw new Error("Cannot write topic");
-    await topic.ref.delete();
-    return topic;
+    const topic = await topicsCollection.findOneById(id, TopicDoc.of);
+    if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
+    await topic.delete();
+    return { id: topic.id, ...topic.toData() };
   },
 
   createComment: async (_parent, args, context) => {
@@ -61,13 +60,12 @@ export const Mutation: Resolvers["Mutation"] = {
 
     const { content, parentType, parentId } = args.input;
     const { uid } = context;
-    const { topicsCollection, commentsCollection } = context.collections;
+    const { topicsCollection } = context.collections;
 
     if (parentType === "Topic") {
-      const topic = await topicsCollection.loader.load(parentId);
-      const commentData = CommentEntity.create({ content, parentType, parentId, userId: uid });
-      await commentsCollection.dataRef({ topicId: topic.id }).doc(commentData._id).set(commentData);
-      return topic;
+      const topic = await topicsCollection.findOneById(parentId, TopicDoc.of);
+      await topic.comments.insert(CommentDoc.new({ content, userId: uid, parentType, parentId }));
+      return { id: topic.id, ...topic.toData() };
     }
 
     throw new Error("rootId and parentId do not match");
@@ -81,13 +79,13 @@ export const Mutation: Resolvers["Mutation"] = {
       input: { content },
     } = args;
     const { uid } = context;
-    const { commentsGroupCollection } = context.collections;
+    const { commentsCollectionGroup } = context.collections;
 
-    const comment = await commentsGroupCollection.loader.load(id);
-    if (!CommentEntity.isCreatedBy(comment, { userId: uid })) throw new Error("Cannot write comment");
-    const editedComment = CommentEntity.edit(comment, { content });
-    await editedComment.ref.set(editedComment);
-    return editedComment;
+    const comment = await commentsCollectionGroup.findOneById(id, CommentDoc.of);
+    if (!comment.isCreatedBy({ userId: uid })) throw new Error("Cannot write comment");
+    comment.edit({ content });
+    await comment.update();
+    return { id: comment.id, ...comment.toData() };
   },
 
   deleteComment: async (_parent, args, context) => {
@@ -95,14 +93,14 @@ export const Mutation: Resolvers["Mutation"] = {
 
     const { id } = args;
     const { uid } = context;
-    const { topicsCollection, commentsGroupCollection } = context.collections;
+    const { topicsCollection, commentsCollectionGroup } = context.collections;
 
-    const comment = await commentsGroupCollection.loader.load(id);
-    if (!CommentEntity.isCreatedBy(comment, { userId: uid })) throw new Error("Cannot write comment");
-    await comment.ref.delete();
+    const comment = await commentsCollectionGroup.findOneById(id, CommentDoc.of);
+    if (!comment.isCreatedBy({ userId: uid })) throw new Error("Cannot write comment");
+    await comment.delete();
 
     if (comment.parentType === "Topic") {
-      return topicsCollection.loader.load(comment.parentId);
+      return topicsCollection.findOneById(comment.parentId);
     }
 
     throw new Error("rootId and parentId do not match");

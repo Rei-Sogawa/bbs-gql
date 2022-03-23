@@ -8,9 +8,9 @@ export const createCollections = (db: Firestore) => {
 
   const usersCollection = new UsersCollection(usersRef);
   const topicsCollection = new TopicsCollection(topicsRef);
-  const commentsGroupCollection = new CommentsCollectionGroup(commentsRef);
+  const commentsCollectionGroup = new CommentsCollectionGroup(commentsRef);
 
-  return { usersCollection, topicsCollection, commentsGroupCollection };
+  return { usersCollection, topicsCollection, commentsCollectionGroup };
 };
 
 export type Collections = ReturnType<typeof createCollections>;

@@ -36,8 +36,8 @@ export class Collection<TData> {
       .then((q) => q.docs.map(decode));
   }
 
-  insert(data: TData): Promise<WriteResult>;
-  insert(data: WithId<TData>): Promise<DocRef<TData>>;
+  insert(data: TData): Promise<DocRef<TData>>;
+  insert(data: WithId<TData>): Promise<WriteResult>;
   insert(data: TData & { id?: string }) {
     const { id, ...__data } = data;
     const _data = __data as unknown as TData;

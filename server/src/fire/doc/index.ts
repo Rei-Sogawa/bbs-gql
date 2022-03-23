@@ -87,8 +87,8 @@ export class TopicDoc extends Doc<TopicData> {
     Object.assign(this, { title, content, updatedAt: now() });
   }
 
-  isCreateBy({ userId }: { userId: string }) {
-    this.userId === userId;
+  isCreatedBy({ userId }: { userId: string }) {
+    return this.userId === userId;
   }
 }
 
@@ -152,8 +152,8 @@ export class CommentDoc extends Doc<CommentData> {
     Object.assign(this, { content, updatedAt: now() });
   }
 
-  isCreateBy({ userId }: { userId: string }) {
-    this.userId === userId;
+  isCreatedBy({ userId }: { userId: string }) {
+    return this.userId === userId;
   }
 }
 
