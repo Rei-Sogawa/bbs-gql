@@ -8,22 +8,19 @@ export const Query: Resolvers["Query"] = {
     const { uid } = context;
     const { usersCollection } = context.collections;
 
-    return usersCollection.loader.load(uid);
+    return usersCollection.findOneById(uid);
   },
 
   topic: (_parent, args, context) => {
     const { id } = args;
     const { topicsCollection } = context.collections;
 
-    return topicsCollection.loader.load(id);
+    return topicsCollection.findOneById(id);
   },
 
   topics: (_parent, _args, context) => {
     const { topicsCollection } = context.collections;
 
-    return topicsCollection.entityRef
-      .orderBy("createdAt", "desc")
-      .get()
-      .then((q) => q.docs.map((doc) => doc.data()));
+    return topicsCollection.findAll();
   },
 };

@@ -8,18 +8,13 @@ export const Topic: Resolvers["Topic"] = {
     const { userId } = parent;
     const { usersCollection } = context.collections;
 
-    return usersCollection.findOneById(userId).then((snap) => {
-      const data = snap.data();
-      if (!data) throw new Error("Not found data");
-      return { id: snap.id, ...data };
-    });
+    return usersCollection.findOneById(userId);
   },
 
   comments: async (parent, _args, context) => {
     const { topicsCollection } = context.collections;
 
-    const topicSnap = await topicsCollection.findOneById(parent.id);
-    const topic = new TopicDoc(topicSnap);
+    const topic = await topicsCollection.findOneById(parent.id, (snap) => new TopicDoc(snap));
     return topic.comments.findAll();
   },
 };
@@ -29,7 +24,7 @@ export const Comment: Resolvers["Comment"] = {
     const { userId } = parent;
     const { usersCollection } = context.collections;
 
-    return usersCollection.loader.load(userId);
+    return usersCollection.findOneById(userId);
   },
 };
 
