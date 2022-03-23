@@ -25,7 +25,7 @@ export class UserDoc extends Doc<UserData> {
     super(snap, UserDataSchema.parse);
   }
 
-  of(snap: DocSnap<UserData>) {
+  static of(snap: DocSnap<UserData>) {
     return new UserDoc(snap);
   }
 
@@ -64,7 +64,7 @@ export class TopicDoc extends Doc<TopicData> {
     super(snap, TopicDataSchema.parse);
   }
 
-  of(snap: DocSnap<TopicData>) {
+  static of(snap: DocSnap<TopicData>) {
     return new TopicDoc(snap);
   }
 
@@ -121,7 +121,7 @@ export class CommentDoc extends Doc<CommentData> {
     super(snap, CommentDataSchema.parse);
   }
 
-  of(snap: DocSnap<CommentData>) {
+  static of(snap: DocSnap<CommentData>) {
     return new CommentDoc(snap);
   }
 

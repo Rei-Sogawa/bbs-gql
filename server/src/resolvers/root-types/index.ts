@@ -1,4 +1,4 @@
-import { TopicDoc } from "../../fire/_document";
+import { TopicDoc } from "../../fire/doc";
 import { Resolvers } from "./../../graphql/generated";
 
 export const Topic: Resolvers["Topic"] = {
@@ -12,7 +12,7 @@ export const Topic: Resolvers["Topic"] = {
   comments: async (parent, _args, context) => {
     const { topicsCollection } = context.collections;
 
-    const topic = await topicsCollection.findOneById(parent.id, (snap) => new TopicDoc(snap));
+    const topic = await topicsCollection.findOneById(parent.id, TopicDoc.of);
     return topic.comments.findAll();
   },
 };
