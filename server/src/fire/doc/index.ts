@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 import { z } from "zod";
 
-import { now } from "../../lib/util/now";
+import { now } from "../../core/util/now";
 import { CommentsCollection } from "../collection";
 import { Doc } from "../lib/document";
 import { DocSnap, WithId } from "../lib/type";

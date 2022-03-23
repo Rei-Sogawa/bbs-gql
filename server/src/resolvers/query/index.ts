@@ -1,5 +1,5 @@
+import { authorize } from "../../core/authorization/authorize";
 import { Resolvers } from "../../graphql/generated";
-import { authorize } from "../../lib/authorization/authorize";
 
 export const Query: Resolvers["Query"] = {
   me: (_parent, _args, context) => {

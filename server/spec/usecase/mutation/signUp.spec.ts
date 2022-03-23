@@ -1,13 +1,12 @@
-import { createRepositories } from "../../../src/lib/repository";
-import { decodeTimestampToDate } from "../../../src/lib/repository/helper/createConverter";
-import { signUp } from "../../../src/lib/usecase/mutation/signUp";
+import { signUp } from "../../../src/core/usecase/mutation/signUp";
 import { clearAuth, clearFirestore } from "../../test-util/clear";
 import { getAuth, getDb } from "../../test-util/setup";
+import { createCollections } from "./../../../src/fire/createCollections";
 
 describe("signUp", () => {
   const context = {
-    services: { AuthService: getAuth() },
-    repositories: createRepositories(getDb()),
+    auth: getAuth(),
+    collections: createCollections(getDb()),
   };
 
   beforeEach(async () => {
