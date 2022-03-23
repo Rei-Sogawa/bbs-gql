@@ -12,7 +12,7 @@ import { Content } from "./Content";
 import { Time } from "./Time";
 import { UserName } from "./UserName";
 
-function canHaveComments(comment: CommentItemFragment | _CommentItemFragment): comment is CommentItemFragment {
+function canComment(comment: CommentItemFragment | _CommentItemFragment): comment is CommentItemFragment {
   return (comment as any).comments !== undefined;
 }
 
@@ -100,7 +100,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
 
               <Content content={comment.content} />
 
-              {canHaveComments(comment) && (
+              {canComment(comment) && (
                 <button className="link" onClick={() => setIsReplying((prev) => !prev)}>
                   reply
                 </button>
@@ -110,7 +110,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
         )}
       </div>
 
-      {canHaveComments(comment) && (isReplying || comment.comments.length > 0) && (
+      {canComment(comment) && (isReplying || comment.comments.length > 0) && (
         <div>
           <div className="flex">
             <div className="divider divider-horizontal" />
