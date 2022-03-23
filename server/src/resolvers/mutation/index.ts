@@ -64,7 +64,8 @@ export const Mutation: Resolvers["Mutation"] = {
 
     if (parentType === "Topic") {
       const topic = await topicsCollection.findOneById(parentId, TopicDoc.of);
-      await topic.comments.insert(CommentDoc.new({ content, userId: uid, parentType, parentId }));
+      const newCommentData = CommentDoc.new({ content, userId: uid, parentType, parentId });
+      await topic.comments.insert({ id: newCommentData._id, ...newCommentData });
       return { id: topic.id, ...topic.toData() };
     }
 
