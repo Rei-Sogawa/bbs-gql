@@ -52,6 +52,23 @@ export class CollectionGroup<TData> {
     this._ref = _ref.withConverter(_converter);
   }
 
+  findOneById(id: string): Promise<WithId<TData>>;
+  findOneById<T>(id: string, decode: (snap: DocSnap<TData>) => T): Promise<T>;
+  findOneById<T>(id: string, decode?: (snap: DocSnap<TData>) => T) {
+    if (!decode)
+      return this.findManyByQuery((ref) => ref.where("_id", "==", id)).then((docs) => {
+        const doc = docs[0];
+        if (!doc) throw new Error("Doc not found");
+        return doc;
+      });
+
+    return this.findManyByQuery((ref) => ref.where("_id", "==", id), decode).then((docs) => {
+      const doc = docs[0];
+      if (!doc) throw new Error("Doc not found");
+      return doc;
+    });
+  }
+
   findManyByQuery(queryFn: (ref: CollectionGroupRef<TData>) => Query<TData>): Promise<WithId<TData>[]>;
   findManyByQuery<T>(
     queryFn: (ref: CollectionGroupRef<TData>) => Query<TData>,
@@ -62,6 +79,7 @@ export class CollectionGroup<TData> {
       return queryFn(this._ref)
         .get()
         .then((q) => q.docs.map(mapper));
+
     return queryFn(this._ref)
       .get()
       .then((q) => q.docs.map(decode));

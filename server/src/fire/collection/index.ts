@@ -1,6 +1,6 @@
 import { CommentData, TopicData, UserData } from "../doc";
-import { Collection } from "../lib/collection";
-import { CollectionRef } from "../lib/type";
+import { Collection, CollectionGroup } from "../lib/collection";
+import { CollectionGroupRef, CollectionRef } from "../lib/type";
 
 export class UsersCollection extends Collection<UserData> {
   constructor(ref: CollectionRef) {
@@ -23,5 +23,11 @@ export class CommentsCollection extends Collection<CommentData> {
   }
   findAll() {
     return this.findManyByQuery((ref) => ref.orderBy("createdAt", "asc"));
+  }
+}
+
+export class CommentsCollectionGroup extends CollectionGroup<CommentData> {
+  constructor(ref: CollectionGroupRef) {
+    super(ref);
   }
 }
