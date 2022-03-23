@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { CommentsCollection } from "./../collection/index";
-import { Doc } from "./helper";
-import { DocSnap, WithId } from "./helper/type";
+import { CommentsCollection } from "../collection";
+import { Doc } from "../lib/document";
+import { DocSnap, WithId } from "../lib/type";
 
 const UserDataSchema = z.object({
   displayName: z.string().min(1),

@@ -1,6 +1,6 @@
-import { CommentData, TopicData, UserData } from "../document";
-import { Collection } from "./helper/index";
-import { CollectionRef } from "./helper/type";
+import { CommentData, TopicData, UserData } from "../doc";
+import { Collection } from "../lib/collection";
+import { CollectionRef } from "../lib/type";
 
 export class UsersCollection extends Collection<UserData> {
   constructor(ref: CollectionRef) {

@@ -1,7 +1,5 @@
-import { createConverter } from "./createConverter";
-import { CollectionRef, Converter, DocRef, DocSnap, Query, WriteResult } from "./type";
-
-type WithId<T> = T & { id: string };
+import { createConverter } from "./helper";
+import { CollectionGroupRef, CollectionRef, Converter, DocRef, DocSnap, Query, WithId, WriteResult } from "./type";
 
 const mapper = <T>(snap: DocSnap<T>) => {
   const data = snap.data();
@@ -44,5 +42,28 @@ export class Collection<TData> {
     const { id, ...__data } = data;
     const _data = __data as unknown as TData;
     return id ? this._ref.doc(id).set(_data) : this._ref.add(_data);
+  }
+}
+
+export class CollectionGroup<TData> {
+  private _ref: CollectionGroupRef<TData>;
+
+  constructor(_ref: CollectionGroupRef, _converter: Converter<TData> = createConverter<TData>()) {
+    this._ref = _ref.withConverter(_converter);
+  }
+
+  findManyByQuery(queryFn: (ref: CollectionGroupRef<TData>) => Query<TData>): Promise<WithId<TData>[]>;
+  findManyByQuery<T>(
+    queryFn: (ref: CollectionGroupRef<TData>) => Query<TData>,
+    decode: (snap: DocSnap<TData>) => T
+  ): Promise<T[]>;
+  findManyByQuery<T>(queryFn: (ref: CollectionGroupRef<TData>) => Query<TData>, decode?: (snap: DocSnap<TData>) => T) {
+    if (!decode)
+      return queryFn(this._ref)
+        .get()
+        .then((q) => q.docs.map(mapper));
+    return queryFn(this._ref)
+      .get()
+      .then((q) => q.docs.map(decode));
   }
 }

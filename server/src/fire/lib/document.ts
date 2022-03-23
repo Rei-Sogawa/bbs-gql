@@ -1,6 +1,5 @@
-import { createConverter } from "../../collection/helper/createConverter";
-import { Converter } from "../../collection/helper/type";
-import { DocRef, DocSnap } from "./type";
+import { createConverter } from "./helper";
+import { Converter, DocRef, DocSnap } from "./type";
 
 export class Doc<TData> {
   private _snap: DocSnap<TData>;

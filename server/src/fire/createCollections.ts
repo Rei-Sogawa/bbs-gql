@@ -1,7 +1,7 @@
-import { Firestore } from "./collection/helper/type";
 import { TopicsCollection, UsersCollection } from "./collection/index";
+import { Firestore } from "./lib/type";
 
-export const createRootCollections = (db: Firestore) => {
+export const createCollections = (db: Firestore) => {
   const usersRef = db.collection("users");
   const topicsRef = db.collection("topics");
 
@@ -11,4 +11,4 @@ export const createRootCollections = (db: Firestore) => {
   return { usersCollection, topicsCollection };
 };
 
-export type RootCollections = ReturnType<typeof createRootCollections>;
+export type Collections = ReturnType<typeof createCollections>;

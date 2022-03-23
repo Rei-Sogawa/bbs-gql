@@ -1,6 +1,4 @@
-import { hasPath } from "ramda";
-
-import { TopicDoc } from "../../fire/document";
+import { TopicDoc } from "../../fire/_document";
 import { Resolvers } from "./../../graphql/generated";
 
 export const Topic: Resolvers["Topic"] = {
@@ -30,9 +28,6 @@ export const Comment: Resolvers["Comment"] = {
 
 export const TopicOrComment: Resolvers["TopicOrComment"] = {
   __resolveType(obj) {
-    if (hasPath(["rootId", "parentId"], obj)) {
-      return "Comment";
-    }
     return "Topic";
   },
 };

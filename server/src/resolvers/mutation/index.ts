@@ -1,11 +1,21 @@
 import { Resolvers } from "../../graphql/generated";
 import { authorize } from "../../lib/authorization/authorize";
 import { TopicEntity } from "../../lib/entity/topic";
-import { signUp } from "../../lib/usecase/mutation/signUp";
+import { UserEntity } from "../../lib/entity/user";
 import { CommentEntity } from "./../../lib/entity/comment";
 
 export const Mutation: Resolvers["Mutation"] = {
-  signUp,
+  signUp: async (_parent, args, context) => {
+    const { displayName, email, password } = args.input;
+    const { auth } = context;
+    const { usersCollection } = context.collections;
+
+    const { uid } = await auth.createUser({ email, password });
+    const userData = UserEntity.create({ displayName });
+    await usersCollection.dataRef.doc(uid).set(userData);
+    return usersCollection.loader.load(uid);
+  },
+
   createTopic: async (_parent, args, context) => {
     authorize(context);
 
