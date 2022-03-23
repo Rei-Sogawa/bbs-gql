@@ -1,31 +1,38 @@
-import { DocSnap } from "./type";
+import { createConverter } from "../../collection/helper/createConverter";
+import { Converter } from "../../collection/helper/type";
+import { DocRef, DocSnap } from "./type";
 
 export class Doc<TData> {
   private _snap: DocSnap<TData>;
+  private _ref: DocRef<TData>;
   private _validate: (data: unknown) => TData;
-  constructor(_snap: DocSnap<TData>, _validate: (data: unknown) => TData) {
+  constructor(
+    _snap: DocSnap<TData>,
+    _validate: (data: unknown) => TData,
+    _converter: Converter<TData> = createConverter<TData>()
+  ) {
     this._snap = _snap;
+    this._ref = _snap.ref.withConverter(_converter);
     this._validate = _validate;
     const data = _snap.data();
     if (!data) throw new Error("Data not found");
-    Object.assign(this, _validate(data));
+    Object.assign(this, data);
   }
   get id() {
     return this._snap.id;
   }
   get ref() {
-    return this._snap.ref;
+    return this._ref;
+  }
+  toPlainData() {
+    const { _snap, _ref, _validate, ...data } = this;
+    return data as unknown;
   }
   toData() {
-    const { _snap, _validate, ...data } = this;
-    return data as unknown as TData;
-  }
-  validate() {
-    this._validate(this.toData());
+    return this._validate(this.toPlainData());
   }
   update() {
-    const data = this._validate(this.toData());
-    return this.ref.set(data);
+    return this.ref.set(this.toData());
   }
   delete() {
     return this.ref.delete();
