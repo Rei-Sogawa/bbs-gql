@@ -7,5 +7,7 @@ generates:
       - "typescript-operations"
       - "typescript-react-apollo"
     config:
+      useIndexSignature: true
+      enumsAsConst: true
       scalars:
         DateTime: string

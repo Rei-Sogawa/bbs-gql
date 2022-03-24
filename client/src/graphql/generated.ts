@@ -23,15 +23,20 @@ export type Comment = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   parent: TopicOrComment;
-  root: Topic;
   updatedAt: Scalars['DateTime'];
   user: User;
 };
 
+export const CommentParentName = {
+  Comment: 'comment',
+  Topic: 'topic'
+} as const;
+
+export type CommentParentName = typeof CommentParentName[keyof typeof CommentParentName];
 export type CreateCommentInput = {
   content: Scalars['String'];
   parentId: Scalars['String'];
-  parentName: Scalars['String'];
+  parentName: CommentParentName;
 };
 
 export type CreateTopicInput = {

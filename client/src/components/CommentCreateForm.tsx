@@ -6,7 +6,7 @@ import { routes } from "../routes";
 import { CommentForm, FormValues } from "./CommentForm";
 
 type CommentCreateFormProps = {
-  parentName: string;
+  parentName: "topic" | "comment";
   parentId: string;
 };
 
