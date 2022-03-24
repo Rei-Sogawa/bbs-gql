@@ -54,6 +54,13 @@ gql`
           ...CommentItem
         }
       }
+      ... on Comment {
+        id
+        comments {
+          id
+          ...CommentItem
+        }
+      }
     }
   }
 `;

@@ -172,7 +172,7 @@ export type DeleteCommentMutationVariables = Exact<{
 }>;
 
 
-export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename: 'Comment' } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }> } };
+export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename: 'Comment', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }> } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }> } };
 
 export type TopicsForIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -405,6 +405,13 @@ export const DeleteCommentDocument = gql`
   deleteComment(id: $id) {
     __typename
     ... on Topic {
+      id
+      comments {
+        id
+        ...CommentItem
+      }
+    }
+    ... on Comment {
       id
       comments {
         id
