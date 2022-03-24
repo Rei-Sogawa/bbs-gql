@@ -74,7 +74,7 @@ export const Mutation: Resolvers["Mutation"] = {
       return { id: comment.id, ...comment.toData() };
     }
 
-    throw new Error("rootId and parentId do not match");
+    throw new Error("Reach bottom of createComment");
   },
 
   updateComment: async (_parent, args, context) => {
@@ -107,8 +107,10 @@ export const Mutation: Resolvers["Mutation"] = {
 
     if (comment.parentName === "topic") {
       return topicsCollection.findOneById(comment.parentId);
+    } else if (comment.parentName === "comment") {
+      return commentsCollectionGroup.findOneById(comment.parentId);
     }
 
-    throw new Error("rootId and parentId do not match");
+    throw new Error("Reach bottom of deleteComment");
   },
 };

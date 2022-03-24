@@ -7,15 +7,19 @@ type Comment {
   createdAt: DateTime!
   id: ID!
   parent: TopicOrComment!
-  root: Topic!
   updatedAt: DateTime!
   user: User!
+}
+
+enum CommentParentName {
+  comment
+  topic
 }
 
 input CreateCommentInput {
   content: String!
   parentId: String!
-  parentName: String!
+  parentName: CommentParentName!
 }
 
 input CreateTopicInput {

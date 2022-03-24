@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { UserMapper, TopicMapper, CommentMapper } from '../fire/document/index';
+import { UserMapper, TopicMapper, CommentMapper } from '../fire/doc/index';
 import { Context } from '../context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -24,15 +24,20 @@ export type Comment = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   parent: TopicOrComment;
-  root: Topic;
   updatedAt: Scalars['DateTime'];
   user: User;
 };
 
+export const CommentParentName = {
+  Comment: 'comment',
+  Topic: 'topic'
+} as const;
+
+export type CommentParentName = typeof CommentParentName[keyof typeof CommentParentName];
 export type CreateCommentInput = {
   content: Scalars['String'];
   parentId: Scalars['String'];
-  parentName: Scalars['String'];
+  parentName: CommentParentName;
 };
 
 export type CreateTopicInput = {
@@ -207,6 +212,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Comment: ResolverTypeWrapper<CommentMapper>;
+  CommentParentName: CommentParentName;
   CreateCommentInput: CreateCommentInput;
   CreateTopicInput: CreateTopicInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
@@ -247,7 +253,6 @@ export type CommentResolvers<ContextType = Context, ParentType extends Resolvers
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   parent?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType>;
-  root?: Resolver<ResolversTypes['Topic'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

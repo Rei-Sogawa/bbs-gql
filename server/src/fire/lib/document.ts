@@ -1,7 +1,7 @@
 import { createConverter } from "./helper";
-import { Converter, DocRef, DocSnap } from "./type";
+import { Converter, DocField, DocRef, DocSnap } from "./type";
 
-export class Doc<TData extends { __name: string }> {
+export class Doc<TData extends DocField> {
   private _snap: DocSnap<TData>;
   private _ref: DocRef<TData>;
   private _validate: (data: unknown) => TData;

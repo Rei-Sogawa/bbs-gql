@@ -17,6 +17,8 @@ const UserDataSchema = z
 
 export type UserData = z.infer<typeof UserDataSchema>;
 
+export type UserMapper = WithId<UserData>;
+
 export class UserDoc extends Doc<UserData> implements UserData {
   __name!: "user";
   displayName!: string;
@@ -42,8 +44,6 @@ export class UserDoc extends Doc<UserData> implements UserData {
   }
 }
 
-export type UserMapper = WithId<UserData>;
-
 const TopicDataSchema = z
   .object({
     __name: z.literal("topic"),
@@ -56,6 +56,8 @@ const TopicDataSchema = z
   .strict();
 
 export type TopicData = z.infer<typeof TopicDataSchema>;
+
+export type TopicMapper = WithId<TopicData>;
 
 export class TopicDoc extends Doc<TopicData> implements TopicData {
   __name!: "topic";
@@ -98,8 +100,6 @@ export class TopicDoc extends Doc<TopicData> implements TopicData {
   }
 }
 
-export type TopicMapper = WithId<TopicData>;
-
 const CommentDataSchema = z
   .object({
     __name: z.literal("comment"),
@@ -114,6 +114,8 @@ const CommentDataSchema = z
   .strict();
 
 export type CommentData = z.infer<typeof CommentDataSchema>;
+
+export type CommentMapper = WithId<CommentData>;
 
 export class CommentDoc extends Doc<CommentData> implements CommentData {
   __name!: "comment";
@@ -165,5 +167,3 @@ export class CommentDoc extends Doc<CommentData> implements CommentData {
     return this.userId === userId;
   }
 }
-
-export type CommentMapper = WithId<CommentData>;

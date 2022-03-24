@@ -1,12 +1,17 @@
 scalar DateTime
 
+enum CommentParentName {
+  topic
+  comment
+}
+
+union TopicOrComment = Topic | Comment
+
 type User {
   id: ID!
   displayName: String!
   topics: [Topic!]!
 }
-
-union TopicOrComment = Topic | Comment
 
 type Topic {
   id: ID!
@@ -23,9 +28,8 @@ type Comment {
   content: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  root: Topic!
-  parent: TopicOrComment!
   user: User!
+  parent: TopicOrComment!
   comments: [Comment!]!
 }
 
@@ -53,7 +57,7 @@ input UpdateTopicInput {
 
 input CreateCommentInput {
   content: String!
-  parentName: String!
+  parentName: CommentParentName!
   parentId: String!
 }
 

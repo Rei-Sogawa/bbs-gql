@@ -1,13 +1,24 @@
 import { createConverter } from "./helper";
-import { CollectionGroupRef, CollectionRef, Converter, DocRef, DocSnap, Query, WithId, WriteResult } from "./type";
+import {
+  CollectionGroupRef,
+  CollectionRef,
+  Converter,
+  DocField,
+  DocRef,
+  DocSnap,
+  GroupDocFiled,
+  Query,
+  WithId,
+  WriteResult,
+} from "./type";
 
-const mapper = <T>(snap: DocSnap<T>) => {
+const mapper = <TData>(snap: DocSnap<TData>) => {
   const data = snap.data();
   if (!data) throw new Error("Data not found");
   return { id: snap.id, ...data };
 };
 
-export class Collection<TData> {
+export class Collection<TData extends DocField> {
   private _ref: CollectionRef<TData>;
 
   constructor(_ref: CollectionRef, _converter: Converter<TData> = createConverter<TData>()) {
@@ -45,7 +56,7 @@ export class Collection<TData> {
   }
 }
 
-export class CollectionGroup<TData> {
+export class CollectionGroup<TData extends GroupDocFiled> {
   private _ref: CollectionGroupRef<TData>;
 
   constructor(_ref: CollectionGroupRef, _converter: Converter<TData> = createConverter<TData>()) {

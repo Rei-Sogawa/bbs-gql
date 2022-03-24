@@ -1,5 +1,4 @@
 import { CommentDoc, TopicDoc } from "../../fire/doc";
-import { CommentMapper, TopicMapper } from "./../../fire/doc/index";
 import { Resolvers } from "./../../graphql/generated";
 
 export const Topic: Resolvers["Topic"] = {
@@ -35,7 +34,7 @@ export const Comment: Resolvers["Comment"] = {
 };
 
 export const TopicOrComment: Resolvers["TopicOrComment"] = {
-  __resolveType(obj: TopicMapper | CommentMapper) {
+  __resolveType(obj) {
     return obj.__name === "topic" ? "Topic" : "Comment";
   },
 };

@@ -1,6 +1,8 @@
 import * as admin from "firebase-admin";
 
 export type WithId<T> = T & { id: string };
+export type DocField = { __name: string };
+export type GroupDocFiled = { __name: string; __id: string };
 
 export type Firestore = admin.firestore.Firestore;
 

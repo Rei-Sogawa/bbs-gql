@@ -8,13 +8,13 @@ generates:
     config:
       useIndexSignature: true
       enumsAsConst: true
-      contextType: ../context#Context
       scalars:
         DateTime: Date
+      contextType: ../context#Context
       mappers:
-        User: ../fire/document/index#UserMapper
-        Topic: ../fire/document/index#TopicMapper
-        Comment: ../fire/document/index#CommentMapper
+        User: ../fire/doc/index#UserMapper
+        Topic: ../fire/doc/index#TopicMapper
+        Comment: ../fire/doc/index#CommentMapper
   src/graphql/typeDefs.ts:
     plugins:
       - "typescript-type-defs.js"
