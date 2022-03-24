@@ -40,4 +40,7 @@ export class Doc<TData extends DocField> {
   delete() {
     return this.ref.delete();
   }
+  recursiveDelete() {
+    return this.ref.firestore.recursiveDelete(this.ref);
+  }
 }
