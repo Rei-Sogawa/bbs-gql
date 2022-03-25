@@ -28,7 +28,10 @@ export class Doc<TData extends DocField> {
 
   toPlainData() {
     const { _snap, _ref, _validate, ...data } = this;
-    return data as unknown;
+    const omitCollection = Object.fromEntries(
+      Object.entries(data).filter(([key]) => !key.toLowerCase().endsWith("collection"))
+    );
+    return omitCollection;
   }
   toData() {
     return this._validate(this.toPlainData());
