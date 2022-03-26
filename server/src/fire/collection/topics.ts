@@ -50,7 +50,7 @@ export class TopicsCollection extends Collection<TopicData, TopicDoc> {
 
     const edges = topics.map((v) => ({ node: v, cursor: v.createdAt }));
     const endCursor = edges.at(-1)?.cursor;
-    const startCursor = edges.at(-1)?.cursor;
+    const startCursor = edges.at(0)?.cursor;
     const hasNextPage = endCursor
       ? (await this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").startAfter(endCursor).limit(1))).length >
         0
