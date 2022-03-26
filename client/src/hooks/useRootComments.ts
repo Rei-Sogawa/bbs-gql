@@ -7,6 +7,7 @@ import {
   useUpdateRootCommentMutation,
 } from "../graphql/generated";
 import { PaginateInput } from "../graphql/generated";
+import { TopicForTopicDetailFragment } from "./../graphql/generated";
 
 gql`
   fragment RootCommentConnection on CommentConnection {
@@ -60,7 +61,7 @@ gql`
   }
 `;
 
-export const useCreateRootComment = () => {
+export const useCreateRootComment = (topic: TopicForTopicDetailFragment) => {
   const [createComment] = useCreateRootCommentMutation();
   return createComment;
 };
@@ -91,7 +92,7 @@ gql`
   }
 `;
 
-export const useDeleteRootComment = () => {
+export const useDeleteRootComment = (topic: TopicForTopicDetailFragment) => {
   const [deleteComment] = useDeleteRootCommentMutation();
   return deleteComment;
 };

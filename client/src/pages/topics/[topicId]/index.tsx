@@ -6,13 +6,15 @@ import { AppContainer } from "../../../components/AppContainer";
 import { AppEllipsisMenu } from "../../../components/AppEllipsisMenu";
 import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
+import { CommentForm, CommentFormProps } from "../../../components/comment/CommentForm";
+import { CommentFormBeforeLogIn } from "../../../components/comment/CommentFormBeforeLogin";
 import { RootCommentItem } from "../../../components/comment/RootCommentItem";
 import { Content } from "../../../components/Content";
 import { Time } from "../../../components/Time";
 import { UserName } from "../../../components/UserName";
 import { useAuth } from "../../../contexts/Auth";
 import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/generated";
-import { useRootComments } from "../../../hooks/useRootComments";
+import { useCreateRootComment, useRootComments } from "../../../hooks/useRootComments";
 import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
 import { routes } from "../../../routes";
 
@@ -97,10 +99,12 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
   );
 };
 
-export const Topic = () => {
-  const { topicId } = useParams();
+type TopicViewProps = {
+  topic: TopicForTopicDetailFragment;
+};
 
-  const topic = useTopic(topicId!);
+const TopicView = ({ topic }: TopicViewProps) => {
+  const { uid } = useAuth();
 
   const [paginate, setPaginate] = useState<{ first: number; after?: string | null }>({ first: 10, after: undefined });
 
@@ -108,7 +112,7 @@ export const Topic = () => {
     edges: rootCommentEdges,
     pageInfo: rootCommentPageInfo,
     fetchMore,
-  } = useRootComments(topicId!, {
+  } = useRootComments(topic.id, {
     first: paginate.first,
     after: paginate.after,
   });
@@ -118,36 +122,50 @@ export const Topic = () => {
     fetchMore();
   };
 
+  const createRootComment = useCreateRootComment(topic);
+  const initialValues: CommentFormProps["initialValues"] = {
+    content: "",
+  };
+  const onSubmit: CommentFormProps["onSubmit"] = async ({ content }) => {
+    await createRootComment({ variables: { input: { content, parentName: "topic", parentId: topic.id } } });
+  };
+
   return (
     <AppLayout>
       <AppContainer size="md">
-        {topic && (
-          <div className="flex flex-col space-y-4">
-            <div>
-              <div className="ml-2">
-                <BreadCrumbs topic={topic} />
-              </div>
-              <TopicDetail topic={topic} />
+        <div className="flex flex-col space-y-4">
+          <div>
+            <div className="ml-2">
+              <BreadCrumbs topic={topic} />
             </div>
-
-            {rootCommentEdges && (
-              <div className="flex flex-col space-y-2">
-                {rootCommentEdges.map(({ node }) => (
-                  <RootCommentItem key={node.id} comment={node} />
-                ))}
-              </div>
-            )}
-
-            {rootCommentPageInfo && (
-              <div className="flex justify-center">
-                <button className="btn btn-primary" disabled={!rootCommentPageInfo.hasNextPage} onClick={onMore}>
-                  More Comments
-                </button>
-              </div>
-            )}
+            <TopicDetail topic={topic} />
           </div>
-        )}
+
+          <div>{uid ? <CommentForm {...{ initialValues, onSubmit }} /> : <CommentFormBeforeLogIn />}</div>
+
+          {rootCommentEdges && (
+            <div className="flex flex-col space-y-2">
+              {rootCommentEdges.map(({ node }) => (
+                <RootCommentItem key={node.id} comment={node} />
+              ))}
+            </div>
+          )}
+
+          {rootCommentPageInfo && (
+            <div className="flex justify-center">
+              <button className="btn btn-primary" disabled={!rootCommentPageInfo.hasNextPage} onClick={onMore}>
+                More Comments
+              </button>
+            </div>
+          )}
+        </div>
       </AppContainer>
     </AppLayout>
   );
+};
+
+export const Topic = () => {
+  const { topicId } = useParams();
+  const topic = useTopic(topicId!);
+  return topic ? <TopicView topic={topic} /> : null;
 };
