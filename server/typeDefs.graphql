@@ -5,7 +5,7 @@ enum CommentParentName {
   comment
 }
 
-union TopicOrComment = Topic | Comment
+union CommentParent = Topic | Comment
 
 type User {
   id: ID!
@@ -29,7 +29,7 @@ type Comment {
   createdAt: DateTime!
   updatedAt: DateTime!
   user: User!
-  parent: TopicOrComment!
+  parent: CommentParent!
   comments: [Comment!]!
 }
 
@@ -70,7 +70,7 @@ type Mutation {
   createTopic(input: CreateTopicInput!): Topic!
   updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
   deleteTopic(id: ID!): Topic!
-  createComment(input: CreateCommentInput!): TopicOrComment!
+  createComment(input: CreateCommentInput!): CommentParent!
   updateComment(id: ID!, input: UpdateCommentInput!): Comment!
-  deleteComment(id: ID!): TopicOrComment!
+  deleteComment(id: ID!): CommentParent!
 }

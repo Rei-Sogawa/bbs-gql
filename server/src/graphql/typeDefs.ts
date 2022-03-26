@@ -6,10 +6,12 @@ type Comment {
   content: String!
   createdAt: DateTime!
   id: ID!
-  parent: TopicOrComment!
+  parent: CommentParent!
   updatedAt: DateTime!
   user: User!
 }
+
+union CommentParent = Comment | Topic
 
 enum CommentParentName {
   comment
@@ -30,9 +32,9 @@ input CreateTopicInput {
 scalar DateTime
 
 type Mutation {
-  createComment(input: CreateCommentInput!): TopicOrComment!
+  createComment(input: CreateCommentInput!): CommentParent!
   createTopic(input: CreateTopicInput!): Topic!
-  deleteComment(id: ID!): TopicOrComment!
+  deleteComment(id: ID!): CommentParent!
   deleteTopic(id: ID!): Topic!
   signUp(input: SignUpInput!): User!
   updateComment(id: ID!, input: UpdateCommentInput!): Comment!
@@ -60,8 +62,6 @@ type Topic {
   updatedAt: DateTime!
   user: User!
 }
-
-union TopicOrComment = Comment | Topic
 
 input UpdateCommentInput {
   content: String!

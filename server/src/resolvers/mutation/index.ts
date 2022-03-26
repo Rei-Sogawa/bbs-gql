@@ -51,7 +51,7 @@ export const Mutation: Resolvers["Mutation"] = {
 
     const topic = await topicsCollection.findOneById(id, TopicDoc.of);
     if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
-    await topic.delete();
+    await topic.recursiveDelete();
     return { id: topic.id, ...topic.toData() };
   },
 
@@ -62,19 +62,14 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicsCollection, commentsCollectionGroup } = context.collections;
 
-    if (parentName === "topic") {
-      const topic = await topicsCollection.findOneById(parentId, TopicDoc.of);
-      const commentData = CommentDoc.new({ content, userId: uid, parentName, parentId });
-      await topic.commentsCollection.insert({ id: commentData.__id, ...commentData });
-      return { id: topic.id, ...topic.toData() };
-    } else if (parentName === "comment") {
-      const comment = await commentsCollectionGroup.findOneById(parentId, CommentDoc.of);
-      const commentData = CommentDoc.new({ content, userId: uid, parentName, parentId });
-      await comment.commentsCollection.insert({ id: commentData.__id, ...commentData });
-      return { id: comment.id, ...comment.toData() };
-    }
+    const parent =
+      parentName === "topic"
+        ? await topicsCollection.findOneById(parentId, TopicDoc.of)
+        : await commentsCollectionGroup.findOneById(parentId, CommentDoc.of);
 
-    throw new Error("Reach bottom of createComment");
+    const commentData = CommentDoc.new({ content, userId: uid, parentName, parentId });
+    await parent.commentsCollection.insert({ id: commentData.__id, ...commentData });
+    return { id: parent.id, ...parent.toData() };
   },
 
   updateComment: async (_parent, args, context) => {
@@ -103,7 +98,7 @@ export const Mutation: Resolvers["Mutation"] = {
 
     const comment = await commentsCollectionGroup.findOneById(id, CommentDoc.of);
     if (!comment.isCreatedBy({ userId: uid })) throw new Error("Cannot write comment");
-    await comment.delete();
+    await comment.recursiveDelete();
 
     if (comment.parentName === "topic") {
       return topicsCollection.findOneById(comment.parentId);

@@ -33,7 +33,7 @@ export const Comment: Resolvers["Comment"] = {
   },
 };
 
-export const TopicOrComment: Resolvers["TopicOrComment"] = {
+export const CommentParent: Resolvers["CommentParent"] = {
   __resolveType(obj) {
     return obj.__name === "topic" ? "Topic" : "Comment";
   },

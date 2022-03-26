@@ -31,8 +31,11 @@ export class Doc<TData extends DocField> {
     const data = Object.fromEntries(Object.entries(props).filter(([key]) => !key.toLowerCase().endsWith("collection")));
     return data;
   }
-  toData() {
+  toParsedData() {
     return this._parse(this.toPlainData());
+  }
+  toData() {
+    return this.toParsedData();
   }
 
   update() {

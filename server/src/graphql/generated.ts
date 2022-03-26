@@ -23,10 +23,12 @@ export type Comment = {
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  parent: TopicOrComment;
+  parent: CommentParent;
   updatedAt: Scalars['DateTime'];
   user: User;
 };
+
+export type CommentParent = Comment | Topic;
 
 export const CommentParentName = {
   Comment: 'comment',
@@ -47,9 +49,9 @@ export type CreateTopicInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createComment: TopicOrComment;
+  createComment: CommentParent;
   createTopic: Topic;
-  deleteComment: TopicOrComment;
+  deleteComment: CommentParent;
   deleteTopic: Topic;
   signUp: User;
   updateComment: Comment;
@@ -121,8 +123,6 @@ export type Topic = {
   updatedAt: Scalars['DateTime'];
   user: User;
 };
-
-export type TopicOrComment = Comment | Topic;
 
 export type UpdateCommentInput = {
   content: Scalars['String'];
@@ -212,6 +212,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Comment: ResolverTypeWrapper<CommentMapper>;
+  CommentParent: ResolversTypes['Comment'] | ResolversTypes['Topic'];
   CommentParentName: CommentParentName;
   CreateCommentInput: CreateCommentInput;
   CreateTopicInput: CreateTopicInput;
@@ -222,7 +223,6 @@ export type ResolversTypes = ResolversObject<{
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   Topic: ResolverTypeWrapper<TopicMapper>;
-  TopicOrComment: ResolversTypes['Comment'] | ResolversTypes['Topic'];
   UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
   User: ResolverTypeWrapper<UserMapper>;
@@ -232,6 +232,7 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
   Comment: CommentMapper;
+  CommentParent: ResolversParentTypes['Comment'] | ResolversParentTypes['Topic'];
   CreateCommentInput: CreateCommentInput;
   CreateTopicInput: CreateTopicInput;
   DateTime: Scalars['DateTime'];
@@ -241,7 +242,6 @@ export type ResolversParentTypes = ResolversObject<{
   SignUpInput: SignUpInput;
   String: Scalars['String'];
   Topic: TopicMapper;
-  TopicOrComment: ResolversParentTypes['Comment'] | ResolversParentTypes['Topic'];
   UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
   User: UserMapper;
@@ -252,10 +252,14 @@ export type CommentResolvers<ContextType = Context, ParentType extends Resolvers
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  parent?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType>;
+  parent?: Resolver<ResolversTypes['CommentParent'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CommentParentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CommentParent'] = ResolversParentTypes['CommentParent']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Comment' | 'Topic', ParentType, ContextType>;
 }>;
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
@@ -263,9 +267,9 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  createComment?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'input'>>;
+  createComment?: Resolver<ResolversTypes['CommentParent'], ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'input'>>;
   createTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationCreateTopicArgs, 'input'>>;
-  deleteComment?: Resolver<ResolversTypes['TopicOrComment'], ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'id'>>;
+  deleteComment?: Resolver<ResolversTypes['CommentParent'], ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'id'>>;
   deleteTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationDeleteTopicArgs, 'id'>>;
   signUp?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'input'>>;
   updateComment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType, RequireFields<MutationUpdateCommentArgs, 'id' | 'input'>>;
@@ -289,10 +293,6 @@ export type TopicResolvers<ContextType = Context, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type TopicOrCommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TopicOrComment'] = ResolversParentTypes['TopicOrComment']> = ResolversObject<{
-  __resolveType: TypeResolveFn<'Comment' | 'Topic', ParentType, ContextType>;
-}>;
-
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -302,11 +302,11 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
 
 export type Resolvers<ContextType = Context> = ResolversObject<{
   Comment?: CommentResolvers<ContextType>;
+  CommentParent?: CommentParentResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Topic?: TopicResolvers<ContextType>;
-  TopicOrComment?: TopicOrCommentResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;
 
