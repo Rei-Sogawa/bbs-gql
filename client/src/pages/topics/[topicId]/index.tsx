@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { AppContainer } from "../../../components/AppContainer";
 import { AppEllipsisMenu } from "../../../components/AppEllipsisMenu";
@@ -11,6 +11,7 @@ import { Time } from "../../../components/Time";
 import { UserName } from "../../../components/UserName";
 import { useAuth } from "../../../contexts/Auth";
 import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/generated";
+import { usePaginateQuery } from "../../../hooks/usePaginate";
 import { useRootComments } from "../../../hooks/useRootComments";
 import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
 import { routes } from "../../../routes";
@@ -100,7 +101,16 @@ export const Topic = () => {
   const { topicId } = useParams();
 
   const topic = useTopic(topicId!);
-  const { edges: rootCommentEdges, pageInfo: rootCommentPageInfo } = useRootComments(topicId!, { first: 20 });
+
+  const { first } = usePaginateQuery();
+  const { edges: rootCommentEdges, pageInfo: rootCommentPageInfo } = useRootComments(topicId!, {
+    first: first ? first : 10,
+  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const onMore = () => {
+    navigate(location.pathname + `?first=${first ? first + 10 : 20}`);
+  };
 
   return (
     <AppLayout>
@@ -118,6 +128,12 @@ export const Topic = () => {
               {rootCommentEdges.map(({ node }) => (
                 <RootCommentItem key={node.id} comment={node} />
               ))}
+            </div>
+
+            <div className="flex justify-center">
+              <button className="btn btn-primary" disabled={!rootCommentPageInfo.hasNextPage} onClick={onMore}>
+                More Comments
+              </button>
             </div>
           </div>
         )}

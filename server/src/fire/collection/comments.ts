@@ -46,7 +46,7 @@ export class CommentsCollection extends Collection<CommentData, CommentDoc> {
           : this.findManyByQuery((ref) => ref.orderBy(...backward).limit(last));
         return (await _topics).reverse();
       }
-      throw new Error("Not specified first or after");
+      return this.findManyByQuery((ref) => ref.orderBy(...forward));
     })();
 
     const edges = nodes.map((v) => ({ node: v, cursor: v.createdAt }));

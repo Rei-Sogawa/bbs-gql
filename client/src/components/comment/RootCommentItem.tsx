@@ -8,6 +8,7 @@ import { useUpdateRootComment } from "../../hooks/useRootComments";
 import { Content } from "../Content";
 import { Time } from "../Time";
 import { UserName } from "../UserName";
+import { ChildCommentItem } from "./ChildCommentItem";
 import { CommentForm, CommentFormProps, FormValues } from "./CommentForm";
 import { CommentFormBeforeLogIn } from "./CommentFormBeforeLogin";
 import { CommentItemMenu } from "./CommentItemMenu";
@@ -20,6 +21,14 @@ gql`
     user {
       id
       displayName
+    }
+    comments(input: {}) {
+      edges {
+        node {
+          id
+          ...ChildCommentItem
+        }
+      }
     }
   }
 `;
@@ -78,26 +87,27 @@ export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
                 >
                   reply
                 </button>
-                <div className="px-2 rounded-md bg-gray-200 font-bold text-xs">{1}</div>
+                <div className="px-2 rounded-md bg-gray-200 font-bold text-xs">{comment.comments.edges.length}</div>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      <div>
-        <div className="flex">
-          <div className="divider divider-horizontal" />
-          <div className="flex-1 flex flex-col space-y-2">
-            {/* {comment.comments.map((comment) => (
-              <CommentItem key={comment.id} comment={comment} />
-            ))} */}
-            {isReplying && (uid ? <CommentForm {...{ initialValues, onSubmit }} /> : <CommentFormBeforeLogIn />)}
+      {isReplying && (
+        <div>
+          <div className="flex">
+            <div className="divider divider-horizontal" />
+            <div className="flex-1 flex flex-col space-y-2">
+              {comment.comments.edges.map(({ node: comment }) => (
+                <ChildCommentItem key={comment.id} comment={comment} />
+              ))}
+              {uid ? <CommentForm {...{ initialValues, onSubmit }} /> : <CommentFormBeforeLogIn />}
+            </div>
           </div>
+          <div className="h-2" />
         </div>
-
-        <div className="h-2" />
-      </div>
+      )}
     </div>
   );
 };
