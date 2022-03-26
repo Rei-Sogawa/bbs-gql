@@ -41,9 +41,10 @@ export class TopicsCollection extends Collection<TopicData, TopicDoc> {
           : this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").limit(first));
       }
       if (last) {
-        return before
-          ? this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").endBefore(before).limit(last))
-          : (await this.findManyByQuery((ref) => ref.orderBy("createdAt", "asc").limit(last))).reverse();
+        const _topics = before
+          ? this.findManyByQuery((ref) => ref.orderBy("createdAt", "asc").startAfter(before).limit(last))
+          : this.findManyByQuery((ref) => ref.orderBy("createdAt", "asc").limit(last));
+        return (await _topics).reverse();
       }
       throw new Error("Not specified first or after");
     })();

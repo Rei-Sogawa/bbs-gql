@@ -26,7 +26,7 @@ const { usersCollection, topicsCollection } = createCollections(db);
 const main = async () => {
   await Promise.all([clearAuth(), clearFirestore()]);
 
-  const usersCount = 59;
+  const usersCount = 53;
   const authUsers = await Promise.all(
     Array.from({ length: usersCount }).map((_, idx) => {
       return auth.createUser({ email: `user-${idx}@example.com`, password: "password" });
@@ -41,7 +41,7 @@ const main = async () => {
     })
   );
 
-  const topicsCount = 59;
+  const topicsCount = 53;
   const topics = await Promise.all(
     Array.from({ length: topicsCount }).map(async (_, idx) => {
       const user = shuffle(users)[0];
