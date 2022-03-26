@@ -18,9 +18,9 @@ export const Query: Resolvers["Query"] = {
     return topicsCollection.findOneById(id);
   },
 
-  topics: (_parent, _args, context) => {
+  topics: (_parent, args, context) => {
     const { topicsCollection } = context.collections;
 
-    return topicsCollection.findAll();
+    return topicsCollection.findAll(args.input);
   },
 };

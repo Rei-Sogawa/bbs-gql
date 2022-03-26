@@ -6,6 +6,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -95,16 +96,29 @@ export type MutationUpdateTopicArgs = {
   input: UpdateTopicInput;
 };
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['DateTime']>;
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  startCursor?: Maybe<Scalars['DateTime']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   me: User;
   topic: Topic;
-  topics: Array<Topic>;
+  topics: TopicConnection;
 };
 
 
 export type QueryTopicArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryTopicsArgs = {
+  input: TopicsInput;
 };
 
 export type SignUpInput = {
@@ -122,6 +136,25 @@ export type Topic = {
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
+};
+
+export type TopicConnection = {
+  __typename?: 'TopicConnection';
+  edges: Array<TopicEdge>;
+  pageInfo: PageInfo;
+};
+
+export type TopicEdge = {
+  __typename?: 'TopicEdge';
+  cursor: Scalars['DateTime'];
+  node: Topic;
+};
+
+export type TopicsInput = {
+  after?: InputMaybe<Scalars['DateTime']>;
+  before?: InputMaybe<Scalars['DateTime']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateCommentInput = {
@@ -218,11 +251,16 @@ export type ResolversTypes = ResolversObject<{
   CreateTopicInput: CreateTopicInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
+  PageInfo: ResolverTypeWrapper<PageInfo>;
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   Topic: ResolverTypeWrapper<TopicDoc>;
+  TopicConnection: ResolverTypeWrapper<Omit<TopicConnection, 'edges'> & { edges: Array<ResolversTypes['TopicEdge']> }>;
+  TopicEdge: ResolverTypeWrapper<Omit<TopicEdge, 'node'> & { node: ResolversTypes['Topic'] }>;
+  TopicsInput: TopicsInput;
   UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
   User: ResolverTypeWrapper<UserDoc>;
@@ -237,11 +275,16 @@ export type ResolversParentTypes = ResolversObject<{
   CreateTopicInput: CreateTopicInput;
   DateTime: Scalars['DateTime'];
   ID: Scalars['ID'];
+  Int: Scalars['Int'];
   Mutation: {};
+  PageInfo: PageInfo;
   Query: {};
   SignUpInput: SignUpInput;
   String: Scalars['String'];
   Topic: TopicDoc;
+  TopicConnection: Omit<TopicConnection, 'edges'> & { edges: Array<ResolversParentTypes['TopicEdge']> };
+  TopicEdge: Omit<TopicEdge, 'node'> & { node: ResolversParentTypes['Topic'] };
+  TopicsInput: TopicsInput;
   UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
   User: UserDoc;
@@ -276,10 +319,18 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   updateTopic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<MutationUpdateTopicArgs, 'id' | 'input'>>;
 }>;
 
+export type PageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
+  endCursor?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  startCursor?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   topic?: Resolver<ResolversTypes['Topic'], ParentType, ContextType, RequireFields<QueryTopicArgs, 'id'>>;
-  topics?: Resolver<Array<ResolversTypes['Topic']>, ParentType, ContextType>;
+  topics?: Resolver<ResolversTypes['TopicConnection'], ParentType, ContextType, RequireFields<QueryTopicsArgs, 'input'>>;
 }>;
 
 export type TopicResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Topic'] = ResolversParentTypes['Topic']> = ResolversObject<{
@@ -290,6 +341,18 @@ export type TopicResolvers<ContextType = Context, ParentType extends ResolversPa
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TopicConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TopicConnection'] = ResolversParentTypes['TopicConnection']> = ResolversObject<{
+  edges?: Resolver<Array<ResolversTypes['TopicEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TopicEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['TopicEdge'] = ResolversParentTypes['TopicEdge']> = ResolversObject<{
+  cursor?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['Topic'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -305,8 +368,11 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
   CommentParent?: CommentParentResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
+  PageInfo?: PageInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Topic?: TopicResolvers<ContextType>;
+  TopicConnection?: TopicConnectionResolvers<ContextType>;
+  TopicEdge?: TopicEdgeResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;
 

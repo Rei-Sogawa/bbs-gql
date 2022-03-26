@@ -41,10 +41,17 @@ type Mutation {
   updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
 }
 
+type PageInfo {
+  endCursor: DateTime
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: DateTime
+}
+
 type Query {
   me: User!
   topic(id: ID!): Topic!
-  topics: [Topic!]!
+  topics(input: TopicsInput!): TopicConnection!
 }
 
 input SignUpInput {
@@ -61,6 +68,23 @@ type Topic {
   title: String!
   updatedAt: DateTime!
   user: User!
+}
+
+type TopicConnection {
+  edges: [TopicEdge!]!
+  pageInfo: PageInfo!
+}
+
+type TopicEdge {
+  cursor: DateTime!
+  node: Topic!
+}
+
+input TopicsInput {
+  after: DateTime
+  before: DateTime
+  first: Int
+  last: Int
 }
 
 input UpdateCommentInput {
