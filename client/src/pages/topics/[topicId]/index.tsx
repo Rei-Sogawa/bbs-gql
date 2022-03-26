@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { AppContainer } from "../../../components/AppContainer";
 import { AppEllipsisMenu } from "../../../components/AppEllipsisMenu";
@@ -11,7 +12,6 @@ import { Time } from "../../../components/Time";
 import { UserName } from "../../../components/UserName";
 import { useAuth } from "../../../contexts/Auth";
 import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/generated";
-import { usePaginateQuery } from "../../../hooks/usePaginate";
 import { useRootComments } from "../../../hooks/useRootComments";
 import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
 import { routes } from "../../../routes";
@@ -102,20 +102,26 @@ export const Topic = () => {
 
   const topic = useTopic(topicId!);
 
-  const { first } = usePaginateQuery();
-  const { edges: rootCommentEdges, pageInfo: rootCommentPageInfo } = useRootComments(topicId!, {
-    first: first ? first : 10,
+  const [paginate, setPaginate] = useState<{ first: number; after?: string | null }>({ first: 10, after: undefined });
+
+  const {
+    edges: rootCommentEdges,
+    pageInfo: rootCommentPageInfo,
+    fetchMore,
+  } = useRootComments(topicId!, {
+    first: paginate.first,
+    after: paginate.after,
   });
-  const location = useLocation();
-  const navigate = useNavigate();
+
   const onMore = () => {
-    navigate(location.pathname + `?first=${first ? first + 10 : 20}`);
+    setPaginate({ first: 10, after: rootCommentPageInfo?.endCursor });
+    fetchMore();
   };
 
   return (
     <AppLayout>
       <AppContainer size="md">
-        {topic && rootCommentEdges && rootCommentPageInfo && (
+        {topic && (
           <div className="flex flex-col space-y-4">
             <div>
               <div className="ml-2">
@@ -124,17 +130,21 @@ export const Topic = () => {
               <TopicDetail topic={topic} />
             </div>
 
-            <div className="flex flex-col space-y-2">
-              {rootCommentEdges.map(({ node }) => (
-                <RootCommentItem key={node.id} comment={node} />
-              ))}
-            </div>
+            {rootCommentEdges && (
+              <div className="flex flex-col space-y-2">
+                {rootCommentEdges.map(({ node }) => (
+                  <RootCommentItem key={node.id} comment={node} />
+                ))}
+              </div>
+            )}
 
-            <div className="flex justify-center">
-              <button className="btn btn-primary" disabled={!rootCommentPageInfo.hasNextPage} onClick={onMore}>
-                More Comments
-              </button>
-            </div>
+            {rootCommentPageInfo && (
+              <div className="flex justify-center">
+                <button className="btn btn-primary" disabled={!rootCommentPageInfo.hasNextPage} onClick={onMore}>
+                  More Comments
+                </button>
+              </div>
+            )}
           </div>
         )}
       </AppContainer>

@@ -7,7 +7,7 @@ import { clearFirestore } from "./test-util/clear";
 import { clearAuth } from "./test-util/clear";
 import { getAuth, getDb } from "./test-util/setup";
 
-// primes: 7, 53, 1087
+// primes: 3, 53, 1087
 
 const shuffle = <T>(_arr: T[]) => {
   const arr = [..._arr];
@@ -26,7 +26,7 @@ const { usersCollection, topicsCollection } = createCollections(db);
 const main = async () => {
   await Promise.all([clearAuth(), clearFirestore()]);
 
-  const usersCount = 7;
+  const usersCount = 3;
   const authUsers = await Promise.all(
     Array.from({ length: usersCount }).map((_, idx) => {
       return auth.createUser({ email: `user-${idx}@example.com`, password: "password" });

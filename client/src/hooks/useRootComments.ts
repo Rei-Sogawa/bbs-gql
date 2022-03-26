@@ -36,7 +36,7 @@ gql`
 `;
 
 export const useRootComments = (topicId: string, paginateInput: PaginateInput) => {
-  const { data } = useRootCommentsForTopicQuery({ variables: { topicId, paginateInput } });
+  const { data, fetchMore } = useRootCommentsForTopicQuery({ variables: { topicId, paginateInput } });
 
   const edges = data?.topic.comments.edges;
   const pageInfo = data?.topic.comments.pageInfo;
@@ -44,18 +44,18 @@ export const useRootComments = (topicId: string, paginateInput: PaginateInput) =
   return {
     edges,
     pageInfo,
+    fetchMore: () => fetchMore({ variables: { topicId, paginateInput } }),
   };
 };
 
 gql`
-  mutation CreateRootComment($input: CreateCommentInput!, $paginateInput: PaginateInput!) {
+  mutation CreateRootComment($input: CreateCommentInput!) {
     createComment(input: $input) {
-      ... on Topic {
+      node {
         id
-        comments(input: $paginateInput) {
-          ...RootCommentConnection
-        }
+        ...RootCommentItem
       }
+      cursor
     }
   }
 `;
@@ -80,14 +80,13 @@ export const useUpdateRootComment = () => {
 };
 
 gql`
-  mutation DeleteRootComment($id: ID!, $paginateInput: PaginateInput!) {
+  mutation DeleteRootComment($id: ID!) {
     deleteComment(id: $id) {
-      ... on Topic {
+      node {
         id
-        comments(input: $paginateInput) {
-          ...RootCommentConnection
-        }
+        ...RootCommentItem
       }
+      cursor
     }
   }
 `;

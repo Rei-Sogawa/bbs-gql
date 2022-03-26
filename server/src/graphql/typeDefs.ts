@@ -42,9 +42,9 @@ input CreateTopicInput {
 scalar DateTime
 
 type Mutation {
-  createComment(input: CreateCommentInput!): CommentParent!
+  createComment(input: CreateCommentInput!): CommentEdge!
   createTopic(input: CreateTopicInput!): Topic!
-  deleteComment(id: ID!): CommentParent!
+  deleteComment(id: ID!): CommentEdge!
   deleteTopic(id: ID!): Topic!
   signUp(input: SignUpInput!): User!
   updateComment(id: ID!, input: UpdateCommentInput!): Comment!

@@ -67,8 +67,8 @@ export const Mutation: Resolvers["Mutation"] = {
         ? await topicsCollection.findOneById(parentId)
         : await commentsCollectionGroup.findOneById(parentId);
     const commentData = CommentDoc.new({ content, userId: uid, parentName, parentId });
-    await parent.commentsCollection.insert({ id: commentData.__id, ...commentData });
-    return parent;
+    const comment = await parent.commentsCollection.insert({ id: commentData.__id, ...commentData });
+    return { node: comment, cursor: comment.createdAt };
   },
 
   updateComment: async (_parent, args, context) => {
@@ -93,13 +93,11 @@ export const Mutation: Resolvers["Mutation"] = {
 
     const { id } = args;
     const { uid } = context;
-    const { topicsCollection, commentsCollectionGroup } = context.collections;
+    const { commentsCollectionGroup } = context.collections;
 
     const comment = await commentsCollectionGroup.findOneById(id);
     if (!comment.isCreatedBy({ userId: uid })) throw new Error("Cannot write comment");
     await comment.recursiveDelete();
-    return comment.parentName === "topic"
-      ? topicsCollection.findOneById(comment.parentId)
-      : commentsCollectionGroup.findOneById(comment.parentId);
+    return { node: comment, cursor: comment.createdAt };
   },
 };

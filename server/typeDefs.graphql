@@ -116,7 +116,7 @@ type Mutation {
   createTopic(input: CreateTopicInput!): Topic!
   updateTopic(id: ID!, input: UpdateTopicInput!): Topic!
   deleteTopic(id: ID!): Topic!
-  createComment(input: CreateCommentInput!): CommentParent!
+  createComment(input: CreateCommentInput!): CommentEdge!
   updateComment(id: ID!, input: UpdateCommentInput!): Comment!
-  deleteComment(id: ID!): CommentParent!
+  deleteComment(id: ID!): CommentEdge!
 }

@@ -18,7 +18,22 @@ const getAuthLink = (token?: string) => {
 const getClient = (token?: string) => {
   const httpLink = createHttpLink({ uri: import.meta.env.VITE_ENDPOINT });
 
-  const cache = new InMemoryCache();
+  const cache = new InMemoryCache({
+    typePolicies: {
+      Topic: {
+        fields: {
+          comments: {
+            keyArgs: false,
+            merge(existing, incoming) {
+              if (!existing) return incoming;
+              const merged = { ...incoming, edges: [...existing.edges, ...incoming.edges] };
+              return merged;
+            },
+          },
+        },
+      },
+    },
+  });
 
   return new ApolloClient({
     link: getAuthLink(token).concat(httpLink),

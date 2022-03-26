@@ -60,9 +60,9 @@ export type CreateTopicInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createComment: CommentParent;
+  createComment: CommentEdge;
   createTopic: Topic;
-  deleteComment: CommentParent;
+  deleteComment: CommentEdge;
   deleteTopic: Topic;
   signUp: User;
   updateComment: Comment;
@@ -188,11 +188,11 @@ export type User = {
   topics: Array<Topic>;
 };
 
-export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, createdAt: string };
-
 export type ChildCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
 
 export type RootCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } };
+
+export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, createdAt: string };
 
 export type UserForMeFragment = { __typename?: 'User', id: string, displayName: string };
 
@@ -213,11 +213,10 @@ export type RootCommentsForTopicQuery = { __typename?: 'Query', topic: { __typen
 
 export type CreateRootCommentMutationVariables = Exact<{
   input: CreateCommentInput;
-  paginateInput: PaginateInput;
 }>;
 
 
-export type CreateRootCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'Comment' } | { __typename?: 'Topic', id: string, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } } };
+export type CreateRootCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } } };
 
 export type UpdateRootCommentMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -229,11 +228,10 @@ export type UpdateRootCommentMutation = { __typename?: 'Mutation', updateComment
 
 export type DeleteRootCommentMutationVariables = Exact<{
   id: Scalars['ID'];
-  paginateInput: PaginateInput;
 }>;
 
 
-export type DeleteRootCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'Comment' } | { __typename?: 'Topic', id: string, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } } };
+export type DeleteRootCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } } };
 
 export type TopicsForIndexQueryVariables = Exact<{
   input: PaginateInput;
@@ -446,17 +444,16 @@ export type RootCommentsForTopicQueryHookResult = ReturnType<typeof useRootComme
 export type RootCommentsForTopicLazyQueryHookResult = ReturnType<typeof useRootCommentsForTopicLazyQuery>;
 export type RootCommentsForTopicQueryResult = Apollo.QueryResult<RootCommentsForTopicQuery, RootCommentsForTopicQueryVariables>;
 export const CreateRootCommentDocument = gql`
-    mutation CreateRootComment($input: CreateCommentInput!, $paginateInput: PaginateInput!) {
+    mutation CreateRootComment($input: CreateCommentInput!) {
   createComment(input: $input) {
-    ... on Topic {
+    node {
       id
-      comments(input: $paginateInput) {
-        ...RootCommentConnection
-      }
+      ...RootCommentItem
     }
+    cursor
   }
 }
-    ${RootCommentConnectionFragmentDoc}`;
+    ${RootCommentItemFragmentDoc}`;
 export type CreateRootCommentMutationFn = Apollo.MutationFunction<CreateRootCommentMutation, CreateRootCommentMutationVariables>;
 
 /**
@@ -473,7 +470,6 @@ export type CreateRootCommentMutationFn = Apollo.MutationFunction<CreateRootComm
  * const [createRootCommentMutation, { data, loading, error }] = useCreateRootCommentMutation({
  *   variables: {
  *      input: // value for 'input'
- *      paginateInput: // value for 'paginateInput'
  *   },
  * });
  */
@@ -520,17 +516,16 @@ export type UpdateRootCommentMutationHookResult = ReturnType<typeof useUpdateRoo
 export type UpdateRootCommentMutationResult = Apollo.MutationResult<UpdateRootCommentMutation>;
 export type UpdateRootCommentMutationOptions = Apollo.BaseMutationOptions<UpdateRootCommentMutation, UpdateRootCommentMutationVariables>;
 export const DeleteRootCommentDocument = gql`
-    mutation DeleteRootComment($id: ID!, $paginateInput: PaginateInput!) {
+    mutation DeleteRootComment($id: ID!) {
   deleteComment(id: $id) {
-    ... on Topic {
+    node {
       id
-      comments(input: $paginateInput) {
-        ...RootCommentConnection
-      }
+      ...RootCommentItem
     }
+    cursor
   }
 }
-    ${RootCommentConnectionFragmentDoc}`;
+    ${RootCommentItemFragmentDoc}`;
 export type DeleteRootCommentMutationFn = Apollo.MutationFunction<DeleteRootCommentMutation, DeleteRootCommentMutationVariables>;
 
 /**
@@ -547,7 +542,6 @@ export type DeleteRootCommentMutationFn = Apollo.MutationFunction<DeleteRootComm
  * const [deleteRootCommentMutation, { data, loading, error }] = useDeleteRootCommentMutation({
  *   variables: {
  *      id: // value for 'id'
- *      paginateInput: // value for 'paginateInput'
  *   },
  * });
  */
