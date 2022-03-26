@@ -65,12 +65,12 @@ export const Mutation: Resolvers["Mutation"] = {
     if (parentName === "topic") {
       const topic = await topicsCollection.findOneById(parentId, TopicDoc.of);
       const commentData = CommentDoc.new({ content, userId: uid, parentName, parentId });
-      await topic.comments.insert({ id: commentData.__id, ...commentData });
+      await topic.commentsCollection.insert({ id: commentData.__id, ...commentData });
       return { id: topic.id, ...topic.toData() };
     } else if (parentName === "comment") {
       const comment = await commentsCollectionGroup.findOneById(parentId, CommentDoc.of);
       const commentData = CommentDoc.new({ content, userId: uid, parentName, parentId });
-      await comment.comments.insert({ id: commentData.__id, ...commentData });
+      await comment.commentsCollection.insert({ id: commentData.__id, ...commentData });
       return { id: comment.id, ...comment.toData() };
     }
 

@@ -28,16 +28,14 @@ export class TopicDoc extends Doc<TopicData> implements TopicData {
   updatedAt!: Date;
   userId!: string;
 
+  commentsCollection = new CommentsCollection(this.ref.collection("comments"));
+
   constructor(snap: DocSnap<TopicData>) {
     super(snap, TopicDataSchema.parse);
   }
 
   static of(snap: DocSnap<TopicData>) {
     return new TopicDoc(snap);
-  }
-
-  get comments() {
-    return new CommentsCollection(this.ref.collection("comments"));
   }
 
   static new({ title, content, userId }: Pick<TopicData, "title" | "content" | "userId">): TopicData {

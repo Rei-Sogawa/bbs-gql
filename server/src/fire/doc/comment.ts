@@ -33,16 +33,14 @@ export class CommentDoc extends Doc<CommentData> implements CommentData {
   parentName!: string;
   parentId!: string;
 
+  commentsCollection = new CommentsCollection(this.ref.collection("comments"));
+
   constructor(snap: DocSnap<CommentData>) {
     super(snap, CommentDataSchema.parse);
   }
 
   static of(snap: DocSnap<CommentData>) {
     return new CommentDoc(snap);
-  }
-
-  get comments() {
-    return new CommentsCollection(this.ref.collection("comments"));
   }
 
   static new({

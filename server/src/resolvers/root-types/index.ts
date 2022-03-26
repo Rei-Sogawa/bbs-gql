@@ -13,7 +13,7 @@ export const Topic: Resolvers["Topic"] = {
     const { topicsCollection } = context.collections;
 
     const topic = await topicsCollection.findOneById(parent.id, TopicDoc.of);
-    return topic.comments.findAll();
+    return topic.commentsCollection.findAll();
   },
 };
 
@@ -29,7 +29,7 @@ export const Comment: Resolvers["Comment"] = {
     const { commentsCollectionGroup } = context.collections;
 
     const comment = await commentsCollectionGroup.findOneById(parent.id, CommentDoc.of);
-    return comment.comments.findAll();
+    return comment.commentsCollection.findAll();
   },
 };
 
