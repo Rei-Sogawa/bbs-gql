@@ -2,14 +2,15 @@ import { gql } from "@apollo/client";
 import { useState } from "react";
 import { FaUser } from "react-icons/fa";
 
-import { useAuth } from "../contexts/Auth";
-import { RootCommentItemFragment } from "../graphql/generated";
-import { useUpdateRootComment } from "../hooks/useRootComments";
-import { CommentForm, FormValues } from "./CommentForm";
+import { useAuth } from "../../contexts/Auth";
+import { RootCommentItemFragment } from "../../graphql/generated";
+import { useUpdateRootComment } from "../../hooks/useRootComments";
+import { Content } from "../Content";
+import { Time } from "../Time";
+import { UserName } from "../UserName";
+import { CommentForm, CommentFormProps, FormValues } from "./CommentForm";
+import { CommentFormBeforeLogIn } from "./CommentFormBeforeLogin";
 import { CommentItemMenu } from "./CommentItemMenu";
-import { Content } from "./Content";
-import { Time } from "./Time";
-import { UserName } from "./UserName";
 
 gql`
   fragment RootCommentItem on Comment {
@@ -29,11 +30,19 @@ export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
   const { uid } = useAuth();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
 
   const updateComment = useUpdateRootComment();
   const onSubmitEditComment = async ({ content }: FormValues) => {
     await updateComment({ variables: { id: comment.id, input: { content } } });
     setIsEditing(false);
+  };
+
+  const initialValues: CommentFormProps["initialValues"] = {
+    content: "",
+  };
+  const onSubmit: CommentFormProps["onSubmit"] = (v) => {
+    return Promise.resolve();
   };
 
   return (
@@ -59,9 +68,35 @@ export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
               </div>
 
               <Content content={comment.content} />
+
+              <div className="flex space-x-2 items-baseline">
+                <button
+                  className="link"
+                  onClick={() => {
+                    setIsReplying((prev) => !prev);
+                  }}
+                >
+                  reply
+                </button>
+                <div className="px-2 rounded-md bg-gray-200 font-bold text-xs">{1}</div>
+              </div>
             </div>
           </div>
         )}
+      </div>
+
+      <div>
+        <div className="flex">
+          <div className="divider divider-horizontal" />
+          <div className="flex-1 flex flex-col space-y-2">
+            {/* {comment.comments.map((comment) => (
+              <CommentItem key={comment.id} comment={comment} />
+            ))} */}
+            {isReplying && (uid ? <CommentForm {...{ initialValues, onSubmit }} /> : <CommentFormBeforeLogIn />)}
+          </div>
+        </div>
+
+        <div className="h-2" />
       </div>
     </div>
   );

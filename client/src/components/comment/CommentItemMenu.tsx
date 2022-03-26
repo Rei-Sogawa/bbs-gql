@@ -1,4 +1,4 @@
-import { AppEllipsisMenu } from "./AppEllipsisMenu";
+import { AppEllipsisMenu } from "../AppEllipsisMenu";
 
 type CommentItemMenuProps = {
   onEdit: () => void;

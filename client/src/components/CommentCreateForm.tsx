@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useGlobal } from "../contexts/Global";
 import { useCreateComment } from "../hooks/useComments";
 import { routes } from "../routes";
-import { CommentForm, FormValues } from "./CommentForm";
+import { CommentForm, FormValues } from "./comment/CommentForm";
 
 type CommentCreateFormProps = {
   parentName: "topic" | "comment";

@@ -5,7 +5,7 @@ export type FormValues = {
   content: string;
 };
 
-type CommentFormProps = {
+export type CommentFormProps = {
   initialValues: FormValues;
   onSubmit: (values: FormValues) => Promise<void>;
   onCancel?: () => void;
