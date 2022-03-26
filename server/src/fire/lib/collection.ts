@@ -1,17 +1,6 @@
 import { Doc } from "./document";
 import { createConverter } from "./helper";
-import {
-  CollectionGroupRef,
-  CollectionRef,
-  Converter,
-  DocField,
-  DocRef,
-  DocSnap,
-  GroupDocFiled,
-  Query,
-  WithId,
-  WriteResult,
-} from "./type";
+import { CollectionGroupRef, CollectionRef, Converter, DocField, DocSnap, GroupDocFiled, Query, WithId } from "./type";
 
 export const toMapper = <TData>(snap: DocSnap<TData>) => {
   const data = snap.data();
@@ -57,12 +46,18 @@ export class Collection<TData extends DocField, TDoc extends Doc<TData>> {
       .then((q) => q.docs.map(decode));
   }
 
-  insert(data: TData): Promise<DocRef<TData>>;
-  insert(data: WithId<TData>): Promise<WriteResult>;
-  insert(data: TData & { id?: string }) {
+  insert(data: TData): Promise<TDoc>;
+  insert(data: WithId<TData>): Promise<TDoc>;
+  async insert(data: TData & { id?: string }) {
     const { id, ...__data } = data;
     const _data = this._parse(__data);
-    return id ? this._ref.doc(id).set(_data) : this._ref.add(_data);
+    if (id) {
+      await this._ref.doc(id).set(_data);
+      return this.findOneById(id);
+    } else {
+      const { id } = await this._ref.add(_data);
+      return this.findOneById(id);
+    }
   }
 }
 
