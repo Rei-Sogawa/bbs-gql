@@ -34,16 +34,16 @@ export class TopicsCollection extends Collection<TopicData, TopicDoc> {
   async findAll(input: FindAllInput): Promise<FindAllOutput> {
     const { first, after, last, before } = input;
 
-    const topics = await (() => {
+    const topics = await (async () => {
       if (first) {
         return after
           ? this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").startAfter(after).limit(first))
           : this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").limit(first));
       }
       if (last) {
-        before
+        return before
           ? this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").endBefore(before).limit(last))
-          : this.findManyByQuery((ref) => ref.orderBy("createdAt", "asc").limit(last));
+          : (await this.findManyByQuery((ref) => ref.orderBy("createdAt", "asc").limit(last))).reverse();
       }
       throw new Error("Not specified first or after");
     })();

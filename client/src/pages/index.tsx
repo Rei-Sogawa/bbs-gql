@@ -16,7 +16,7 @@ const useIndexQuery = () => {
   const after = query.get("after");
   const last = query.get("last");
   const before = query.get("before");
-  return { first, after, last, before };
+  return { first: !first && !last ? "10" : first, after, last, before };
 };
 
 export const Index: VFC = () => {
@@ -36,39 +36,43 @@ export const Index: VFC = () => {
           <div className="text-center">
             <AppHeading>Topics!</AppHeading>
           </div>
-          <div>
-            {edges?.map(({ node: topic }) => (
-              <div key={topic.id}>
-                <TopicItem topic={topic} />
-                <div className="divider" />
+          {edges && pageInfo && (
+            <div>
+              <div>
+                {edges?.map(({ node: topic }) => (
+                  <div key={topic.id}>
+                    <TopicItem topic={topic} />
+                    <div className="divider" />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="flex justify-center">
-            <div className="btn-group">
-              <button className="btn" onClick={() => navigate(routes["/"].path() + "?first=10")}>
-                <FaAngleDoubleLeft />
-              </button>
-              <button
-                className="btn"
-                disabled={!pageInfo?.hasPreviousPage}
-                onClick={() => navigate(routes["/"].path() + "?last=10&before=" + pageInfo?.startCursor)}
-              >
-                <FaAngleLeft />
-              </button>
-              <button className="btn btn-disabled">...</button>
-              <button
-                className="btn"
-                disabled={!pageInfo?.hasNextPage}
-                onClick={() => navigate(routes["/"].path() + "?first=10&after=" + pageInfo?.endCursor)}
-              >
-                <FaAngleRight />
-              </button>
-              <button className="btn" onClick={() => navigate(routes["/"].path() + "?last=10")}>
-                <FaAngleDoubleRight />
-              </button>
+              <div className="flex justify-center">
+                <div className="btn-group">
+                  <button className="btn" onClick={() => navigate(routes["/"].path() + "?first=10")}>
+                    <FaAngleDoubleLeft />
+                  </button>
+                  <button
+                    className="btn"
+                    disabled={!pageInfo?.hasPreviousPage}
+                    onClick={() => navigate(routes["/"].path() + "?last=10&before=" + pageInfo?.startCursor)}
+                  >
+                    <FaAngleLeft />
+                  </button>
+                  <button className="btn btn-disabled">...</button>
+                  <button
+                    className="btn"
+                    disabled={!pageInfo?.hasNextPage}
+                    onClick={() => navigate(routes["/"].path() + "?first=10&after=" + pageInfo?.endCursor)}
+                  >
+                    <FaAngleRight />
+                  </button>
+                  <button className="btn" onClick={() => navigate(routes["/"].path() + "?last=10")}>
+                    <FaAngleDoubleRight />
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </AppContainer>
     </AppLayout>
