@@ -49,7 +49,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicsCollection } = context.collections;
 
-    const topic = await topicsCollection.findOneById(id, TopicDoc.of);
+    const topic = await topicsCollection.findOneById(id);
     if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
     await topic.recursiveDelete();
     return { id: topic.id, ...topic.toData() };
@@ -64,8 +64,8 @@ export const Mutation: Resolvers["Mutation"] = {
 
     const parent =
       parentName === "topic"
-        ? await topicsCollection.findOneById(parentId, TopicDoc.of)
-        : await commentsCollectionGroup.findOneById(parentId, CommentDoc.of);
+        ? await topicsCollection.findOneById(parentId)
+        : await commentsCollectionGroup.findOneById(parentId);
 
     const commentData = CommentDoc.new({ content, userId: uid, parentName, parentId });
     await parent.commentsCollection.insert({ id: commentData.__id, ...commentData });
@@ -82,7 +82,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { commentsCollectionGroup } = context.collections;
 
-    const comment = await commentsCollectionGroup.findOneById(id, CommentDoc.of);
+    const comment = await commentsCollectionGroup.findOneById(id);
     if (!comment.isCreatedBy({ userId: uid })) throw new Error("Cannot write comment");
     comment.edit({ content });
     await comment.update();
@@ -96,16 +96,12 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicsCollection, commentsCollectionGroup } = context.collections;
 
-    const comment = await commentsCollectionGroup.findOneById(id, CommentDoc.of);
+    const comment = await commentsCollectionGroup.findOneById(id);
     if (!comment.isCreatedBy({ userId: uid })) throw new Error("Cannot write comment");
     await comment.recursiveDelete();
 
-    if (comment.parentName === "topic") {
-      return topicsCollection.findOneById(comment.parentId);
-    } else if (comment.parentName === "comment") {
-      return commentsCollectionGroup.findOneById(comment.parentId);
-    }
-
-    throw new Error("Reach bottom of deleteComment");
+    return comment.parentName === "topic"
+      ? topicsCollection.findOneById(comment.parentId)
+      : commentsCollectionGroup.findOneById(comment.parentId);
   },
 };

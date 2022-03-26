@@ -1,3 +1,4 @@
+import { Doc } from "./document";
 import { createConverter } from "./helper";
 import {
   CollectionGroupRef,
@@ -12,33 +13,36 @@ import {
   WriteResult,
 } from "./type";
 
-const toMapper = <TData>(snap: DocSnap<TData>) => {
+export const toMapper = <TData>(snap: DocSnap<TData>) => {
   const data = snap.data();
   if (!data) throw new Error("Data not found");
   return { id: snap.id, ...data };
 };
 
-export class Collection<TData extends DocField> {
+export class Collection<TData extends DocField, TDoc extends Doc<TData>> {
   private _ref: CollectionRef<TData>;
   private _parse: (data: unknown) => TData;
+  private _of: (snap: DocSnap<TData>) => TDoc;
 
   constructor(
     _ref: CollectionRef,
     _parse: (data: unknown) => TData,
+    _of: (snap: DocSnap<TData>) => TDoc,
     _converter: Converter<TData> = createConverter<TData>()
   ) {
     this._ref = _ref.withConverter(_converter);
     this._parse = _parse;
+    this._of = _of;
   }
 
-  findOneById(id: string): Promise<WithId<TData>>;
+  findOneById(id: string): Promise<TDoc>;
   findOneById<T>(id: string, decode: (snap: DocSnap<TData>) => T): Promise<T>;
   findOneById<T>(id: string, decode?: (snap: DocSnap<TData>) => T) {
-    if (!decode) return this._ref.doc(id).get().then(toMapper);
+    if (!decode) return this._ref.doc(id).get().then(this._of);
     return this._ref.doc(id).get().then(decode);
   }
 
-  findManyByQuery(queryFn: (ref: CollectionRef<TData>) => Query<TData>): Promise<WithId<TData>[]>;
+  findManyByQuery(queryFn: (ref: CollectionRef<TData>) => Query<TData>): Promise<TDoc[]>;
   findManyByQuery<T>(
     queryFn: (ref: CollectionRef<TData>) => Query<TData>,
     decode: (snap: DocSnap<TData>) => T
@@ -47,7 +51,7 @@ export class Collection<TData extends DocField> {
     if (!decode)
       return queryFn(this._ref)
         .get()
-        .then((q) => q.docs.map(toMapper));
+        .then((q) => q.docs.map(this._of));
     return queryFn(this._ref)
       .get()
       .then((q) => q.docs.map(decode));
@@ -62,14 +66,20 @@ export class Collection<TData extends DocField> {
   }
 }
 
-export class CollectionGroup<TData extends GroupDocFiled> {
+export class CollectionGroup<TData extends GroupDocFiled, TDoc extends Doc<TData>> {
   private _ref: CollectionGroupRef<TData>;
+  private _of: (snap: DocSnap<TData>) => TDoc;
 
-  constructor(_ref: CollectionGroupRef, _converter: Converter<TData> = createConverter<TData>()) {
+  constructor(
+    _ref: CollectionGroupRef,
+    _of: (snap: DocSnap<TData>) => TDoc,
+    _converter: Converter<TData> = createConverter<TData>()
+  ) {
     this._ref = _ref.withConverter(_converter);
+    this._of = _of;
   }
 
-  findOneById(id: string): Promise<WithId<TData>>;
+  findOneById(id: string): Promise<TDoc>;
   findOneById<T>(id: string, decode: (snap: DocSnap<TData>) => T): Promise<T>;
   findOneById<T>(id: string, decode?: (snap: DocSnap<TData>) => T) {
     if (!decode)
@@ -86,7 +96,7 @@ export class CollectionGroup<TData extends GroupDocFiled> {
     });
   }
 
-  findManyByQuery(queryFn: (ref: CollectionGroupRef<TData>) => Query<TData>): Promise<WithId<TData>[]>;
+  findManyByQuery(queryFn: (ref: CollectionGroupRef<TData>) => Query<TData>): Promise<TDoc[]>;
   findManyByQuery<T>(
     queryFn: (ref: CollectionGroupRef<TData>) => Query<TData>,
     decode: (snap: DocSnap<TData>) => T
@@ -95,7 +105,7 @@ export class CollectionGroup<TData extends GroupDocFiled> {
     if (!decode)
       return queryFn(this._ref)
         .get()
-        .then((q) => q.docs.map(toMapper));
+        .then((q) => q.docs.map(this._of));
 
     return queryFn(this._ref)
       .get()

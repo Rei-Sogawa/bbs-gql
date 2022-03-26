@@ -39,7 +39,7 @@ export class Doc<TData extends DocField> {
   }
 
   update() {
-    return this.ref.set(this.toData());
+    return this.ref.set(this.toParsedData());
   }
   delete() {
     return this.ref.delete();

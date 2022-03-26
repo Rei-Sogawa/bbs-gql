@@ -1,4 +1,5 @@
-import { CommentDoc, TopicDoc } from "../../fire/doc";
+import { TopicDoc } from "../../fire/doc";
+import { toMapper } from "./../../fire/lib/collection";
 import { Resolvers } from "./../../graphql/generated";
 
 export const Topic: Resolvers["Topic"] = {
@@ -6,7 +7,7 @@ export const Topic: Resolvers["Topic"] = {
     const { userId } = parent;
     const { usersCollection } = context.collections;
 
-    return usersCollection.findOneById(userId);
+    return usersCollection.findOneById(userId, toMapper);
   },
 
   comments: async (parent, _args, context) => {
@@ -22,13 +23,13 @@ export const Comment: Resolvers["Comment"] = {
     const { userId } = parent;
     const { usersCollection } = context.collections;
 
-    return usersCollection.findOneById(userId);
+    return usersCollection.findOneById(userId, toMapper);
   },
 
   comments: async (parent, _args, context) => {
     const { commentsCollectionGroup } = context.collections;
 
-    const comment = await commentsCollectionGroup.findOneById(parent.id, CommentDoc.of);
+    const comment = await commentsCollectionGroup.findOneById(parent.id);
     return comment.commentsCollection.findAll();
   },
 };
