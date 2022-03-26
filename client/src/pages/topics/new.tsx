@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AppContainer } from "../../components/AppContainer";
 import { AppHeading } from "../../components/AppHeading";
 import { AppLayout } from "../../components/AppLayout";
-import { TopicForm, TopicFormProps } from "../../components/TopicForm";
+import { TopicForm, TopicFormProps } from "../../components/topic/TopicForm";
 import { useCreateTopic } from "../../hooks/useTopics";
 import { routes } from "../../routes";
 

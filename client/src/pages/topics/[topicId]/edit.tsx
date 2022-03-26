@@ -4,7 +4,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { AppContainer } from "../../../components/AppContainer";
 import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
-import { TopicForm, TopicFormProps } from "../../../components/TopicForm";
+import { TopicForm, TopicFormProps } from "../../../components/topic/TopicForm";
 import { useAuth } from "../../../contexts/Auth";
 import { TopicForTopicEditFragment } from "../../../graphql/generated";
 import { useTopicEdit, useUpdateTopic } from "../../../hooks/useTopics";

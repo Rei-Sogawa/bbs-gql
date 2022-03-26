@@ -1,10 +1,10 @@
 import { gql } from "@apollo/client";
 import { Link } from "react-router-dom";
 
-import { TopicItemFragment } from "../graphql/generated";
-import { routes } from "../routes";
-import { AppHeading } from "./AppHeading";
-import { Time } from "./Time";
+import { TopicItemFragment } from "../../graphql/generated";
+import { routes } from "../../routes";
+import { AppHeading } from "../AppHeading";
+import { Time } from "../Time";
 
 gql`
   fragment TopicItem on Topic {

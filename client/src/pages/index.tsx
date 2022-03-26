@@ -4,7 +4,7 @@ import { AppContainer } from "../components/AppContainer";
 import { AppHeading } from "../components/AppHeading";
 import { AppLayout } from "../components/AppLayout";
 import { PaginateButtons } from "../components/PaginateButtons";
-import { TopicItem } from "../components/TopicItem";
+import { TopicItem } from "../components/topic/TopicItem";
 import { usePaginateNavigate, usePaginateQuery } from "../hooks/usePaginate";
 import { useTopics } from "../hooks/useTopics";
 
