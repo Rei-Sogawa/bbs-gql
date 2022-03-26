@@ -7,7 +7,7 @@ import { clearFirestore } from "./test-util/clear";
 import { clearAuth } from "./test-util/clear";
 import { getAuth, getDb } from "./test-util/setup";
 
-// primes: 2, 73, 179, 283, 419, 547, 661, 811, 947, 1087, 1229
+// primes: 59, 1087
 
 const shuffle = <T>(_arr: T[]) => {
   const arr = [..._arr];
@@ -26,7 +26,7 @@ const { usersCollection, topicsCollection } = createCollections(db);
 const main = async () => {
   await Promise.all([clearAuth(), clearFirestore()]);
 
-  const usersCount = 73;
+  const usersCount = 59;
   const authUsers = await Promise.all(
     Array.from({ length: usersCount }).map((_, idx) => {
       return auth.createUser({ email: `user-${idx}@example.com`, password: "password" });
@@ -41,9 +41,9 @@ const main = async () => {
     })
   );
 
-  const topicsCount = 73;
+  const topicsCount = 59;
   const topics = await Promise.all(
-    Array.from({ length: topicsCount }).map((_, idx) => {
+    Array.from({ length: topicsCount }).map(async (_, idx) => {
       const user = shuffle(users)[0];
       const title = `topic-${idx}`;
       const content = `topic-${idx}-content`;
@@ -58,7 +58,7 @@ const main = async () => {
 
   const commentsCount = 1087;
   const comments = await Promise.all(
-    Array.from({ length: commentsCount }).map((_, idx) => {
+    Array.from({ length: commentsCount }).map(async (_, idx) => {
       const topic = shuffle(topics)[0];
       const user = shuffle(users)[0];
       const content = `comment-${idx}`;
@@ -78,7 +78,7 @@ const main = async () => {
 
   const nestCommentsCount = 1087;
   const nestComments = await Promise.all(
-    Array.from({ length: nestCommentsCount }).map((_, idx) => {
+    Array.from({ length: nestCommentsCount }).map(async (_, idx) => {
       const comment = shuffle(comments)[0];
       const user = shuffle(users)[0];
       const content = `nest-comment-${idx}`;

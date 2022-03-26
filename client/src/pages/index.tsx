@@ -7,7 +7,7 @@ import { TopicItem } from "../components/TopicItem";
 import { useTopics } from "../hooks/useTopics";
 
 export const Index: VFC = () => {
-  const { edges } = useTopics({ first: 20 });
+  const { edges } = useTopics({ first: 10 });
 
   return (
     <AppLayout>

@@ -30,6 +30,7 @@ export class TopicsCollection extends Collection<TopicData, TopicDoc> {
   constructor(ref: CollectionRef) {
     super(ref, TopicDataSchema.parse, TopicDoc.of);
   }
+
   async findAll(input: FindAllInput): Promise<FindAllOutput> {
     const { first, after, last, before } = input;
 
