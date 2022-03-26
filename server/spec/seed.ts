@@ -1,4 +1,4 @@
-import { createCollections } from "@/fire/createCollections";
+import { createCollections } from "@src/fire/createCollections";
 
 import { clearFirestore } from "./test-util/clear";
 import { clearAuth } from "./test-util/clear";
