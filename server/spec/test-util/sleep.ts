@@ -1,4 +1,4 @@
-export const wait = (ms = 0) =>
+export const sleep = (ms = 0) =>
   new Promise((resolve) =>
     setTimeout(() => {
       resolve(true);

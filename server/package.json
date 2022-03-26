@@ -9,7 +9,8 @@
     "dev": "ts-node-dev --respawn src/index",
     "emu": "firebase emulators:start --only auth,firestore --import=./emulators-export --export-on-exit",
     "gql": "graphql-codegen --config codegen.yml",
-    "test": "jest --detectOpenHandles"
+    "test": "jest --detectOpenHandles",
+    "seed": "ts-node -P spec/tsconfig.json -r tsconfig-paths/register spec/seed"
   },
   "dependencies": {
     "@rei-sogawa/path-builder": "^1.0.3",
@@ -47,6 +48,7 @@
     "ts-jest": "^27.1.3",
     "ts-node": "^10.7.0",
     "ts-node-dev": "^1.1.8",
+    "tsconfig-paths": "^3.14.1",
     "type-fest": "^2.12.0",
     "typescript": "^4.6.2"
   }
