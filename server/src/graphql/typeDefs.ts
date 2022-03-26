@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
 type Comment {
-  comments(input: PaginateInput!): CommentConnection!
+  comments: CommentConnection!
   content: String!
   createdAt: DateTime!
   id: ID!

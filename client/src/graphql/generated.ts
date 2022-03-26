@@ -27,11 +27,6 @@ export type Comment = {
   user: User;
 };
 
-
-export type CommentCommentsArgs = {
-  input: PaginateInput;
-};
-
 export type CommentConnection = {
   __typename?: 'CommentConnection';
   edges: Array<CommentEdge>;
@@ -193,8 +188,6 @@ export type User = {
   topics: Array<Topic>;
 };
 
-export type CommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
-
 export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, createdAt: string };
 
 export type ChildCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
@@ -232,7 +225,7 @@ export type UpdateRootCommentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateRootCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } };
+export type UpdateRootCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } };
 
 export type DeleteRootCommentMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -296,17 +289,6 @@ export type TopicForTopicEditFragment = { __typename?: 'Topic', id: string, titl
 
 export type TopicForTopicDetailFragment = { __typename?: 'Topic', id: string, title: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
 
-export const CommentItemFragmentDoc = gql`
-    fragment CommentItem on Comment {
-  id
-  content
-  createdAt
-  user {
-    id
-    displayName
-  }
-}
-    `;
 export const TopicItemFragmentDoc = gql`
     fragment TopicItem on Topic {
   id
@@ -340,7 +322,7 @@ export const RootCommentItemFragmentDoc = gql`
     id
     displayName
   }
-  comments(input: {}) {
+  comments {
     edges {
       node {
         id
@@ -506,10 +488,10 @@ export const UpdateRootCommentDocument = gql`
     mutation UpdateRootComment($id: ID!, $input: UpdateCommentInput!) {
   updateComment(id: $id, input: $input) {
     id
-    ...CommentItem
+    ...RootCommentItem
   }
 }
-    ${CommentItemFragmentDoc}`;
+    ${RootCommentItemFragmentDoc}`;
 export type UpdateRootCommentMutationFn = Apollo.MutationFunction<UpdateRootCommentMutation, UpdateRootCommentMutationVariables>;
 
 /**

@@ -7,7 +7,7 @@ import { clearFirestore } from "./test-util/clear";
 import { clearAuth } from "./test-util/clear";
 import { getAuth, getDb } from "./test-util/setup";
 
-// primes: 59, 1087
+// primes: 7, 53, 1087
 
 const shuffle = <T>(_arr: T[]) => {
   const arr = [..._arr];
@@ -26,7 +26,7 @@ const { usersCollection, topicsCollection } = createCollections(db);
 const main = async () => {
   await Promise.all([clearAuth(), clearFirestore()]);
 
-  const usersCount = 53;
+  const usersCount = 7;
   const authUsers = await Promise.all(
     Array.from({ length: usersCount }).map((_, idx) => {
       return auth.createUser({ email: `user-${idx}@example.com`, password: "password" });
@@ -63,13 +63,15 @@ const main = async () => {
       const user = shuffle(users)[0];
       const content = `comment-${idx}`;
       const createdAt = addDays(topic.createdAt, idx);
+      const commentData = CommentDoc.new({
+        content,
+        userId: user.id,
+        parentName: "topic",
+        parentId: topic.id,
+      });
       return topic.commentsCollection.insert({
-        ...CommentDoc.new({
-          content,
-          userId: user.id,
-          parentName: "topic",
-          parentId: topic.id,
-        }),
+        id: commentData.__id,
+        ...commentData,
         createdAt,
         updatedAt: createdAt,
       });
@@ -83,13 +85,15 @@ const main = async () => {
       const user = shuffle(users)[0];
       const content = `nest-comment-${idx}`;
       const createdAt = addDays(comment.createdAt, idx);
+      const commentData = CommentDoc.new({
+        content,
+        userId: user.id,
+        parentName: "comment",
+        parentId: comment.id,
+      });
       return comment.commentsCollection.insert({
-        ...CommentDoc.new({
-          content,
-          userId: user.id,
-          parentName: "comment",
-          parentId: comment.id,
-        }),
+        id: commentData.__id,
+        ...commentData,
         createdAt,
         updatedAt: createdAt,
       });

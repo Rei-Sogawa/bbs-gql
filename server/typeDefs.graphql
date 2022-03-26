@@ -70,7 +70,7 @@ type Comment {
   updatedAt: DateTime!
   user: User!
   parent: CommentParent!
-  comments(input: PaginateInput!): CommentConnection!
+  comments: CommentConnection!
 }
 
 #

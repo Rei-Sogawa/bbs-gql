@@ -69,7 +69,7 @@ gql`
   mutation UpdateRootComment($id: ID!, $input: UpdateCommentInput!) {
     updateComment(id: $id, input: $input) {
       id
-      ...CommentItem
+      ...RootCommentItem
     }
   }
 `;

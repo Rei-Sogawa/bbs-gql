@@ -22,7 +22,7 @@ gql`
       id
       displayName
     }
-    comments(input: {}) {
+    comments {
       edges {
         node {
           id

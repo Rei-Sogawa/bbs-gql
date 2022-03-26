@@ -29,11 +29,6 @@ export type Comment = {
   user: User;
 };
 
-
-export type CommentCommentsArgs = {
-  input: PaginateInput;
-};
-
 export type CommentConnection = {
   __typename?: 'CommentConnection';
   edges: Array<CommentEdge>;
@@ -317,7 +312,7 @@ export type ResolversParentTypes = ResolversObject<{
 }>;
 
 export type CommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = ResolversObject<{
-  comments?: Resolver<ResolversTypes['CommentConnection'], ParentType, ContextType, RequireFields<CommentCommentsArgs, 'input'>>;
+  comments?: Resolver<ResolversTypes['CommentConnection'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
