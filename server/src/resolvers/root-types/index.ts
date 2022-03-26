@@ -7,8 +7,8 @@ export const Topic: Resolvers["Topic"] = {
     return usersCollection.findOneById(parent.userId);
   },
 
-  comments: async (parent) => {
-    return parent.commentsCollection.findAll();
+  comments: async (parent, args) => {
+    return parent.commentsCollection.findAll(args.input);
   },
 };
 
@@ -19,8 +19,8 @@ export const Comment: Resolvers["Comment"] = {
     return usersCollection.findOneById(parent.userId);
   },
 
-  comments: async (parent) => {
-    return parent.commentsCollection.findAll();
+  comments: async (parent, args) => {
+    return parent.commentsCollection.findAll(args.input);
   },
 };
 

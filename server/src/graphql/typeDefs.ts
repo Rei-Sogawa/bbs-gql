@@ -2,13 +2,23 @@ import { gql } from "apollo-server-express";
 
 export const typeDefs = gql`
 type Comment {
-  comments: [Comment!]!
+  comments(input: PaginateInput!): CommentConnection!
   content: String!
   createdAt: DateTime!
   id: ID!
   parent: CommentParent!
   updatedAt: DateTime!
   user: User!
+}
+
+type CommentConnection {
+  edges: [CommentEdge!]!
+  pageInfo: PageInfo!
+}
+
+type CommentEdge {
+  cursor: DateTime!
+  node: Comment!
 }
 
 union CommentParent = Comment | Topic
@@ -68,7 +78,7 @@ input SignUpInput {
 }
 
 type Topic {
-  comments: [Comment!]!
+  comments(input: PaginateInput!): CommentConnection!
   content: String!
   createdAt: DateTime!
   id: ID!

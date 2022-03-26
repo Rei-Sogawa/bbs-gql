@@ -1,24 +1,11 @@
 import { TopicData, TopicDataSchema, TopicDoc } from "../doc";
 import { Collection } from "../lib/collection";
 import { CollectionRef } from "../lib/type";
-
-type FindAllInput = {
-  first?: number | null;
-  after?: Date | null;
-  last?: number | null;
-  before?: Date | null;
-};
+import { PageInfo, PaginateInput } from "./helper";
 
 type Edge = {
   node: TopicDoc;
   cursor: Date;
-};
-
-type PageInfo = {
-  startCursor?: Date;
-  endCursor?: Date;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
 };
 
 type FindAllOutput = {
@@ -31,34 +18,59 @@ export class TopicsCollection extends Collection<TopicData, TopicDoc> {
     super(ref, TopicDataSchema.parse, TopicDoc.of);
   }
 
-  async findAll(input: FindAllInput): Promise<FindAllOutput> {
+  async findAll(input: PaginateInput): Promise<FindAllOutput> {
     const { first, after, last, before } = input;
 
-    const topics = await (async () => {
+    const forward = ["createdAt", "desc"] as const;
+    const backward = ["createdAt", "asc"] as const;
+
+    const nodes = await (async () => {
       if (first) {
         return after
-          ? this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").startAfter(after).limit(first))
-          : this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").limit(first));
+          ? this.findManyByQuery((ref) =>
+              ref
+                .orderBy(...forward)
+                .startAfter(after)
+                .limit(first)
+            )
+          : this.findManyByQuery((ref) => ref.orderBy(...forward).limit(first));
       }
       if (last) {
         const _topics = before
-          ? this.findManyByQuery((ref) => ref.orderBy("createdAt", "asc").startAfter(before).limit(last))
-          : this.findManyByQuery((ref) => ref.orderBy("createdAt", "asc").limit(last));
+          ? this.findManyByQuery((ref) =>
+              ref
+                .orderBy(...backward)
+                .startAfter(before)
+                .limit(last)
+            )
+          : this.findManyByQuery((ref) => ref.orderBy(...backward).limit(last));
         return (await _topics).reverse();
       }
       throw new Error("Not specified first or after");
     })();
 
-    const edges = topics.map((v) => ({ node: v, cursor: v.createdAt }));
+    const edges = nodes.map((v) => ({ node: v, cursor: v.createdAt }));
     const endCursor = edges.at(-1)?.cursor;
     const startCursor = edges.at(0)?.cursor;
     const hasNextPage = endCursor
-      ? (await this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").startAfter(endCursor).limit(1))).length >
-        0
+      ? (
+          await this.findManyByQuery((ref) =>
+            ref
+              .orderBy(...forward)
+              .startAfter(endCursor)
+              .limit(1)
+          )
+        ).length > 0
       : false;
     const hasPreviousPage = startCursor
-      ? (await this.findManyByQuery((ref) => ref.orderBy("createdAt", "desc").endBefore(startCursor).limit(1))).length >
-        0
+      ? (
+          await this.findManyByQuery((ref) =>
+            ref
+              .orderBy(...forward)
+              .endBefore(startCursor)
+              .limit(1)
+          )
+        ).length > 0
       : false;
 
     return {

@@ -7,6 +7,9 @@ enum CommentParentName {
 
 union CommentParent = Topic | Comment
 
+#
+# PAGINATE
+#
 type PageInfo {
   startCursor: DateTime
   endCursor: DateTime
@@ -31,6 +34,19 @@ type TopicConnection {
   pageInfo: PageInfo!
 }
 
+type CommentEdge {
+  node: Comment!
+  cursor: DateTime!
+}
+
+type CommentConnection {
+  edges: [CommentEdge!]!
+  pageInfo: PageInfo!
+}
+
+#
+# ROOT
+#
 type User {
   id: ID!
   displayName: String!
@@ -44,7 +60,7 @@ type Topic {
   createdAt: DateTime!
   updatedAt: DateTime!
   user: User!
-  comments: [Comment!]!
+  comments(input: PaginateInput!): CommentConnection!
 }
 
 type Comment {
@@ -54,7 +70,7 @@ type Comment {
   updatedAt: DateTime!
   user: User!
   parent: CommentParent!
-  comments: [Comment!]!
+  comments(input: PaginateInput!): CommentConnection!
 }
 
 #

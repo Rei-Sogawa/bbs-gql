@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FaUser } from "react-icons/fa";
 
 import { useAuth } from "../contexts/Auth";
-import { _CommentItemFragment, Comment, CommentItemFragment } from "../graphql/generated";
+import { Comment, CommentItemFragment } from "../graphql/generated";
 import { useDeleteComment, useUpdateComment } from "../hooks/useComments";
 import { AppEllipsisMenu } from "./AppEllipsisMenu";
 import { CommentCreateForm, CommentCreateFormBeforeLogIn } from "./CommentCreateForm";
@@ -12,15 +12,15 @@ import { Content } from "./Content";
 import { Time } from "./Time";
 import { UserName } from "./UserName";
 
-function canComment(comment: CommentItemFragment | _CommentItemFragment): comment is CommentItemFragment {
-  return (comment as Record<string, unknown>).comments !== undefined;
-}
+// function canComment(comment: CommentItemFragment | _CommentItemFragment): comment is CommentItemFragment {
+//   return (comment as Record<string, unknown>).comments !== undefined;
+// }
 
 const CommentItemMenu = ({ comment, onEdit }: { comment: Pick<Comment, "id">; onEdit: () => void }) => {
   const deleteComment = useDeleteComment();
 
   const onDelete = async () => {
-    await deleteComment({ variables: { id: comment.id } });
+    await deleteComment({ variables: { id: comment.id, paginateInput: { first: 10 } } });
   };
 
   return (
@@ -42,15 +42,6 @@ const CommentItemMenu = ({ comment, onEdit }: { comment: Pick<Comment, "id">; on
 gql`
   fragment CommentItem on Comment {
     id
-    ..._CommentItem
-    comments {
-      id
-      ..._CommentItem
-    }
-  }
-
-  fragment _CommentItem on Comment {
-    id
     content
     createdAt
     user {
@@ -61,7 +52,7 @@ gql`
 `;
 
 type CommentItemProps = {
-  comment: CommentItemFragment | _CommentItemFragment;
+  comment: CommentItemFragment;
 };
 
 export const CommentItem = ({ comment }: CommentItemProps) => {
@@ -98,7 +89,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
 
               <Content content={comment.content} />
 
-              {canComment(comment) && (
+              {/* {canComment(comment) && (
                 <div className="flex space-x-2 items-baseline">
                   <button
                     className="link"
@@ -110,13 +101,13 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                   </button>
                   <div className="px-2 rounded-md bg-gray-200 font-bold text-xs">{comment.comments.length}</div>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         )}
       </div>
 
-      {canComment(comment) && isReplying && (
+      {/* {canComment(comment) && isReplying && (
         <div>
           <div className="flex">
             <div className="divider divider-horizontal" />
@@ -134,7 +125,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
 
           <div className="h-2" />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

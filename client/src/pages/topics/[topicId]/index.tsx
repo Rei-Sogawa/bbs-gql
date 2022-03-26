@@ -5,13 +5,13 @@ import { AppContainer } from "../../../components/AppContainer";
 import { AppEllipsisMenu } from "../../../components/AppEllipsisMenu";
 import { AppHeading } from "../../../components/AppHeading";
 import { AppLayout } from "../../../components/AppLayout";
-import { CommentCreateForm, CommentCreateFormBeforeLogIn } from "../../../components/CommentCreateForm";
-import { CommentItem } from "../../../components/CommentItem";
 import { Content } from "../../../components/Content";
+import { RootCommentItem } from "../../../components/RootCommentItem";
 import { Time } from "../../../components/Time";
 import { UserName } from "../../../components/UserName";
 import { useAuth } from "../../../contexts/Auth";
 import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/generated";
+import { useRootComments } from "../../../hooks/useRootComments";
 import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
 import { routes } from "../../../routes";
 
@@ -99,13 +99,13 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
 export const Topic = () => {
   const { topicId } = useParams();
 
-  const { uid } = useAuth();
   const topic = useTopic(topicId!);
+  const { edges: rootCommentEdges, pageInfo: rootCommentPageInfo } = useRootComments(topicId!, { first: 20 });
 
   return (
     <AppLayout>
       <AppContainer size="md">
-        {topic && (
+        {topic && rootCommentEdges && rootCommentPageInfo && (
           <div className="flex flex-col space-y-4">
             <div>
               <div className="ml-2">
@@ -114,11 +114,9 @@ export const Topic = () => {
               <TopicDetail topic={topic} />
             </div>
 
-            {uid ? <CommentCreateForm parentName="topic" parentId={topic.id} /> : <CommentCreateFormBeforeLogIn />}
-
             <div className="flex flex-col space-y-2">
-              {topic.comments.map((comment) => (
-                <CommentItem key={comment.id} comment={comment} />
+              {rootCommentEdges.map(({ node }) => (
+                <RootCommentItem key={node.id} comment={node} />
               ))}
             </div>
           </div>

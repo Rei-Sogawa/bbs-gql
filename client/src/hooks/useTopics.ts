@@ -47,10 +47,6 @@ gql`
     topic(id: $id) {
       id
       ...TopicForTopicDetail
-      comments {
-        id
-        ...CommentItem
-      }
     }
   }
 `;

@@ -1,71 +1,98 @@
-import { gql } from "@apollo/client";
+// import { gql } from "@apollo/client";
 
-import { useCreateCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from "../graphql/generated";
+// import {
+//   useCreateCommentMutation,
+//   useDeleteCommentMutation,
+//   useParentCommentsForTopicQuery,
+//   useUpdateCommentMutation,
+// } from "../graphql/generated";
+// import { PaginateInput } from "./../graphql/generated";
 
-gql`
-  mutation CreateComment($input: CreateCommentInput!) {
-    createComment(input: $input) {
-      __typename
-      ... on Topic {
-        id
-        comments {
-          id
-          ...CommentItem
-        }
-      }
-      ... on Comment {
-        id
-        comments {
-          id
-          ..._CommentItem
-        }
-      }
-    }
-  }
-`;
+// gql`
+//   fragment CommentConnection on CommentConnection {
+//     edges {
+//       node {
+//         id
+//         ...CommentItem
+//       }
+//       cursor
+//     }
+//     pageInfo {
+//       startCursor
+//       endCursor
+//       hasNextPage
+//       hasPreviousPage
+//     }
+//   }
 
-export const useCreateComment = () => {
-  const [createComment] = useCreateCommentMutation();
-  return createComment;
-};
+//   query ParentCommentsForTopic($topicId: ID!, $paginateInput: PaginateInput!) {
+//     topic(id: $topicId) {
+//       id
+//       comments(input: $paginateInput) {
+//         ...CommentConnection
+//       }
+//     }
+//   }
+// `;
 
-gql`
-  mutation UpdateComment($id: ID!, $input: UpdateCommentInput!) {
-    updateComment(id: $id, input: $input) {
-      id
-      ...CommentItem
-    }
-  }
-`;
+// export const useParentComments = (topicId: string, paginateInput: PaginateInput) => {
+//   const { data } = useParentCommentsForTopicQuery({ variables: { topicId, paginateInput } });
 
-export const useUpdateComment = () => {
-  const [updateComment] = useUpdateCommentMutation();
-  return updateComment;
-};
+//   const edges = data?.topic.comments.edges;
+//   const pageInfo = data?.topic.comments.pageInfo;
 
-gql`
-  mutation DeleteComment($id: ID!) {
-    deleteComment(id: $id) {
-      __typename
-      ... on Topic {
-        id
-        comments {
-          id
-          ...CommentItem
-        }
-      }
-      ... on Comment {
-        id
-        comments {
-          id
-          ...CommentItem
-        }
-      }
-    }
-  }
-`;
+//   return {
+//     edges,
+//     pageInfo,
+//   };
+// };
 
-export const useDeleteComment = () => {
-  const [deleteComment] = useDeleteCommentMutation();
-  return deleteComment;
-};
+// gql`
+//   mutation CreateComment($input: CreateCommentInput!, $paginateInput: PaginateInput!) {
+//     createComment(input: $input) {
+//       ... on Topic {
+//         id
+//         comments(input: $paginateInput) {
+//           ...CommentConnection
+//         }
+//       }
+//     }
+//   }
+// `;
+
+// export const useCreateComment = () => {
+//   const [createComment] = useCreateCommentMutation();
+//   return createComment;
+// };
+
+// gql`
+//   mutation UpdateComment($id: ID!, $input: UpdateCommentInput!) {
+//     updateComment(id: $id, input: $input) {
+//       id
+//       ...CommentItem
+//     }
+//   }
+// `;
+
+// export const useUpdateComment = () => {
+//   const [updateComment] = useUpdateCommentMutation();
+//   return updateComment;
+// };
+
+// gql`
+//   mutation DeleteComment($id: ID!, $paginateInput: PaginateInput!) {
+//     deleteComment(id: $id) {
+//       ... on Topic {
+//         id
+//         comments(input: $paginateInput) {
+//           ...CommentConnection
+//         }
+//       }
+//     }
+//   }
+// `;
+
+// export const useDeleteComment = () => {
+//   const [deleteComment] = useDeleteCommentMutation();
+//   return deleteComment;
+// };

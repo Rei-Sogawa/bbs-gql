@@ -20,13 +20,30 @@ export type Scalars = {
 
 export type Comment = {
   __typename?: 'Comment';
-  comments: Array<Comment>;
+  comments: CommentConnection;
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   parent: CommentParent;
   updatedAt: Scalars['DateTime'];
   user: User;
+};
+
+
+export type CommentCommentsArgs = {
+  input: PaginateInput;
+};
+
+export type CommentConnection = {
+  __typename?: 'CommentConnection';
+  edges: Array<CommentEdge>;
+  pageInfo: PageInfo;
+};
+
+export type CommentEdge = {
+  __typename?: 'CommentEdge';
+  cursor: Scalars['DateTime'];
+  node: Comment;
 };
 
 export type CommentParent = Comment | Topic;
@@ -136,13 +153,18 @@ export type SignUpInput = {
 
 export type Topic = {
   __typename?: 'Topic';
-  comments: Array<Comment>;
+  comments: CommentConnection;
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
+};
+
+
+export type TopicCommentsArgs = {
+  input: PaginateInput;
 };
 
 export type TopicConnection = {
@@ -245,6 +267,8 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Comment: ResolverTypeWrapper<CommentDoc>;
+  CommentConnection: ResolverTypeWrapper<Omit<CommentConnection, 'edges'> & { edges: Array<ResolversTypes['CommentEdge']> }>;
+  CommentEdge: ResolverTypeWrapper<Omit<CommentEdge, 'node'> & { node: ResolversTypes['Comment'] }>;
   CommentParent: ResolversTypes['Comment'] | ResolversTypes['Topic'];
   CommentParentName: CommentParentName;
   CreateCommentInput: CreateCommentInput;
@@ -270,6 +294,8 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
   Comment: CommentDoc;
+  CommentConnection: Omit<CommentConnection, 'edges'> & { edges: Array<ResolversParentTypes['CommentEdge']> };
+  CommentEdge: Omit<CommentEdge, 'node'> & { node: ResolversParentTypes['Comment'] };
   CommentParent: ResolversParentTypes['Comment'] | ResolversParentTypes['Topic'];
   CreateCommentInput: CreateCommentInput;
   CreateTopicInput: CreateTopicInput;
@@ -291,13 +317,25 @@ export type ResolversParentTypes = ResolversObject<{
 }>;
 
 export type CommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = ResolversObject<{
-  comments?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
+  comments?: Resolver<ResolversTypes['CommentConnection'], ParentType, ContextType, RequireFields<CommentCommentsArgs, 'input'>>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   parent?: Resolver<ResolversTypes['CommentParent'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CommentConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CommentConnection'] = ResolversParentTypes['CommentConnection']> = ResolversObject<{
+  edges?: Resolver<Array<ResolversTypes['CommentEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CommentEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CommentEdge'] = ResolversParentTypes['CommentEdge']> = ResolversObject<{
+  cursor?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['Comment'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -334,7 +372,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
 }>;
 
 export type TopicResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Topic'] = ResolversParentTypes['Topic']> = ResolversObject<{
-  comments?: Resolver<Array<ResolversTypes['Comment']>, ParentType, ContextType>;
+  comments?: Resolver<ResolversTypes['CommentConnection'], ParentType, ContextType, RequireFields<TopicCommentsArgs, 'input'>>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -365,6 +403,8 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
 
 export type Resolvers<ContextType = Context> = ResolversObject<{
   Comment?: CommentResolvers<ContextType>;
+  CommentConnection?: CommentConnectionResolvers<ContextType>;
+  CommentEdge?: CommentEdgeResolvers<ContextType>;
   CommentParent?: CommentParentResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
