@@ -6,14 +6,14 @@ import { useAuth } from "../contexts/Auth";
 import { _CommentItemFragment, Comment, CommentItemFragment } from "../graphql/generated";
 import { useDeleteComment, useUpdateComment } from "../hooks/useComments";
 import { AppEllipsisMenu } from "./AppEllipsisMenu";
-import { CommentCreateForm } from "./CommentCreateForm";
+import { CommentCreateForm, CommentCreateFormBeforeLogIn } from "./CommentCreateForm";
 import { CommentForm, FormValues } from "./CommentForm";
 import { Content } from "./Content";
 import { Time } from "./Time";
 import { UserName } from "./UserName";
 
 function canComment(comment: CommentItemFragment | _CommentItemFragment): comment is CommentItemFragment {
-  return (comment as any).comments !== undefined;
+  return (comment as Record<string, unknown>).comments !== undefined;
 }
 
 const CommentItemMenu = ({ comment, onEdit }: { comment: Pick<Comment, "id">; onEdit: () => void }) => {
@@ -69,7 +69,6 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
-  const [isViewingComments, setIsViewingComments] = useState(false);
 
   const updateComment = useUpdateComment();
   const onSubmitEditComment = async ({ content }: FormValues) => {
@@ -100,7 +99,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
               <Content content={comment.content} />
 
               {canComment(comment) && (
-                <div className="flex space-x-2">
+                <div className="flex space-x-2 items-baseline">
                   <button
                     className="link"
                     onClick={() => {
@@ -109,16 +108,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                   >
                     reply
                   </button>
-                  {comment.comments.length > 0 && (
-                    <button
-                      className="link"
-                      onClick={() => {
-                        setIsViewingComments((prev) => !prev);
-                      }}
-                    >
-                      {isViewingComments ? "hide" : `${comment.comments.length} comments`}
-                    </button>
-                  )}
+                  <div className="px-2 rounded-md bg-gray-200 font-bold text-xs">{comment.comments.length}</div>
                 </div>
               )}
             </div>
@@ -126,15 +116,19 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
         )}
       </div>
 
-      {canComment(comment) && (isReplying || isViewingComments) && (
+      {canComment(comment) && isReplying && (
         <div>
           <div className="flex">
             <div className="divider divider-horizontal" />
             <div className="flex-1 flex flex-col space-y-2">
-              {isReplying && <CommentCreateForm {...{ parentName: "comment", parentId: comment.id }} />}
-
-              {isViewingComments &&
-                comment.comments.map((comment) => <CommentItem key={comment.id} comment={comment} />)}
+              {comment.comments.map((comment) => (
+                <CommentItem key={comment.id} comment={comment} />
+              ))}
+              {isReplying && uid ? (
+                <CommentCreateForm parentName="comment" parentId={comment.id} />
+              ) : (
+                <CommentCreateFormBeforeLogIn />
+              )}
             </div>
           </div>
 
