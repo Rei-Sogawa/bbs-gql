@@ -74,13 +74,13 @@ export class CollectionGroup<TData extends GroupDocFiled> {
   findOneById<T>(id: string, decode?: (snap: DocSnap<TData>) => T) {
     if (!decode)
       return this.findManyByQuery((ref) => ref.where("__id", "==", id)).then((docs) => {
-        const doc = docs[0];
+        const doc = docs.at(0);
         if (!doc) throw new Error("Doc not found");
         return doc;
       });
 
     return this.findManyByQuery((ref) => ref.where("__id", "==", id), decode).then((docs) => {
-      const doc = docs[0];
+      const doc = docs.at(0);
       if (!doc) throw new Error("Doc not found");
       return doc;
     });
