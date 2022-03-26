@@ -48,10 +48,17 @@ type PageInfo {
   startCursor: DateTime
 }
 
+input PaginateInput {
+  after: DateTime
+  before: DateTime
+  first: Int
+  last: Int
+}
+
 type Query {
   me: User!
   topic(id: ID!): Topic!
-  topics(input: TopicsInput!): TopicConnection!
+  topics(input: PaginateInput!): TopicConnection!
 }
 
 input SignUpInput {
@@ -78,13 +85,6 @@ type TopicConnection {
 type TopicEdge {
   cursor: DateTime!
   node: Topic!
-}
-
-input TopicsInput {
-  after: DateTime
-  before: DateTime
-  first: Int
-  last: Int
 }
 
 input UpdateCommentInput {

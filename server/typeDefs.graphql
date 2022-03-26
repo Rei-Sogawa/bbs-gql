@@ -7,6 +7,30 @@ enum CommentParentName {
 
 union CommentParent = Topic | Comment
 
+type PageInfo {
+  startCursor: DateTime
+  endCursor: DateTime
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+input PaginateInput {
+  first: Int
+  after: DateTime
+  last: Int
+  before: DateTime
+}
+
+type TopicEdge {
+  node: Topic!
+  cursor: DateTime!
+}
+
+type TopicConnection {
+  edges: [TopicEdge!]!
+  pageInfo: PageInfo!
+}
+
 type User {
   id: ID!
   displayName: String!
@@ -36,34 +60,10 @@ type Comment {
 #
 # QUERY
 #
-type PageInfo {
-  startCursor: DateTime
-  endCursor: DateTime
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-}
-
-input TopicsInput {
-  first: Int
-  after: DateTime
-  last: Int
-  before: DateTime
-}
-
-type TopicEdge {
-  node: Topic!
-  cursor: DateTime!
-}
-
-type TopicConnection {
-  edges: [TopicEdge!]!
-  pageInfo: PageInfo!
-}
-
 type Query {
   me: User!
   topic(id: ID!): Topic!
-  topics(input: TopicsInput!): TopicConnection!
+  topics(input: PaginateInput!): TopicConnection!
 }
 
 #

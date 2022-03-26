@@ -104,6 +104,13 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['DateTime']>;
 };
 
+export type PaginateInput = {
+  after?: InputMaybe<Scalars['DateTime']>;
+  before?: InputMaybe<Scalars['DateTime']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   me: User;
@@ -118,7 +125,7 @@ export type QueryTopicArgs = {
 
 
 export type QueryTopicsArgs = {
-  input: TopicsInput;
+  input: PaginateInput;
 };
 
 export type SignUpInput = {
@@ -148,13 +155,6 @@ export type TopicEdge = {
   __typename?: 'TopicEdge';
   cursor: Scalars['DateTime'];
   node: Topic;
-};
-
-export type TopicsInput = {
-  after?: InputMaybe<Scalars['DateTime']>;
-  before?: InputMaybe<Scalars['DateTime']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateCommentInput = {
@@ -254,13 +254,13 @@ export type ResolversTypes = ResolversObject<{
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
+  PaginateInput: PaginateInput;
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   Topic: ResolverTypeWrapper<TopicDoc>;
   TopicConnection: ResolverTypeWrapper<Omit<TopicConnection, 'edges'> & { edges: Array<ResolversTypes['TopicEdge']> }>;
   TopicEdge: ResolverTypeWrapper<Omit<TopicEdge, 'node'> & { node: ResolversTypes['Topic'] }>;
-  TopicsInput: TopicsInput;
   UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
   User: ResolverTypeWrapper<UserDoc>;
@@ -278,13 +278,13 @@ export type ResolversParentTypes = ResolversObject<{
   Int: Scalars['Int'];
   Mutation: {};
   PageInfo: PageInfo;
+  PaginateInput: PaginateInput;
   Query: {};
   SignUpInput: SignUpInput;
   String: Scalars['String'];
   Topic: TopicDoc;
   TopicConnection: Omit<TopicConnection, 'edges'> & { edges: Array<ResolversParentTypes['TopicEdge']> };
   TopicEdge: Omit<TopicEdge, 'node'> & { node: ResolversParentTypes['Topic'] };
-  TopicsInput: TopicsInput;
   UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
   User: UserDoc;

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 import {
-  TopicsInput,
+  PaginateInput,
   useCreateTopicMutation,
   useDeleteTopicMutation,
   useTopicForTopicEditQuery,
@@ -11,7 +11,7 @@ import {
 } from "../graphql/generated";
 
 gql`
-  query TopicsForIndex($input: TopicsInput!) {
+  query TopicsForIndex($input: PaginateInput!) {
     topics(input: $input) {
       edges {
         node {
@@ -30,7 +30,7 @@ gql`
   }
 `;
 
-export const useTopics = (input: TopicsInput) => {
+export const useTopics = (input: PaginateInput) => {
   const { data } = useTopicsForIndexQuery({ variables: { input } });
 
   const edges = data?.topics.edges;

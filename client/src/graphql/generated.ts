@@ -102,6 +102,13 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['DateTime']>;
 };
 
+export type PaginateInput = {
+  after?: InputMaybe<Scalars['DateTime']>;
+  before?: InputMaybe<Scalars['DateTime']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   me: User;
@@ -116,7 +123,7 @@ export type QueryTopicArgs = {
 
 
 export type QueryTopicsArgs = {
-  input: TopicsInput;
+  input: PaginateInput;
 };
 
 export type SignUpInput = {
@@ -146,13 +153,6 @@ export type TopicEdge = {
   __typename?: 'TopicEdge';
   cursor: Scalars['DateTime'];
   node: Topic;
-};
-
-export type TopicsInput = {
-  after?: InputMaybe<Scalars['DateTime']>;
-  before?: InputMaybe<Scalars['DateTime']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateCommentInput = {
@@ -207,7 +207,7 @@ export type DeleteCommentMutationVariables = Exact<{
 export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename: 'Comment', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }> } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }> } };
 
 export type TopicsForIndexQueryVariables = Exact<{
-  input: TopicsInput;
+  input: PaginateInput;
 }>;
 
 
@@ -482,7 +482,7 @@ export type DeleteCommentMutationHookResult = ReturnType<typeof useDeleteComment
 export type DeleteCommentMutationResult = Apollo.MutationResult<DeleteCommentMutation>;
 export type DeleteCommentMutationOptions = Apollo.BaseMutationOptions<DeleteCommentMutation, DeleteCommentMutationVariables>;
 export const TopicsForIndexDocument = gql`
-    query TopicsForIndex($input: TopicsInput!) {
+    query TopicsForIndex($input: PaginateInput!) {
   topics(input: $input) {
     edges {
       node {
