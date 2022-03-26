@@ -4,16 +4,16 @@ import { Converter, DocField, DocRef, DocSnap } from "./type";
 export class Doc<TData extends DocField> {
   private _snap: DocSnap<TData>;
   private _ref: DocRef<TData>;
-  private _validate: (data: unknown) => TData;
+  private _parse: (data: unknown) => TData;
 
   constructor(
     _snap: DocSnap<TData>,
-    _validate: (data: unknown) => TData,
+    _parse: (data: unknown) => TData,
     _converter: Converter<TData> = createConverter<TData>()
   ) {
     this._snap = _snap;
     this._ref = _snap.ref.withConverter(_converter);
-    this._validate = _validate;
+    this._parse = _parse;
     const data = _snap.data();
     if (!data) throw new Error("Data not found");
     Object.assign(this, data);
@@ -27,14 +27,12 @@ export class Doc<TData extends DocField> {
   }
 
   toPlainData() {
-    const { _snap, _ref, _validate, ...data } = this;
-    const omitCollection = Object.fromEntries(
-      Object.entries(data).filter(([key]) => !key.toLowerCase().endsWith("collection"))
-    );
-    return omitCollection;
+    const { _snap, _ref, _parse, ...props } = this;
+    const data = Object.fromEntries(Object.entries(props).filter(([key]) => !key.toLowerCase().endsWith("collection")));
+    return data;
   }
   toData() {
-    return this._validate(this.toPlainData());
+    return this._parse(this.toPlainData());
   }
 
   update() {

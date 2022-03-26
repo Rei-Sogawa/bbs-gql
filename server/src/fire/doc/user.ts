@@ -4,7 +4,7 @@ import { now } from "../../util/now";
 import { Doc } from "../lib/document";
 import { DocSnap, WithId } from "../lib/type";
 
-const UserDataSchema = z
+export const UserDataSchema = z
   .object({
     __name: z.literal("user"),
     displayName: z.string().min(1),

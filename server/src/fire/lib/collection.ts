@@ -12,7 +12,7 @@ import {
   WriteResult,
 } from "./type";
 
-const mapper = <TData>(snap: DocSnap<TData>) => {
+const toMapper = <TData>(snap: DocSnap<TData>) => {
   const data = snap.data();
   if (!data) throw new Error("Data not found");
   return { id: snap.id, ...data };
@@ -20,15 +20,21 @@ const mapper = <TData>(snap: DocSnap<TData>) => {
 
 export class Collection<TData extends DocField> {
   private _ref: CollectionRef<TData>;
+  private _parse: (data: unknown) => TData;
 
-  constructor(_ref: CollectionRef, _converter: Converter<TData> = createConverter<TData>()) {
+  constructor(
+    _ref: CollectionRef,
+    _parse: (data: unknown) => TData,
+    _converter: Converter<TData> = createConverter<TData>()
+  ) {
     this._ref = _ref.withConverter(_converter);
+    this._parse = _parse;
   }
 
   findOneById(id: string): Promise<WithId<TData>>;
   findOneById<T>(id: string, decode: (snap: DocSnap<TData>) => T): Promise<T>;
   findOneById<T>(id: string, decode?: (snap: DocSnap<TData>) => T) {
-    if (!decode) return this._ref.doc(id).get().then(mapper);
+    if (!decode) return this._ref.doc(id).get().then(toMapper);
     return this._ref.doc(id).get().then(decode);
   }
 
@@ -41,7 +47,7 @@ export class Collection<TData extends DocField> {
     if (!decode)
       return queryFn(this._ref)
         .get()
-        .then((q) => q.docs.map(mapper));
+        .then((q) => q.docs.map(toMapper));
     return queryFn(this._ref)
       .get()
       .then((q) => q.docs.map(decode));
@@ -51,7 +57,7 @@ export class Collection<TData extends DocField> {
   insert(data: WithId<TData>): Promise<WriteResult>;
   insert(data: TData & { id?: string }) {
     const { id, ...__data } = data;
-    const _data = __data as unknown as TData;
+    const _data = this._parse(__data);
     return id ? this._ref.doc(id).set(_data) : this._ref.add(_data);
   }
 }
@@ -89,7 +95,7 @@ export class CollectionGroup<TData extends GroupDocFiled> {
     if (!decode)
       return queryFn(this._ref)
         .get()
-        .then((q) => q.docs.map(mapper));
+        .then((q) => q.docs.map(toMapper));
 
     return queryFn(this._ref)
       .get()

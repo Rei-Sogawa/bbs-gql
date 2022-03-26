@@ -6,7 +6,7 @@ import { CommentsCollection } from "../collection";
 import { Doc } from "../lib/document";
 import { DocSnap, WithId } from "../lib/type";
 
-const CommentDataSchema = z
+export const CommentDataSchema = z
   .object({
     __name: z.literal("comment"),
     __id: z.string().min(1),
