@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { UserMapper, TopicMapper, CommentMapper } from '../fire/doc/index';
+import { UserDoc, TopicDoc, CommentDoc } from '../fire/doc/index';
 import { Context } from '../context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -211,7 +211,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Comment: ResolverTypeWrapper<CommentMapper>;
+  Comment: ResolverTypeWrapper<CommentDoc>;
   CommentParent: ResolversTypes['Comment'] | ResolversTypes['Topic'];
   CommentParentName: CommentParentName;
   CreateCommentInput: CreateCommentInput;
@@ -222,16 +222,16 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   SignUpInput: SignUpInput;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Topic: ResolverTypeWrapper<TopicMapper>;
+  Topic: ResolverTypeWrapper<TopicDoc>;
   UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
-  User: ResolverTypeWrapper<UserMapper>;
+  User: ResolverTypeWrapper<UserDoc>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
-  Comment: CommentMapper;
+  Comment: CommentDoc;
   CommentParent: ResolversParentTypes['Comment'] | ResolversParentTypes['Topic'];
   CreateCommentInput: CreateCommentInput;
   CreateTopicInput: CreateTopicInput;
@@ -241,10 +241,10 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   SignUpInput: SignUpInput;
   String: Scalars['String'];
-  Topic: TopicMapper;
+  Topic: TopicDoc;
   UpdateCommentInput: UpdateCommentInput;
   UpdateTopicInput: UpdateTopicInput;
-  User: UserMapper;
+  User: UserDoc;
 }>;
 
 export type CommentResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Comment'] = ResolversParentTypes['Comment']> = ResolversObject<{

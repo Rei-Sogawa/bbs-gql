@@ -22,10 +22,12 @@ export type Comment = {
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  parent: TopicOrComment;
+  parent: CommentParent;
   updatedAt: Scalars['DateTime'];
   user: User;
 };
+
+export type CommentParent = Comment | Topic;
 
 export const CommentParentName = {
   Comment: 'comment',
@@ -46,9 +48,9 @@ export type CreateTopicInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createComment: TopicOrComment;
+  createComment: CommentParent;
   createTopic: Topic;
-  deleteComment: TopicOrComment;
+  deleteComment: CommentParent;
   deleteTopic: Topic;
   signUp: User;
   updateComment: Comment;
@@ -120,8 +122,6 @@ export type Topic = {
   updatedAt: Scalars['DateTime'];
   user: User;
 };
-
-export type TopicOrComment = Comment | Topic;
 
 export type UpdateCommentInput = {
   content: Scalars['String'];

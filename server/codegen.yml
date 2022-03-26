@@ -12,9 +12,9 @@ generates:
         DateTime: Date
       contextType: ../context#Context
       mappers:
-        User: ../fire/doc/index#UserMapper
-        Topic: ../fire/doc/index#TopicMapper
-        Comment: ../fire/doc/index#CommentMapper
+        User: ../fire/doc/index#UserDoc
+        Topic: ../fire/doc/index#TopicDoc
+        Comment: ../fire/doc/index#CommentDoc
   src/graphql/typeDefs.ts:
     plugins:
       - "typescript-type-defs.js"
