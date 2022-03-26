@@ -1,37 +1,26 @@
 import { VFC } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { AppContainer } from "../components/AppContainer";
 import { AppHeading } from "../components/AppHeading";
 import { AppLayout } from "../components/AppLayout";
 import { PaginateButtons } from "../components/PaginateButtons";
 import { TopicItem } from "../components/TopicItem";
-import { usePaginateQuery } from "../hooks/usePaginateQuery";
+import { usePaginateNavigate, usePaginateQuery } from "../hooks/usePaginate";
 import { useTopics } from "../hooks/useTopics";
-import { routes } from "../routes";
 
 export const Index: VFC = () => {
   const { first, after, last, before } = usePaginateQuery();
 
-  const navigate = useNavigate();
-  const onFirst = () => {
-    navigate(routes["/"].path() + "?first=10");
-  };
-  const onPrevious = () => {
-    navigate(routes["/"].path() + "?last=10&before=" + pageInfo?.startCursor);
-  };
-  const onNext = () => {
-    navigate(routes["/"].path() + "?first=10&after=" + pageInfo?.endCursor);
-  };
-  const onLast = () => {
-    navigate(routes["/"].path() + "?last=10");
-  };
-
   const { edges, pageInfo } = useTopics({
-    first: first ? Number(first) : undefined,
+    first,
     after,
-    last: last ? Number(last) : undefined,
+    last,
     before,
+  });
+
+  const { onFirst, onPrevious, onNext, onLast } = usePaginateNavigate({
+    startCursor: pageInfo?.startCursor,
+    endCursor: pageInfo?.endCursor,
   });
 
   return (
