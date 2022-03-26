@@ -211,7 +211,7 @@ export type TopicsForIndexQueryVariables = Exact<{
 }>;
 
 
-export type TopicsForIndexQuery = { __typename?: 'Query', topics: { __typename?: 'TopicConnection', edges: Array<{ __typename?: 'TopicEdge', node: { __typename?: 'Topic', id: string, title: string, createdAt: string } }> } };
+export type TopicsForIndexQuery = { __typename?: 'Query', topics: { __typename?: 'TopicConnection', edges: Array<{ __typename?: 'TopicEdge', cursor: string, node: { __typename?: 'Topic', id: string, title: string, createdAt: string } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } };
 
 export type TopicForTopicQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -489,6 +489,13 @@ export const TopicsForIndexDocument = gql`
         id
         ...TopicItem
       }
+      cursor
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
     }
   }
 }

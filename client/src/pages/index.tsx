@@ -7,7 +7,7 @@ import { TopicItem } from "../components/TopicItem";
 import { useTopics } from "../hooks/useTopics";
 
 export const Index: VFC = () => {
-  const topics = useTopics();
+  const { edges } = useTopics({ first: 20 });
 
   return (
     <AppLayout>
@@ -17,7 +17,7 @@ export const Index: VFC = () => {
             <AppHeading>Topics!</AppHeading>
           </div>
           <div>
-            {topics.map((topic) => (
+            {edges?.map(({ node: topic }) => (
               <div key={topic.id}>
                 <TopicItem topic={topic} />
                 <div className="divider" />

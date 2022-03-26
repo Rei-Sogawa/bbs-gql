@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 
 import {
+  TopicsInput,
   useCreateTopicMutation,
   useDeleteTopicMutation,
   useTopicForTopicEditQuery,
@@ -17,15 +18,28 @@ gql`
           id
           ...TopicItem
         }
+        cursor
+      }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
       }
     }
   }
 `;
 
-export const useTopics = () => {
-  const { data } = useTopicsForIndexQuery({ variables: { input: { first: 20 } } });
-  const topics = data?.topics.edges.map((v) => v.node) ?? [];
-  return topics;
+export const useTopics = (input: TopicsInput) => {
+  const { data } = useTopicsForIndexQuery({ variables: { input } });
+
+  const edges = data?.topics.edges;
+  const pageInfo = data?.topics.pageInfo;
+
+  return {
+    edges,
+    pageInfo,
+  };
 };
 
 gql`
