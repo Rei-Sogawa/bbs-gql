@@ -94,16 +94,29 @@ export type MutationUpdateTopicArgs = {
   input: UpdateTopicInput;
 };
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['DateTime']>;
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  startCursor?: Maybe<Scalars['DateTime']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   me: User;
   topic: Topic;
-  topics: Array<Topic>;
+  topics: TopicConnection;
 };
 
 
 export type QueryTopicArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryTopicsArgs = {
+  input: TopicsInput;
 };
 
 export type SignUpInput = {
@@ -121,6 +134,25 @@ export type Topic = {
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
+};
+
+export type TopicConnection = {
+  __typename?: 'TopicConnection';
+  edges: Array<TopicEdge>;
+  pageInfo: PageInfo;
+};
+
+export type TopicEdge = {
+  __typename?: 'TopicEdge';
+  cursor: Scalars['DateTime'];
+  node: Topic;
+};
+
+export type TopicsInput = {
+  after?: InputMaybe<Scalars['DateTime']>;
+  before?: InputMaybe<Scalars['DateTime']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 export type UpdateCommentInput = {
@@ -174,10 +206,12 @@ export type DeleteCommentMutationVariables = Exact<{
 
 export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename: 'Comment', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }> } | { __typename: 'Topic', id: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, comments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } }>, user: { __typename?: 'User', id: string, displayName: string } }> } };
 
-export type TopicsForIndexQueryVariables = Exact<{ [key: string]: never; }>;
+export type TopicsForIndexQueryVariables = Exact<{
+  input: TopicsInput;
+}>;
 
 
-export type TopicsForIndexQuery = { __typename?: 'Query', topics: Array<{ __typename?: 'Topic', id: string, title: string, createdAt: string }> };
+export type TopicsForIndexQuery = { __typename?: 'Query', topics: { __typename?: 'TopicConnection', edges: Array<{ __typename?: 'TopicEdge', node: { __typename?: 'Topic', id: string, title: string, createdAt: string } }> } };
 
 export type TopicForTopicQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -448,10 +482,14 @@ export type DeleteCommentMutationHookResult = ReturnType<typeof useDeleteComment
 export type DeleteCommentMutationResult = Apollo.MutationResult<DeleteCommentMutation>;
 export type DeleteCommentMutationOptions = Apollo.BaseMutationOptions<DeleteCommentMutation, DeleteCommentMutationVariables>;
 export const TopicsForIndexDocument = gql`
-    query TopicsForIndex {
-  topics {
-    id
-    ...TopicItem
+    query TopicsForIndex($input: TopicsInput!) {
+  topics(input: $input) {
+    edges {
+      node {
+        id
+        ...TopicItem
+      }
+    }
   }
 }
     ${TopicItemFragmentDoc}`;
@@ -468,10 +506,11 @@ export const TopicsForIndexDocument = gql`
  * @example
  * const { data, loading, error } = useTopicsForIndexQuery({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useTopicsForIndexQuery(baseOptions?: Apollo.QueryHookOptions<TopicsForIndexQuery, TopicsForIndexQueryVariables>) {
+export function useTopicsForIndexQuery(baseOptions: Apollo.QueryHookOptions<TopicsForIndexQuery, TopicsForIndexQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<TopicsForIndexQuery, TopicsForIndexQueryVariables>(TopicsForIndexDocument, options);
       }

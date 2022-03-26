@@ -10,17 +10,21 @@ import {
 } from "../graphql/generated";
 
 gql`
-  query TopicsForIndex {
-    topics {
-      id
-      ...TopicItem
+  query TopicsForIndex($input: TopicsInput!) {
+    topics(input: $input) {
+      edges {
+        node {
+          id
+          ...TopicItem
+        }
+      }
     }
   }
 `;
 
 export const useTopics = () => {
-  const { data } = useTopicsForIndexQuery();
-  const topics = data?.topics ?? [];
+  const { data } = useTopicsForIndexQuery({ variables: { input: { first: 20 } } });
+  const topics = data?.topics.edges.map((v) => v.node) ?? [];
   return topics;
 };
 
