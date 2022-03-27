@@ -127,8 +127,10 @@ export const useDeleteRootComment = (parent: Pick<Comment["parent"], "id" | "__t
       cache.modify({
         id: cache.identify(parent),
         fields: {
-          comments(existing) {
+          comments(existing, { toReference }) {
+            const edge = { ...data.deleteComment, node: toReference(data.deleteComment.node) };
             console.log(existing);
+            console.log(edge);
             return existing;
           },
         },
