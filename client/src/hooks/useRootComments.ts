@@ -1,7 +1,9 @@
-import { gql } from "@apollo/client";
+import { gql, Reference } from "@apollo/client";
+import { Merge } from "type-fest";
 
 import {
   Comment,
+  CommentEdge,
   useCreateRootCommentMutation,
   useDeleteRootCommentMutation,
   useRootCommentsForTopicQuery,
@@ -82,9 +84,18 @@ export const useCreateRootComment = (parent: Pick<Comment["parent"], "id" | "__t
       cache.modify({
         id: cache.identify(parent),
         fields: {
-          comments(existing) {
-            console.log(existing);
-            return existing;
+          comments(existing, { toReference }) {
+            if (!existing) return existing;
+
+            const edge = { ...data.createComment, node: toReference(data.createComment.node) };
+            if (existing.pageInfo.hasNextPage) {
+              if (edge.cursor < existing.pageInfo.endCursor) {
+                return { ...existing, edges: [...existing.edges, edge].sort((a, b) => a.cursor - b.cursor) };
+              }
+              return existing;
+            }
+
+            return { ...existing, edges: [...existing.edges, edge].sort((a, b) => a.cursor - b.cursor) };
           },
         },
       });
@@ -127,11 +138,15 @@ export const useDeleteRootComment = (parent: Pick<Comment["parent"], "id" | "__t
       cache.modify({
         id: cache.identify(parent),
         fields: {
-          comments(existing, { toReference }) {
-            const edge = { ...data.deleteComment, node: toReference(data.deleteComment.node) };
-            console.log(existing);
-            console.log(edge);
-            return existing;
+          comments(existing, { readField }) {
+            if (!existing) return existing;
+            return {
+              ...existing,
+              edges: existing.edges.filter(
+                (edge: Merge<CommentEdge, { node: Reference }>) =>
+                  readField("id", edge.node) !== data.deleteComment.node.id
+              ),
+            };
           },
         },
       });
