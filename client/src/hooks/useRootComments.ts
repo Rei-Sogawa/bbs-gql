@@ -13,7 +13,7 @@ import {
 function assertParentTopic(
   parent: Pick<Comment["parent"], "id" | "__typename">
 ): asserts parent is { id: string; __typename: "Topic" } {
-  if (parent.__typename !== "Topic") throw new Error("Not parent is Topic");
+  if (parent.__typename !== "Topic") throw new Error("Parent is not Topic");
 }
 
 gql`
@@ -140,6 +140,7 @@ export const useDeleteRootComment = (parent: Pick<Comment["parent"], "id" | "__t
         fields: {
           comments(existing, { readField }) {
             if (!existing) return existing;
+
             return {
               ...existing,
               edges: existing.edges.filter(

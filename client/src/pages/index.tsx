@@ -5,23 +5,10 @@ import { AppHeading } from "../components/AppHeading";
 import { AppLayout } from "../components/AppLayout";
 import { PaginateButtons } from "../components/PaginateButtons";
 import { TopicItem } from "../components/topic/TopicItem";
-import { usePaginateNavigate, usePaginateQuery } from "../hooks/usePaginate";
 import { useTopics } from "../hooks/useTopics";
 
 export const Index: VFC = () => {
-  const { first, after, last, before } = usePaginateQuery();
-
-  const { edges, pageInfo } = useTopics({
-    first,
-    after,
-    last,
-    before,
-  });
-
-  const { onFirst, onPrevious, onNext, onLast } = usePaginateNavigate({
-    startCursor: pageInfo?.startCursor,
-    endCursor: pageInfo?.endCursor,
-  });
+  const { edges, pageInfo, onFirst, onPrevious, onNext, onLast } = useTopics();
 
   return (
     <AppLayout>
