@@ -1,8 +1,6 @@
 import { gql } from "@apollo/client";
-import { useState } from "react";
 
 import {
-  PaginateInput,
   useCreateTopicMutation,
   useDeleteTopicMutation,
   useTopicForTopicEditQuery,
@@ -11,6 +9,7 @@ import {
   useUpdateTopicMutation,
 } from "../graphql/generated";
 import { assertIsDefined } from "../util/assert";
+import { useGlobal } from "./../contexts/Global";
 
 gql`
   query TopicsForIndex($input: PaginateInput!) {
@@ -33,31 +32,29 @@ gql`
 `;
 
 export const useTopics = () => {
-  const [localPageInfo, setLocalPageInfo] = useState<PaginateInput>({
-    first: 10,
-    after: undefined,
-    last: undefined,
-    before: undefined,
-  });
+  const {
+    state: { topicsPaginateInput },
+    setTopicsPaginateInput,
+  } = useGlobal();
 
-  const { data } = useTopicsForIndexQuery({ variables: { input: localPageInfo } });
+  const { data } = useTopicsForIndexQuery({ variables: { input: topicsPaginateInput } });
 
   const edges = data?.topics.edges;
   const pageInfo = data?.topics.pageInfo;
 
   const onFirst = () => {
-    setLocalPageInfo({ first: 10 });
+    setTopicsPaginateInput({ first: 10 });
   };
   const onPrevious = () => {
     assertIsDefined(pageInfo);
-    setLocalPageInfo({ last: 10, before: pageInfo.startCursor });
+    setTopicsPaginateInput({ last: 10, before: pageInfo.startCursor });
   };
   const onNext = () => {
     assertIsDefined(pageInfo);
-    setLocalPageInfo({ first: 10, after: pageInfo.endCursor });
+    setTopicsPaginateInput({ first: 10, after: pageInfo.endCursor });
   };
   const onLast = () => {
-    setLocalPageInfo({ last: 10 });
+    setTopicsPaginateInput({ last: 10 });
   };
 
   return {
