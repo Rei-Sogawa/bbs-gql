@@ -99,7 +99,9 @@ export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
                 >
                   reply
                 </button>
-                <div className="px-2 rounded-md bg-gray-200 font-bold text-xs">{comment.comments.edges.length}</div>
+                {comment.comments.edges.length > 0 && (
+                  <div className="px-2 rounded-md bg-gray-200 font-bold text-xs">{comment.comments.edges.length}</div>
+                )}
               </div>
             </div>
           </div>
