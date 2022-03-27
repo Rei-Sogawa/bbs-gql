@@ -1,13 +1,18 @@
 import { gql } from "@apollo/client";
 
 import {
+  Comment,
   useCreateRootCommentMutation,
   useDeleteRootCommentMutation,
   useRootCommentsForTopicQuery,
   useUpdateRootCommentMutation,
 } from "../graphql/generated";
-import { PaginateInput } from "../graphql/generated";
-import { TopicForTopicDetailFragment } from "./../graphql/generated";
+
+function assertParentTopic(
+  parent: Pick<Comment["parent"], "id" | "__typename">
+): asserts parent is { id: string; __typename: "Topic" } {
+  if (parent.__typename !== "Topic") throw new Error("Not parent is Topic");
+}
 
 gql`
   fragment RootCommentConnection on CommentConnection {
@@ -25,7 +30,9 @@ gql`
       hasPreviousPage
     }
   }
+`;
 
+gql`
   query RootCommentsForTopic($topicId: ID!, $paginateInput: PaginateInput!) {
     topic(id: $topicId) {
       id
@@ -36,16 +43,22 @@ gql`
   }
 `;
 
-export const useRootComments = (topicId: string, paginateInput: PaginateInput) => {
-  const { data, fetchMore } = useRootCommentsForTopicQuery({ variables: { topicId, paginateInput } });
+export const useRootComments = (topicId: string) => {
+  const { data, fetchMore } = useRootCommentsForTopicQuery({
+    variables: { topicId, paginateInput: { first: 10 } },
+  });
 
   const edges = data?.topic.comments.edges;
   const pageInfo = data?.topic.comments.pageInfo;
 
+  const fetchMoreRootComments = () => {
+    fetchMore({ variables: { topicId, paginateInput: { first: 10, after: pageInfo?.endCursor } } });
+  };
+
   return {
-    edges,
-    pageInfo,
-    fetchMore: () => fetchMore({ variables: { topicId, paginateInput } }),
+    rootCommentEdges: edges,
+    rootCommentPageInfo: pageInfo,
+    fetchMoreRootComments,
   };
 };
 
@@ -61,8 +74,22 @@ gql`
   }
 `;
 
-export const useCreateRootComment = (topic: TopicForTopicDetailFragment) => {
-  const [createComment] = useCreateRootCommentMutation();
+export const useCreateRootComment = (parent: Pick<Comment["parent"], "id" | "__typename">) => {
+  assertParentTopic(parent);
+  const [createComment] = useCreateRootCommentMutation({
+    update(cache, { data }) {
+      if (!data) return;
+      cache.modify({
+        id: cache.identify(parent),
+        fields: {
+          comments(existing) {
+            console.log(existing);
+            return existing;
+          },
+        },
+      });
+    },
+  });
   return createComment;
 };
 
@@ -92,7 +119,21 @@ gql`
   }
 `;
 
-export const useDeleteRootComment = (topic: TopicForTopicDetailFragment) => {
-  const [deleteComment] = useDeleteRootCommentMutation();
+export const useDeleteRootComment = (parent: Pick<Comment["parent"], "id" | "__typename">) => {
+  assertParentTopic(parent);
+  const [deleteComment] = useDeleteRootCommentMutation({
+    update(cache, { data }) {
+      if (!data) return;
+      cache.modify({
+        id: cache.identify(parent),
+        fields: {
+          comments(existing) {
+            console.log(existing);
+            return existing;
+          },
+        },
+      });
+    },
+  });
   return deleteComment;
 };

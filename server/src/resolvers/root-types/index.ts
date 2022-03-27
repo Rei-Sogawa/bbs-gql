@@ -19,8 +19,16 @@ export const Comment: Resolvers["Comment"] = {
     return usersCollection.findOneById(parent.userId);
   },
 
-  comments: async (parent) => {
+  comments: (parent) => {
     return parent.commentsCollection.findAll({});
+  },
+
+  parent: (parent, _args, context) => {
+    const { topicsCollection, commentsCollectionGroup } = context.collections;
+
+    return parent.parentName === "topic"
+      ? topicsCollection.findOneById(parent.parentId)
+      : commentsCollectionGroup.findOneById(parent.parentId);
   },
 };
 

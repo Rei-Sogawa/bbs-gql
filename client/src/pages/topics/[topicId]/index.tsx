@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client";
-import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { AppContainer } from "../../../components/AppContainer";
@@ -106,21 +105,7 @@ type TopicViewProps = {
 const TopicView = ({ topic }: TopicViewProps) => {
   const { uid } = useAuth();
 
-  const [paginate, setPaginate] = useState<{ first: number; after?: string | null }>({ first: 10, after: undefined });
-
-  const {
-    edges: rootCommentEdges,
-    pageInfo: rootCommentPageInfo,
-    fetchMore,
-  } = useRootComments(topic.id, {
-    first: paginate.first,
-    after: paginate.after,
-  });
-
-  const onMore = () => {
-    setPaginate({ first: 10, after: rootCommentPageInfo?.endCursor });
-    fetchMore();
-  };
+  const { rootCommentEdges, rootCommentPageInfo, fetchMoreRootComments } = useRootComments(topic.id);
 
   const createRootComment = useCreateRootComment(topic);
   const initialValues: CommentFormProps["initialValues"] = {
@@ -153,7 +138,11 @@ const TopicView = ({ topic }: TopicViewProps) => {
 
           {rootCommentPageInfo && (
             <div className="flex justify-center">
-              <button className="btn btn-primary" disabled={!rootCommentPageInfo.hasNextPage} onClick={onMore}>
+              <button
+                className="btn btn-primary"
+                disabled={!rootCommentPageInfo.hasNextPage}
+                onClick={fetchMoreRootComments}
+              >
                 More Comments
               </button>
             </div>

@@ -4,7 +4,7 @@ import { FaUser } from "react-icons/fa";
 
 import { useAuth } from "../../contexts/Auth";
 import { RootCommentItemFragment } from "../../graphql/generated";
-import { useUpdateRootComment } from "../../hooks/useRootComments";
+import { useDeleteRootComment, useUpdateRootComment } from "../../hooks/useRootComments";
 import { Content } from "../Content";
 import { Time } from "../Time";
 import { UserName } from "../UserName";
@@ -28,6 +28,15 @@ gql`
           id
           ...ChildCommentItem
         }
+      }
+    }
+    parent {
+      __typename
+      ... on Topic {
+        id
+      }
+      ... on Comment {
+        id
       }
     }
   }
@@ -54,6 +63,11 @@ export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
     return Promise.resolve();
   };
 
+  const deleteRootComment = useDeleteRootComment(comment.parent);
+  const onDelete = async () => {
+    await deleteRootComment({ variables: { id: comment.id } });
+  };
+
   return (
     <div className="flex flex-col space-y-2">
       <div className="px-3 py-4 border rounded">
@@ -71,9 +85,7 @@ export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
                   <UserName userName={comment.user.displayName} />
                   <Time time={comment.createdAt} />
                 </div>
-                {comment.user.id === uid && (
-                  <CommentItemMenu onEdit={() => setIsEditing(true)} onDelete={() => Promise.resolve()} />
-                )}
+                {comment.user.id === uid && <CommentItemMenu onEdit={() => setIsEditing(true)} onDelete={onDelete} />}
               </div>
 
               <Content content={comment.content} />

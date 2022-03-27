@@ -190,7 +190,7 @@ export type User = {
 
 export type ChildCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
 
-export type RootCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } };
+export type RootCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } };
 
 export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, createdAt: string };
 
@@ -201,7 +201,7 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, displayName: string } };
 
-export type RootCommentConnectionFragment = { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } };
+export type RootCommentConnectionFragment = { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } };
 
 export type RootCommentsForTopicQueryVariables = Exact<{
   topicId: Scalars['ID'];
@@ -209,14 +209,14 @@ export type RootCommentsForTopicQueryVariables = Exact<{
 }>;
 
 
-export type RootCommentsForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } } };
+export type RootCommentsForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } } };
 
 export type CreateRootCommentMutationVariables = Exact<{
   input: CreateCommentInput;
 }>;
 
 
-export type CreateRootCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } } };
+export type CreateRootCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } } };
 
 export type UpdateRootCommentMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -224,14 +224,14 @@ export type UpdateRootCommentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateRootCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } };
+export type UpdateRootCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } };
 
 export type DeleteRootCommentMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DeleteRootCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> } } } };
+export type DeleteRootCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } } };
 
 export type TopicsForIndexQueryVariables = Exact<{
   input: PaginateInput;
@@ -326,6 +326,15 @@ export const RootCommentItemFragmentDoc = gql`
         id
         ...ChildCommentItem
       }
+    }
+  }
+  parent {
+    __typename
+    ... on Topic {
+      id
+    }
+    ... on Comment {
+      id
     }
   }
 }
