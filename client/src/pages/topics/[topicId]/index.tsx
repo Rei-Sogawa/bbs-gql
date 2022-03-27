@@ -84,19 +84,21 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
   return (
     <div className="p-4 border rounded">
       <div className="flex flex-col space-y-2">
-        <div className="flex items-center space-x-4">
-          <button className="btn btn-circle btn-sm">
-            <FaUser size="16" />
-          </button>
-          <div>
-            <UserName userName={topic.user.displayName} />
-            <Time time={topic.createdAt} />
+        <div className="flex justify-between">
+          <div className="flex items-center space-x-4">
+            <button className="btn btn-circle btn-sm">
+              <FaUser size="16" />
+            </button>
+            <div>
+              <UserName userName={topic.user.displayName} />
+              <Time time={topic.createdAt} />
+            </div>
           </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <Heading>{topic.title}</Heading>
+
           {topic.user.id === uid && <TopicMenu topic={topic} />}
         </div>
+
+        <Heading>{topic.title}</Heading>
         <Content content={topic.content} />
       </div>
     </div>
