@@ -143,13 +143,9 @@ const TopicView = ({ topic }: TopicViewProps) => {
             </div>
           )}
 
-          {rootCommentPageInfo && (
+          {rootCommentPageInfo?.hasNextPage && (
             <div className="flex justify-center">
-              <button
-                className="btn btn-primary"
-                disabled={!rootCommentPageInfo.hasNextPage}
-                onClick={fetchMoreRootComments}
-              >
+              <button className="btn btn-primary" onClick={fetchMoreRootComments}>
                 More Comments
               </button>
             </div>
