@@ -3,10 +3,10 @@ import { ReactNode, useCallback, VFC } from "react";
 import { FaPen, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-import { useAuth } from "../contexts/Auth";
-import { routes } from "../routes";
+import { useAuth } from "../../contexts/Auth";
+import { routes } from "../../routes";
 
-const AppHeader: VFC = () => {
+const Header: VFC = () => {
   const { uid } = useAuth();
   const signOut = useCallback(() => getAuth().signOut(), []);
   const navigate = useNavigate();
@@ -77,12 +77,12 @@ const AppHeader: VFC = () => {
   );
 };
 
-type AppLayoutProps = { children: ReactNode };
+type LayoutProps = { children: ReactNode };
 
-export const AppLayout: VFC<AppLayoutProps> = ({ children }) => {
+export const Layout: VFC<LayoutProps> = ({ children }) => {
   return (
     <div className="h-screen flex flex-col">
-      <AppHeader />
+      <Header />
       <div className="flex-1">{children}</div>
     </div>
   );

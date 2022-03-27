@@ -1,9 +1,9 @@
 import { VFC } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { AppContainer } from "../../components/AppContainer";
-import { AppHeading } from "../../components/AppHeading";
-import { AppLayout } from "../../components/AppLayout";
+import { Layout } from "../../components/layout/Layout";
+import { Container } from "../../components/shared/Container";
+import { Heading } from "../../components/shared/Heading";
 import { TopicForm, TopicFormProps } from "../../components/topic/TopicForm";
 import { useCreateTopic } from "../../hooks/useTopics";
 import { routes } from "../../routes";
@@ -21,10 +21,10 @@ export const TopicNew: VFC = () => {
   };
 
   return (
-    <AppLayout>
-      <AppContainer size="md">
+    <Layout>
+      <Container size="md">
         <div className="text-center">
-          <AppHeading>Topic New Page!</AppHeading>
+          <Heading>Topic New Page!</Heading>
         </div>
         <TopicForm initialValues={initialValues} onSubmit={onSubmit} />
         <div className="mt-2 ml-2">
@@ -32,7 +32,7 @@ export const TopicNew: VFC = () => {
             Back
           </Link>
         </div>
-      </AppContainer>
-    </AppLayout>
+      </Container>
+    </Layout>
   );
 };

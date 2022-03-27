@@ -1,9 +1,9 @@
 import { VFC } from "react";
 
-import { AppContainer } from "../components/AppContainer";
-import { AppHeading } from "../components/AppHeading";
-import { AppLayout } from "../components/AppLayout";
-import { PaginateButtons } from "../components/PaginateButtons";
+import { Layout } from "../components/layout/Layout";
+import { Container } from "../components/shared/Container";
+import { Heading } from "../components/shared/Heading";
+import { PaginateButtons } from "../components/shared/PaginateButtons";
 import { TopicItem } from "../components/topic/TopicItem";
 import { useTopics } from "../hooks/useTopics";
 
@@ -11,11 +11,11 @@ export const Index: VFC = () => {
   const { edges, pageInfo, onFirst, onPrevious, onNext, onLast } = useTopics();
 
   return (
-    <AppLayout>
-      <AppContainer size="md">
+    <Layout>
+      <Container size="md">
         <div className="flex flex-col space-y-2">
           <div className="text-center">
-            <AppHeading>Topics!</AppHeading>
+            <Heading>Topics!</Heading>
           </div>
           {edges && pageInfo && (
             <div>
@@ -41,7 +41,7 @@ export const Index: VFC = () => {
             </div>
           )}
         </div>
-      </AppContainer>
-    </AppLayout>
+      </Container>
+    </Layout>
   );
 };

@@ -4,8 +4,8 @@ import { VFC } from "react";
 import { Field, Form } from "react-final-form";
 import { Link, useNavigate } from "react-router-dom";
 
-import { AppHeading } from "../components/AppHeading";
-import { AppSignUpLayout } from "../components/AppSignUpLayout";
+import { SignUpLayout } from "../components/layout/SignUpLayout";
+import { Heading } from "../components/shared/Heading";
 import { useGlobal } from "../contexts/Global";
 import { useSignUpMutation } from "../graphql/generated";
 import { routes } from "../routes";
@@ -153,9 +153,9 @@ const SignUpForm: VFC = () => {
 
 export const SignUp: VFC = () => {
   return (
-    <AppSignUpLayout>
+    <SignUpLayout>
       <div className="text-center">
-        <AppHeading>Sign Up</AppHeading>
+        <Heading>Sign Up</Heading>
       </div>
       <SignUpForm />
       <div className="mt-4 ml-1 flex flex-col space-y-1">
@@ -166,6 +166,6 @@ export const SignUp: VFC = () => {
           Back
         </Link>
       </div>
-    </AppSignUpLayout>
+    </SignUpLayout>
   );
 };

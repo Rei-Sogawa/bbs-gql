@@ -1,4 +1,4 @@
-import { AppEllipsisMenu } from "../AppEllipsisMenu";
+import { EllipsisMenu } from "../shared/EllipsisMenu";
 
 type CommentItemMenuProps = {
   onEdit: () => void;
@@ -7,7 +7,7 @@ type CommentItemMenuProps = {
 
 export const CommentItemMenu = ({ onEdit, onDelete }: CommentItemMenuProps) => {
   return (
-    <AppEllipsisMenu>
+    <EllipsisMenu>
       <li>
         <button className="btn btn-ghost" onClick={onEdit}>
           Edit
@@ -18,6 +18,6 @@ export const CommentItemMenu = ({ onEdit, onDelete }: CommentItemMenuProps) => {
           Delete
         </button>
       </li>
-    </AppEllipsisMenu>
+    </EllipsisMenu>
   );
 };

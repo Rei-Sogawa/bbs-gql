@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 
-import { AppContainer } from "../../../components/AppContainer";
-import { AppHeading } from "../../../components/AppHeading";
-import { AppLayout } from "../../../components/AppLayout";
+import { Layout } from "../../../components/layout/Layout";
+import { Container } from "../../../components/shared/Container";
+import { Heading } from "../../../components/shared/Heading";
 import { TopicForm, TopicFormProps } from "../../../components/topic/TopicForm";
 import { useAuth } from "../../../contexts/Auth";
 import { TopicForTopicEditFragment } from "../../../graphql/generated";
@@ -36,10 +36,10 @@ export const TopicEditView = ({ topic }: TopicEditViewProps) => {
   };
 
   return (
-    <AppLayout>
-      <AppContainer size="md">
+    <Layout>
+      <Container size="md">
         <div className="text-center">
-          <AppHeading>Topic Edit Page!</AppHeading>
+          <Heading>Topic Edit Page!</Heading>
         </div>
         <TopicForm initialValues={initialValues} onSubmit={onSubmit} />
         <div className="mt-2 ml-2">
@@ -47,8 +47,8 @@ export const TopicEditView = ({ topic }: TopicEditViewProps) => {
             Back
           </Link>
         </div>
-      </AppContainer>
-    </AppLayout>
+      </Container>
+    </Layout>
   );
 };
 

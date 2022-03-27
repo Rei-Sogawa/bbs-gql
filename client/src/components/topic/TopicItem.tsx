@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 
 import { TopicItemFragment } from "../../graphql/generated";
 import { routes } from "../../routes";
-import { AppHeading } from "../AppHeading";
-import { Time } from "../Time";
+import { Heading } from "../shared/Heading";
+import { Time } from "../shared/Time";
 
 gql`
   fragment TopicItem on Topic {
@@ -22,7 +22,7 @@ export const TopicItem = ({ topic }: TopicItemProps) => {
   return (
     <div>
       <Link to={routes["/topics/:topicId"].path({ topicId: topic.id })} className="link link-primary">
-        <AppHeading>{topic.title}</AppHeading>
+        <Heading>{topic.title}</Heading>
       </Link>
       <Time time={topic.createdAt} />
     </div>

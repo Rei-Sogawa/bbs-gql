@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 
-export const AppEllipsisMenu: FC = ({ children }) => {
+export const EllipsisMenu: FC = ({ children }) => {
   return (
     <div>
       <div className="dropdown dropdown-end">

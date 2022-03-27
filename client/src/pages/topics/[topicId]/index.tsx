@@ -1,16 +1,16 @@
 import { gql } from "@apollo/client";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { AppContainer } from "../../../components/AppContainer";
-import { AppEllipsisMenu } from "../../../components/AppEllipsisMenu";
-import { AppHeading } from "../../../components/AppHeading";
-import { AppLayout } from "../../../components/AppLayout";
 import { CommentForm, CommentFormProps } from "../../../components/comment/CommentForm";
 import { CommentFormBeforeLogIn } from "../../../components/comment/CommentFormBeforeLogin";
 import { RootCommentItem } from "../../../components/comment/RootCommentItem";
-import { Content } from "../../../components/Content";
-import { Time } from "../../../components/Time";
-import { UserName } from "../../../components/UserName";
+import { Layout } from "../../../components/layout/Layout";
+import { Container } from "../../../components/shared/Container";
+import { Content } from "../../../components/shared/Content";
+import { EllipsisMenu } from "../../../components/shared/EllipsisMenu";
+import { Heading } from "../../../components/shared/Heading";
+import { Time } from "../../../components/shared/Time";
+import { UserName } from "../../../components/shared/UserName";
 import { useAuth } from "../../../contexts/Auth";
 import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/generated";
 import { useCreateRootComment, useRootComments } from "../../../hooks/useRootComments";
@@ -44,7 +44,7 @@ const TopicMenu = ({ topic }: { topic: Pick<ITopic, "id"> }) => {
   };
 
   return (
-    <AppEllipsisMenu>
+    <EllipsisMenu>
       <li>
         <button className="btn btn-ghost" onClick={onEdit}>
           Edit
@@ -55,7 +55,7 @@ const TopicMenu = ({ topic }: { topic: Pick<ITopic, "id"> }) => {
           Delete
         </button>
       </li>
-    </AppEllipsisMenu>
+    </EllipsisMenu>
   );
 };
 
@@ -83,7 +83,7 @@ const TopicDetail = ({ topic }: TopicDetailProps) => {
     <div className="p-4 border rounded">
       <div className="flex flex-col space-y-2">
         <div className="flex justify-between items-center">
-          <AppHeading>{topic.title}</AppHeading>
+          <Heading>{topic.title}</Heading>
           {topic.user.id === uid && <TopicMenu topic={topic} />}
         </div>
 
@@ -116,8 +116,8 @@ const TopicView = ({ topic }: TopicViewProps) => {
   };
 
   return (
-    <AppLayout>
-      <AppContainer size="md">
+    <Layout>
+      <Container size="md">
         <div className="flex flex-col space-y-4">
           <div>
             <div className="ml-2">
@@ -148,8 +148,8 @@ const TopicView = ({ topic }: TopicViewProps) => {
             </div>
           )}
         </div>
-      </AppContainer>
-    </AppLayout>
+      </Container>
+    </Layout>
   );
 };
 

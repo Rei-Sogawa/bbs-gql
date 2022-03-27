@@ -1,10 +1,10 @@
 import { ReactNode, VFC } from "react";
 
-type AppSignUpLayoutProps = {
+type SignUpLayoutProps = {
   children: ReactNode;
 };
 
-export const AppSignUpLayout: VFC<AppSignUpLayoutProps> = ({ children }) => {
+export const SignUpLayout: VFC<SignUpLayoutProps> = ({ children }) => {
   return (
     <div className="bg-gray-100 h-screen">
       <div className="h-full md:h-auto md:pt-20 bg-gray-100">
