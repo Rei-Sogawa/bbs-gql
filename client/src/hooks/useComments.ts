@@ -4,16 +4,26 @@ import { Merge } from "type-fest";
 import {
   Comment,
   CommentEdge,
+  CreateCommentInput,
   useCreateRootCommentMutation,
   useDeleteRootCommentMutation,
   useRootCommentsForTopicQuery,
   useUpdateRootCommentMutation,
 } from "../graphql/generated";
+import { UpdateCommentInput } from "./../graphql/generated";
 
-function assertParentTopic(
+type _Parent = { parent: Pick<Comment["parent"], "id" | "__typename"> };
+type _Comment = Pick<Comment, "id"> & _Parent;
+
+function assertIsParentTopic(
   parent: Pick<Comment["parent"], "id" | "__typename">
 ): asserts parent is { id: string; __typename: "Topic" } {
   if (parent.__typename !== "Topic") throw new Error("Parent is not Topic");
+}
+function assertIsParentComment(
+  parent: Pick<Comment["parent"], "id" | "__typename">
+): asserts parent is { id: string; __typename: "Topic" } {
+  if (parent.__typename !== "Comment") throw new Error("Parent is not Comment");
 }
 
 gql`
@@ -76,13 +86,13 @@ gql`
   }
 `;
 
-export const useCreateRootComment = (parent: Pick<Comment["parent"], "id" | "__typename">) => {
-  assertParentTopic(parent);
-  const [createComment] = useCreateRootCommentMutation({
+export const useCreateRootComment = (comment: _Parent) => {
+  assertIsParentTopic(comment.parent);
+  const [mutate] = useCreateRootCommentMutation({
     update(cache, { data }) {
       if (!data) return;
       cache.modify({
-        id: cache.identify(parent),
+        id: cache.identify(comment.parent),
         fields: {
           comments(existing, { toReference }) {
             if (!existing) return existing;
@@ -101,6 +111,9 @@ export const useCreateRootComment = (parent: Pick<Comment["parent"], "id" | "__t
       });
     },
   });
+  const createComment = async (input: Pick<CreateCommentInput, "content">) => {
+    await mutate({ variables: { input: { ...input, parentName: "topic", parentId: comment.parent.id } } });
+  };
   return createComment;
 };
 
@@ -113,8 +126,11 @@ gql`
   }
 `;
 
-export const useUpdateRootComment = () => {
-  const [updateComment] = useUpdateRootCommentMutation();
+export const useUpdateRootComment = (comment: Pick<Comment, "id">) => {
+  const [mutate] = useUpdateRootCommentMutation();
+  const updateComment = async (input: UpdateCommentInput) => {
+    await mutate({ variables: { id: comment.id, input } });
+  };
   return updateComment;
 };
 
@@ -130,13 +146,13 @@ gql`
   }
 `;
 
-export const useDeleteRootComment = (parent: Pick<Comment["parent"], "id" | "__typename">) => {
-  assertParentTopic(parent);
-  const [deleteComment] = useDeleteRootCommentMutation({
+export const useDeleteRootComment = (comment: _Comment) => {
+  assertIsParentTopic(comment.parent);
+  const [mutate] = useDeleteRootCommentMutation({
     update(cache, { data }) {
       if (!data) return;
       cache.modify({
-        id: cache.identify(parent),
+        id: cache.identify(comment.parent),
         fields: {
           comments(existing, { readField }) {
             if (!existing) return existing;
@@ -153,5 +169,12 @@ export const useDeleteRootComment = (parent: Pick<Comment["parent"], "id" | "__t
       });
     },
   });
+  const deleteComment = async () => {
+    await mutate({ variables: { id: comment.id } });
+  };
   return deleteComment;
 };
+
+// export const useCreateChildComment = () => {};
+// export const useUpdateChildComment = () => {};
+// export const useDeleteChildComment = () => {};

@@ -7,8 +7,6 @@ import { clearFirestore } from "./test-util/clear";
 import { clearAuth } from "./test-util/clear";
 import { getAuth, getDb } from "./test-util/setup";
 
-// primes: 2, 53, 1087
-
 const shuffle = <T>(_arr: T[]) => {
   const arr = [..._arr];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -41,7 +39,7 @@ const main = async () => {
     })
   );
 
-  const topicsCount = 53;
+  const topicsCount = 13;
   const topics = await Promise.all(
     Array.from({ length: topicsCount }).map(async (_, idx) => {
       const user = shuffle(users)[0];

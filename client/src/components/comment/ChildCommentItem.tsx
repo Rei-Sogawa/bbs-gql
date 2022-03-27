@@ -4,7 +4,7 @@ import { FaUser } from "react-icons/fa";
 
 import { useAuth } from "../../contexts/Auth";
 import { ChildCommentItemFragment } from "../../graphql/generated";
-import { useUpdateRootComment } from "../../hooks/useRootComments";
+import { useUpdateRootComment } from "../../hooks/useComments";
 import { Content } from "../shared/Content";
 import { Time } from "../shared/Time";
 import { UserName } from "../shared/UserName";

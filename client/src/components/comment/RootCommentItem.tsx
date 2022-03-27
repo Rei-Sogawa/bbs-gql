@@ -4,7 +4,7 @@ import { FaUser } from "react-icons/fa";
 
 import { useAuth } from "../../contexts/Auth";
 import { RootCommentItemFragment } from "../../graphql/generated";
-import { useDeleteRootComment, useUpdateRootComment } from "../../hooks/useRootComments";
+import { useDeleteRootComment, useUpdateRootComment } from "../../hooks/useComments";
 import { Content } from "../shared/Content";
 import { Time } from "../shared/Time";
 import { UserName } from "../shared/UserName";
@@ -47,14 +47,8 @@ type RootCommentItemProps = { comment: RootCommentItemFragment };
 export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
   const { uid } = useAuth();
 
-  const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
-
-  const updateComment = useUpdateRootComment();
-  const onSubmitEditComment = async ({ content }: FormValues) => {
-    await updateComment({ variables: { id: comment.id, input: { content } } });
-    setIsEditing(false);
-  };
+  const [isEditing, setIsEditing] = useState(false);
 
   const initialValues: CommentFormProps["initialValues"] = {
     content: "",
@@ -63,10 +57,13 @@ export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
     return Promise.resolve();
   };
 
-  const deleteRootComment = useDeleteRootComment(comment.parent);
-  const onDelete = async () => {
-    await deleteRootComment({ variables: { id: comment.id } });
+  const updateComment = useUpdateRootComment(comment);
+  const onSubmitEditComment = async ({ content }: FormValues) => {
+    await updateComment({ content });
+    setIsEditing(false);
   };
+
+  const deleteRootComment = useDeleteRootComment(comment);
 
   return (
     <div className="flex flex-col space-y-2">
@@ -85,7 +82,9 @@ export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
                   <UserName userName={comment.user.displayName} />
                   <Time time={comment.createdAt} />
                 </div>
-                {comment.user.id === uid && <CommentItemMenu onEdit={() => setIsEditing(true)} onDelete={onDelete} />}
+                {comment.user.id === uid && (
+                  <CommentItemMenu onEdit={() => setIsEditing(true)} onDelete={deleteRootComment} />
+                )}
               </div>
 
               <Content content={comment.content} />

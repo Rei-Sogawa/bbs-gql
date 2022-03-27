@@ -13,7 +13,7 @@ import { Time } from "../../../components/shared/Time";
 import { UserName } from "../../../components/shared/UserName";
 import { useAuth } from "../../../contexts/Auth";
 import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/generated";
-import { useCreateRootComment, useRootComments } from "../../../hooks/useRootComments";
+import { useCreateRootComment, useRootComments } from "../../../hooks/useComments";
 import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
 import { routes } from "../../../routes";
 
@@ -107,12 +107,12 @@ const TopicView = ({ topic }: TopicViewProps) => {
 
   const { rootCommentEdges, rootCommentPageInfo, fetchMoreRootComments } = useRootComments(topic.id);
 
-  const createRootComment = useCreateRootComment(topic);
+  const createRootComment = useCreateRootComment({ parent: topic });
   const initialValues: CommentFormProps["initialValues"] = {
     content: "",
   };
   const onSubmit: CommentFormProps["onSubmit"] = async ({ content }) => {
-    await createRootComment({ variables: { input: { content, parentName: "topic", parentId: topic.id } } });
+    await createRootComment({ content });
   };
 
   return (
