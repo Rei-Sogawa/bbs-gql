@@ -16,6 +16,7 @@ import { Topic as ITopic, TopicForTopicDetailFragment } from "../../../graphql/g
 import { useCreateRootComment, useRootComments } from "../../../hooks/useComments";
 import { useDeleteTopic, useTopic } from "../../../hooks/useTopics";
 import { routes } from "../../../routes";
+import { assertIsDefined } from "../../../util/assert";
 
 const BreadCrumbs = ({ topic }: { topic: Pick<ITopic, "title"> }) => {
   return (
@@ -155,6 +156,8 @@ const TopicView = ({ topic }: TopicViewProps) => {
 
 export const Topic = () => {
   const { topicId } = useParams();
-  const topic = useTopic(topicId!);
+  assertIsDefined(topicId);
+  const topic = useTopic(topicId);
+
   return topic ? <TopicView topic={topic} /> : null;
 };

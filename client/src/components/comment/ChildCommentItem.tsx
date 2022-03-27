@@ -4,7 +4,7 @@ import { FaUser } from "react-icons/fa";
 
 import { useAuth } from "../../contexts/Auth";
 import { ChildCommentItemFragment } from "../../graphql/generated";
-import { useUpdateRootComment } from "../../hooks/useComments";
+import { useDeleteChildComment, useUpdateChildComment } from "../../hooks/useComments";
 import { Content } from "../shared/Content";
 import { Time } from "../shared/Time";
 import { UserName } from "../shared/UserName";
@@ -20,6 +20,15 @@ gql`
       id
       displayName
     }
+    parent {
+      __typename
+      ... on Topic {
+        id
+      }
+      ... on Comment {
+        id
+      }
+    }
   }
 `;
 
@@ -30,11 +39,13 @@ export const ChildCommentItem = ({ comment }: ChildCommentItemProps) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const updateComment = useUpdateRootComment();
+  const updateComment = useUpdateChildComment(comment);
   const onSubmitEditComment = async ({ content }: FormValues) => {
-    await updateComment({ variables: { id: comment.id, input: { content } } });
+    await updateComment({ content });
     setIsEditing(false);
   };
+
+  const deleteChildComment = useDeleteChildComment(comment);
 
   return (
     <div className="flex flex-col">
@@ -54,7 +65,7 @@ export const ChildCommentItem = ({ comment }: ChildCommentItemProps) => {
                   <Time time={comment.createdAt} />
                 </div>
                 {comment.user.id === uid && (
-                  <CommentItemMenu onEdit={() => setIsEditing(true)} onDelete={() => Promise.resolve()} />
+                  <CommentItemMenu onEdit={() => setIsEditing(true)} onDelete={deleteChildComment} />
                 )}
               </div>
 

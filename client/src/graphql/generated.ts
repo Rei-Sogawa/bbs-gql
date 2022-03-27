@@ -188,9 +188,9 @@ export type User = {
   topics: Array<Topic>;
 };
 
-export type ChildCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } };
+export type ChildCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } };
 
-export type RootCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } };
+export type RootCommentItemFragment = { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } };
 
 export type TopicItemFragment = { __typename?: 'Topic', id: string, title: string, createdAt: string };
 
@@ -201,7 +201,7 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, displayName: string } };
 
-export type RootCommentConnectionFragment = { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } };
+export type RootCommentConnectionFragment = { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } };
 
 export type RootCommentsForTopicQueryVariables = Exact<{
   topicId: Scalars['ID'];
@@ -209,14 +209,14 @@ export type RootCommentsForTopicQueryVariables = Exact<{
 }>;
 
 
-export type RootCommentsForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } } };
+export type RootCommentsForTopicQuery = { __typename?: 'Query', topic: { __typename?: 'Topic', id: string, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } } };
 
 export type CreateRootCommentMutationVariables = Exact<{
   input: CreateCommentInput;
 }>;
 
 
-export type CreateRootCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } } };
+export type CreateRootCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } } };
 
 export type UpdateRootCommentMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -224,14 +224,36 @@ export type UpdateRootCommentMutationVariables = Exact<{
 }>;
 
 
-export type UpdateRootCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } };
+export type UpdateRootCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } };
 
 export type DeleteRootCommentMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DeleteRootCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } } };
+export type DeleteRootCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, comments: { __typename?: 'CommentConnection', edges: Array<{ __typename?: 'CommentEdge', node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } }> }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } } };
+
+export type CreateChildCommentMutationVariables = Exact<{
+  input: CreateCommentInput;
+}>;
+
+
+export type CreateChildCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } } };
+
+export type UpdateChildCommentMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: UpdateCommentInput;
+}>;
+
+
+export type UpdateChildCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } };
+
+export type DeleteChildCommentMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteChildCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CommentEdge', cursor: string, node: { __typename?: 'Comment', id: string, content: string, createdAt: string, user: { __typename?: 'User', id: string, displayName: string }, parent: { __typename: 'Comment', id: string } | { __typename: 'Topic', id: string } } } };
 
 export type TopicsForIndexQueryVariables = Exact<{
   input: PaginateInput;
@@ -308,6 +330,15 @@ export const ChildCommentItemFragmentDoc = gql`
   user {
     id
     displayName
+  }
+  parent {
+    __typename
+    ... on Topic {
+      id
+    }
+    ... on Comment {
+      id
+    }
   }
 }
     `;
@@ -561,6 +592,115 @@ export function useDeleteRootCommentMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteRootCommentMutationHookResult = ReturnType<typeof useDeleteRootCommentMutation>;
 export type DeleteRootCommentMutationResult = Apollo.MutationResult<DeleteRootCommentMutation>;
 export type DeleteRootCommentMutationOptions = Apollo.BaseMutationOptions<DeleteRootCommentMutation, DeleteRootCommentMutationVariables>;
+export const CreateChildCommentDocument = gql`
+    mutation CreateChildComment($input: CreateCommentInput!) {
+  createComment(input: $input) {
+    node {
+      id
+      ...ChildCommentItem
+    }
+    cursor
+  }
+}
+    ${ChildCommentItemFragmentDoc}`;
+export type CreateChildCommentMutationFn = Apollo.MutationFunction<CreateChildCommentMutation, CreateChildCommentMutationVariables>;
+
+/**
+ * __useCreateChildCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateChildCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateChildCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createChildCommentMutation, { data, loading, error }] = useCreateChildCommentMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateChildCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateChildCommentMutation, CreateChildCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateChildCommentMutation, CreateChildCommentMutationVariables>(CreateChildCommentDocument, options);
+      }
+export type CreateChildCommentMutationHookResult = ReturnType<typeof useCreateChildCommentMutation>;
+export type CreateChildCommentMutationResult = Apollo.MutationResult<CreateChildCommentMutation>;
+export type CreateChildCommentMutationOptions = Apollo.BaseMutationOptions<CreateChildCommentMutation, CreateChildCommentMutationVariables>;
+export const UpdateChildCommentDocument = gql`
+    mutation UpdateChildComment($id: ID!, $input: UpdateCommentInput!) {
+  updateComment(id: $id, input: $input) {
+    id
+    ...ChildCommentItem
+  }
+}
+    ${ChildCommentItemFragmentDoc}`;
+export type UpdateChildCommentMutationFn = Apollo.MutationFunction<UpdateChildCommentMutation, UpdateChildCommentMutationVariables>;
+
+/**
+ * __useUpdateChildCommentMutation__
+ *
+ * To run a mutation, you first call `useUpdateChildCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateChildCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateChildCommentMutation, { data, loading, error }] = useUpdateChildCommentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateChildCommentMutation(baseOptions?: Apollo.MutationHookOptions<UpdateChildCommentMutation, UpdateChildCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateChildCommentMutation, UpdateChildCommentMutationVariables>(UpdateChildCommentDocument, options);
+      }
+export type UpdateChildCommentMutationHookResult = ReturnType<typeof useUpdateChildCommentMutation>;
+export type UpdateChildCommentMutationResult = Apollo.MutationResult<UpdateChildCommentMutation>;
+export type UpdateChildCommentMutationOptions = Apollo.BaseMutationOptions<UpdateChildCommentMutation, UpdateChildCommentMutationVariables>;
+export const DeleteChildCommentDocument = gql`
+    mutation DeleteChildComment($id: ID!) {
+  deleteComment(id: $id) {
+    node {
+      id
+      ...ChildCommentItem
+    }
+    cursor
+  }
+}
+    ${ChildCommentItemFragmentDoc}`;
+export type DeleteChildCommentMutationFn = Apollo.MutationFunction<DeleteChildCommentMutation, DeleteChildCommentMutationVariables>;
+
+/**
+ * __useDeleteChildCommentMutation__
+ *
+ * To run a mutation, you first call `useDeleteChildCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteChildCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteChildCommentMutation, { data, loading, error }] = useDeleteChildCommentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteChildCommentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteChildCommentMutation, DeleteChildCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteChildCommentMutation, DeleteChildCommentMutationVariables>(DeleteChildCommentDocument, options);
+      }
+export type DeleteChildCommentMutationHookResult = ReturnType<typeof useDeleteChildCommentMutation>;
+export type DeleteChildCommentMutationResult = Apollo.MutationResult<DeleteChildCommentMutation>;
+export type DeleteChildCommentMutationOptions = Apollo.BaseMutationOptions<DeleteChildCommentMutation, DeleteChildCommentMutationVariables>;
 export const TopicsForIndexDocument = gql`
     query TopicsForIndex($input: PaginateInput!) {
   topics(input: $input) {

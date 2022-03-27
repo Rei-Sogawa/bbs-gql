@@ -9,6 +9,7 @@ import { useAuth } from "../../../contexts/Auth";
 import { TopicForTopicEditFragment } from "../../../graphql/generated";
 import { useTopicEdit, useUpdateTopic } from "../../../hooks/useTopics";
 import { routes } from "../../../routes";
+import { assertIsDefined } from "../../../util/assert";
 
 gql`
   fragment TopicForTopicEdit on Topic {
@@ -53,10 +54,11 @@ export const TopicEditView = ({ topic }: TopicEditViewProps) => {
 };
 
 export const TopicEdit = () => {
-  const { topicId } = useParams();
-
   const { uid } = useAuth();
-  const topic = useTopicEdit(topicId!);
+
+  const { topicId } = useParams();
+  assertIsDefined(topicId);
+  const topic = useTopicEdit(topicId);
 
   if (!topic) return null;
   if (uid !== topic.user.id) return <Navigate to={routes["/"].path()} />;

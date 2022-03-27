@@ -5,9 +5,11 @@ import {
   Comment,
   CommentEdge,
   CreateCommentInput,
+  useCreateChildCommentMutation,
   useCreateRootCommentMutation,
   useDeleteRootCommentMutation,
   useRootCommentsForTopicQuery,
+  useUpdateChildCommentMutation,
   useUpdateRootCommentMutation,
 } from "../graphql/generated";
 import { UpdateCommentInput } from "./../graphql/generated";
@@ -86,13 +88,13 @@ gql`
   }
 `;
 
-export const useCreateRootComment = (comment: _Parent) => {
-  assertIsParentTopic(comment.parent);
+export const useCreateRootComment = ({ parent }: _Parent) => {
+  assertIsParentTopic(parent);
   const [mutate] = useCreateRootCommentMutation({
     update(cache, { data }) {
       if (!data) return;
       cache.modify({
-        id: cache.identify(comment.parent),
+        id: cache.identify(parent),
         fields: {
           comments(existing, { toReference }) {
             if (!existing) return existing;
@@ -112,7 +114,7 @@ export const useCreateRootComment = (comment: _Parent) => {
     },
   });
   const createComment = async (input: Pick<CreateCommentInput, "content">) => {
-    await mutate({ variables: { input: { ...input, parentName: "topic", parentId: comment.parent.id } } });
+    await mutate({ variables: { input: { ...input, parentName: "topic", parentId: parent.id } } });
   };
   return createComment;
 };
@@ -175,6 +177,95 @@ export const useDeleteRootComment = (comment: _Comment) => {
   return deleteComment;
 };
 
-// export const useCreateChildComment = () => {};
-// export const useUpdateChildComment = () => {};
-// export const useDeleteChildComment = () => {};
+gql`
+  mutation CreateChildComment($input: CreateCommentInput!) {
+    createComment(input: $input) {
+      node {
+        id
+        ...ChildCommentItem
+      }
+      cursor
+    }
+  }
+`;
+
+export const useCreateChildComment = ({ parent }: _Parent) => {
+  assertIsParentComment(parent);
+  const [mutate] = useCreateChildCommentMutation({
+    update(cache, { data }) {
+      if (!data) return;
+      cache.modify({
+        id: cache.identify(parent),
+        fields: {
+          comments(existing, { toReference }) {
+            if (!existing) return existing;
+            const edge = { ...data.createComment, node: toReference(data.createComment.node) };
+            return { ...existing, edges: [...existing.edges, edge].sort((a, b) => a.cursor - b.cursor) };
+          },
+        },
+      });
+    },
+  });
+  const createComment = async (input: Pick<CreateCommentInput, "content">) => {
+    await mutate({ variables: { input: { ...input, parentName: "comment", parentId: parent.id } } });
+  };
+  return createComment;
+};
+
+gql`
+  mutation UpdateChildComment($id: ID!, $input: UpdateCommentInput!) {
+    updateComment(id: $id, input: $input) {
+      id
+      ...ChildCommentItem
+    }
+  }
+`;
+
+export const useUpdateChildComment = (comment: Pick<Comment, "id">) => {
+  const [mutate] = useUpdateChildCommentMutation();
+  const updateComment = async (input: UpdateCommentInput) => {
+    await mutate({ variables: { id: comment.id, input } });
+  };
+  return updateComment;
+};
+
+gql`
+  mutation DeleteChildComment($id: ID!) {
+    deleteComment(id: $id) {
+      node {
+        id
+        ...ChildCommentItem
+      }
+      cursor
+    }
+  }
+`;
+
+export const useDeleteChildComment = (comment: _Comment) => {
+  assertIsParentComment(comment.parent);
+  const [mutate] = useDeleteRootCommentMutation({
+    update(cache, { data }) {
+      if (!data) return;
+      cache.modify({
+        id: cache.identify(comment.parent),
+        fields: {
+          comments(existing, { readField }) {
+            if (!existing) return existing;
+
+            return {
+              ...existing,
+              edges: existing.edges.filter(
+                (edge: Merge<CommentEdge, { node: Reference }>) =>
+                  readField("id", edge.node) !== data.deleteComment.node.id
+              ),
+            };
+          },
+        },
+      });
+    },
+  });
+  const deleteComment = async () => {
+    await mutate({ variables: { id: comment.id } });
+  };
+  return deleteComment;
+};

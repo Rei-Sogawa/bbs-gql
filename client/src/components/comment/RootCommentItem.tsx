@@ -4,7 +4,7 @@ import { FaUser } from "react-icons/fa";
 
 import { useAuth } from "../../contexts/Auth";
 import { RootCommentItemFragment } from "../../graphql/generated";
-import { useDeleteRootComment, useUpdateRootComment } from "../../hooks/useComments";
+import { useCreateChildComment, useDeleteRootComment, useUpdateRootComment } from "../../hooks/useComments";
 import { Content } from "../shared/Content";
 import { Time } from "../shared/Time";
 import { UserName } from "../shared/UserName";
@@ -50,11 +50,12 @@ export const RootCommentItem = ({ comment }: RootCommentItemProps) => {
   const [isReplying, setIsReplying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+  const createChildComment = useCreateChildComment({ parent: comment });
   const initialValues: CommentFormProps["initialValues"] = {
     content: "",
   };
-  const onSubmit: CommentFormProps["onSubmit"] = (v) => {
-    return Promise.resolve();
+  const onSubmit: CommentFormProps["onSubmit"] = async (values) => {
+    await createChildComment(values);
   };
 
   const updateComment = useUpdateRootComment(comment);
