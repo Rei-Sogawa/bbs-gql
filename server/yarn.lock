@@ -1523,6 +1523,11 @@
   resolved "https://registry.yarnpkg.com/@rei-sogawa/path-builder/-/path-builder-1.0.3.tgz#6cbab5218fad473c51c170c0e64d286d32775074"
   integrity sha512-0Q3Dkp2OV6v12oH5S6n0bPvrrI6qJrLwcdmkH7GQppCDzJJpCDX61Ew7jdVNz4/1dIlbxWO2nsylSKv+RPk4SA==
 
+"@rei-sogawa/unfireorm@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@rei-sogawa/unfireorm/-/unfireorm-1.0.2.tgz#2ab5e24b3ebda1d531200a9466212ee3428781ed"
+  integrity sha512-+C1+d0O2p/kdnwwa9fmRJdDE/oCMsQ2PX0LfNSNWTjmynP1nSmNIstSmOnXvFFKi5eDxcIb2IEp/2gzUajFG4g==
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.1.tgz#a21117b19ee9be70c379ec1877537ef2e1c63301"

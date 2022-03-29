@@ -35,7 +35,7 @@ export const Mutation: Resolvers["Mutation"] = {
     const { uid } = context;
     const { topicsCollection } = context.collections;
 
-    const topic = await topicsCollection.findOneById(id, TopicDoc.of);
+    const topic = await topicsCollection.findOneById(id);
     if (!topic.isCreatedBy({ userId: uid })) throw new Error("Cannot write topic");
     topic.edit({ title, content });
     await topic.update();

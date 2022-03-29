@@ -1,8 +1,9 @@
+import { FireDocument } from "@rei-sogawa/unfireorm";
 import { z } from "zod";
 
 import { now } from "../../util/now";
 import { CommentsCollection } from "../collection";
-import { Doc } from "../lib/document";
+import { createConverter } from "../lib/helper";
 import { DocSnap, WithId } from "../lib/type";
 
 export const TopicDataSchema = z
@@ -20,7 +21,7 @@ export type TopicData = z.infer<typeof TopicDataSchema>;
 
 export type TopicMapper = WithId<TopicData>;
 
-export class TopicDoc extends Doc<TopicData> implements TopicData {
+export class TopicDoc extends FireDocument<TopicData> implements TopicData {
   __name!: "topic";
   title!: string;
   content!: string;
@@ -31,7 +32,7 @@ export class TopicDoc extends Doc<TopicData> implements TopicData {
   commentsCollection = new CommentsCollection(this.ref.collection("comments"));
 
   constructor(snap: DocSnap<TopicData>) {
-    super(snap, TopicDataSchema.parse);
+    super({ snap, parse: TopicDataSchema.parse, converter: createConverter<TopicData>() });
   }
 
   static of(snap: DocSnap<TopicData>) {
